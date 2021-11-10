@@ -1,0 +1,23 @@
+{
+  "name": "work-for-u-server",
+  "version": "1.0.0",
+  "description": "server code for WORK FOR YOU project by Group 9 - CS546A",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amanpawar507/Group_9_CS546_A.git"
+  },
+  "author": "Group 9 CS546-A",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amanpawar507/Group_9_CS546_A/issues"
+  },
+  "homepage": "https://github.com/amanpawar507/Group_9_CS546_A#readme",
+  "dependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
