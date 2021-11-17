@@ -53,6 +53,51 @@ const createProject = async (name, description, tenureMonths, skillsRequired, ho
     }
 
 }
+//------------------------------------------get------------------------------------------------------
+
+const get = async (id) => {
+
+    //Exceptions
+    if(arguments.length!=1) throw `The required number of parameter are not provided`;
+    if (!id) throw `Please provide an id to search`;
+    if (typeof(id) !== 'string') throw `Id must be a string`;
+    if(id.trim().length==0) throw `Id cannot be an empty string`;
+    if(!ObjectId.isValid(id)) throw `Please enter a valid Id`;
+
+    let parsedId = ObjectId(id);
+
+    //Project Collection
+    const projectCollection = await project();
+    let project = await projectCollection.findOne({ _id: parsedId });
+    
+
+    if (project === null) throw `No project with the id: ${id}`;
+    else{
+
+        //Output
+        project._id = project._id.toString();
+        return project;
+    }
+}
+
+//-----------------------------------------getAll-------------------------------------------------------
+
+const getAll = async () => {
+
+    
+    //Exceptions
+    if(arguments.length!=0) throw `No parameter required`;
+
+    const projectCollection = await project();
+    const projectList = await projectCollection.find({}).toArray();
+
+    for(let i of projectList){
+        i._id = i._id.toString();
+     }
+
+    //Output
+    return projectList;
+}
 
 module.exports = {
     createProject

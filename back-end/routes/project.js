@@ -39,4 +39,30 @@ router.post('/',async(req,res) => {
     }
 })
 
+
+//-----------------------------------------getAll-------------------------------------------------------
+
+router.get('projects/', async (req, res) => {
+  
+    try {
+      const projectList = await project.getAll();
+      res.json(projectList);
+    } catch (e) {
+      let error = e.toString();
+      res.status(500).json({ "error": error });
+    }
+  });
+
+//------------------------------------------get------------------------------------------------------
+
+router.get('projects/:id', async (req, res) => {
+  try {
+    const project = await project.get(req.params.id);
+    res.status(200).json(project);
+  } catch (e) {
+    let error = e.toString();
+    res.status(404).json({"error": error});
+  }
+});
+
 module.exports = router;
