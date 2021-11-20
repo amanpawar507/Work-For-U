@@ -1,7 +1,6 @@
-const {project} = require('../config/mongoCollections');
-const {getSkill}  = require('./skill');
-const {ObjectId} = require("mongodb");
-
+const { project } = require("../config/mongoCollections");
+const { getSkill } = require("./skill");
+const { ObjectId } = require("mongodb");
 
 const getCurrentTime = () => {
     var today = new Date();
@@ -9,6 +8,22 @@ const getCurrentTime = () => {
     var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     var dateTime = date+' '+time;
     return dateTime;
+}
+
+const getProject = async projectId => {
+    if(!projectId) throw "provide a project ID to fetch";
+    if(typeof projectId !== "string") throw "Invalid project ID";
+
+    const objId = ObjectId(projectId);
+
+    const projectCollection = await project();
+    let foundEntry = await projectCollection.findOne({_id: objId});
+    if(!foundEntry) throw "could not find project for the given ID";
+
+    return {
+        _id: foundEntry._id.toString(),
+        ...foundEntry
+    }
 }
 
 const createProject = async (name, description, tenureMonths, skillsRequired, hourlyPay, status, createdBy) => {
@@ -53,32 +68,6 @@ const createProject = async (name, description, tenureMonths, skillsRequired, ho
     }
 
 }
-//------------------------------------------get------------------------------------------------------
-
-const get = async (id) => {
-
-    //Exceptions
-    if(arguments.length!=1) throw `The required number of parameter are not provided`;
-    if (!id) throw `Please provide an id to search`;
-    if (typeof(id) !== 'string') throw `Id must be a string`;
-    if(id.trim().length==0) throw `Id cannot be an empty string`;
-    if(!ObjectId.isValid(id)) throw `Please enter a valid Id`;
-
-    let parsedId = ObjectId(id);
-
-    //Project Collection
-    const projectCollection = await project();
-    let project = await projectCollection.findOne({ _id: parsedId });
-    
-
-    if (project === null) throw `No project with the id: ${id}`;
-    else{
-
-        //Output
-        project._id = project._id.toString();
-        return project;
-    }
-}
 
 //-----------------------------------------getAll-------------------------------------------------------
 
@@ -100,5 +89,6 @@ const getAll = async () => {
 }
 
 module.exports = {
-    createProject
+    createProject,
+    getProject
 }
