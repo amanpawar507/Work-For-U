@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { project } = require("../data");
 
+//-----------------------------------------create---------------------------------------------------------
+
 router.post("/", async (req, res) => {
   try {
     let request = req.body;
@@ -54,6 +56,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+//-----------------------------------------get---------------------------------------------------------
 
 router.get('/:id', async (req,res) => {
     try {
@@ -78,6 +81,20 @@ router.get('/:id', async (req,res) => {
         res.status(500).json({error: error.messsage});
     }
 })
+
+
+//-----------------------------------------getAll-------------------------------------------------------
+
+router.get('/', async (req, res) => {
+  
+    try {
+      const projectList = await project.getAll();
+      res.json(projectList);
+    } catch (e) {
+      let error = e.toString();
+      res.status(500).json({ "error": error });
+    }
+  });
 
 
 module.exports = router;
