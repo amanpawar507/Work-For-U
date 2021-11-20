@@ -39,4 +39,28 @@ router.post('/',async(req,res) => {
     }
 })
 
+router.get('/:id', async (req,res) => {
+    try {
+        const id = req.params.id;
+        if(!id) {
+            res.status(400).json({error: "Please provide an ID"});
+            return;
+        }
+        if(typeof id !== "string") {
+            res.status(400).json({error: "Invalid type of ID"});
+            return;
+        }
+        if(id.trim().length === 0) {
+            res.status(400).json({error: "empty spaces for ID"});
+            return;
+        }
+
+        let result = await project.getProject(id);
+        res.json(result);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({error: error.messsage});
+    }
+})
+
 module.exports = router;
