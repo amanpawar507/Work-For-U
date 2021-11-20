@@ -1,52 +1,55 @@
-const {skill} = require('../config/mongoCollections');
-const {ObjectId} = require("mongodb");
-
+const { skill } = require("../config/mongoCollections");
+const { ObjectId } = require("mongodb");
 
 const getCurrentTime = () => {
-    var today = new Date();
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    var dateTime = date+' '+time;
-    return dateTime;
-}
+  var today = new Date();
+  var date =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  var time =
+    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  var dateTime = date + " " + time;
+  return dateTime;
+};
 
-const createSkill = async name => {
-    if(!name) throw "provide a name for the skill";
-    if(typeof name !== "string") throw "invalid type of input";
+const createSkill = async (name) => {
+  if (!name) throw "provide a name for the skill";
+  if (typeof name !== "string") throw "invalid type of input";
 
-    const skillCollection = await skill();
+  const skillCollection = await skill();
 
-    const newEntry = {
-                        name,
-                        createdAt: getCurrentTime()
-                    }
-    const addedEntry = await skillCollection.insertOne(newEntry);
-    if(addedEntry.insertedCount === 0) throw "could not add the skill";
-    
-    addedEntryInfo = await skillCollection.findOne({_id: addedEntry.insertedId});
-    if(!addedEntry) throw "could not find the added skill";
+  const newEntry = {
+    name,
+    createdAt: getCurrentTime(),
+  };
+  const addedEntry = await skillCollection.insertOne(newEntry);
+  if (addedEntry.insertedCount === 0) throw "could not add the skill";
 
-    return true
- }
+  addedEntryInfo = await skillCollection.findOne({
+    _id: addedEntry.insertedId,
+  });
+  if (!addedEntryInfo) throw "could not find the added skill";
 
- const getSkill = async idArray => {
-     if(!idArray) throw "provide an ID to search";
-     if(typeof idArray !== 'object' && !idArray.length) throw "Invalid Id array";
+  return addedEntryInfo;
+};
 
-     const skillCollection = await skill();
-     let objIds = [];
-     idArray.forEach(element => {
-         objIds.push(ObjectId(element));
-     });
-     console.log(objIds);
-     const found = await skillCollection.find({_id: {$in: objIds}}).toArray();
-     console.log(found);
-     if(!found) throw "could not find the skill for the given ID";
+const getSkill = async (idArray) => {
+  if (!idArray) throw "provide an ID to search";
+  if (typeof idArray !== "object" && !idArray.length) throw "Invalid Id array";
 
-     return found;
- }
+  const skillCollection = await skill();
+  let objIds = [];
+  idArray.forEach((element) => {
+    objIds.push(ObjectId(element));
+  });
+  console.log(objIds);
+  const found = await skillCollection.find({ _id: { $in: objIds } }).toArray();
+  console.log(found);
+  if (!found) throw "could not find the skill for the given ID";
 
- module.exports = {
-     createSkill,
-     getSkill
- }
+  return found;
+};
+
+module.exports = {
+  createSkill,
+  getSkill,
+};
