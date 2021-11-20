@@ -1,7 +1,6 @@
-const {project} = require('../config/mongoCollections');
-const {getSkill}  = require('./skill');
-const {ObjectId} = require("mongodb");
-
+const { project } = require("../config/mongoCollections");
+const { getSkill } = require("./skill");
+const { ObjectId } = require("mongodb");
 
 const getCurrentTime = () => {
     var today = new Date();
