@@ -38,12 +38,22 @@ router.post("/", async (req, res) => {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
-}catch(error){
+    module.exports = router;
+    let result = await project.createProject(
+      name,
+      description,
+      tenureMonths,
+      skillsRequired,
+      hourlyPay,
+      status,
+      createdBy
+    );
+    res.json(result);
+  } catch (error) {
     console.log(error);
-    res.status(500).json({error: error.messsage});
-}
-}
-)
+    res.status(500).json({ error: error.messsage });
+  }
+});
 
 
 router.get('/:id', async (req,res) => {
@@ -69,5 +79,6 @@ router.get('/:id', async (req,res) => {
         res.status(500).json({error: error.messsage});
     }
 })
+
 
 module.exports = router;
