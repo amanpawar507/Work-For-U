@@ -1,4 +1,5 @@
 const { employer } = require("../config/mongoCollections");
+const { getProject } = require("./project");
 //const { getSkill } = require("./freelanceFunctions");
 const { ObjectId } = require("mongodb");
 
@@ -40,12 +41,13 @@ const createEmployer = async ({
     throw "Invalid type of data";
 
   //let = await getSkill(skillsRequired);
+  let projectArrayE = await getProject(projects);
   const employerCollection = await employer();
   const newEntry = {
     fullName,
     emailId,
     password,
-    projects,
+    projects: projectArrayE,
     companyName,
     createdAt: getCurrentTime(),
   };

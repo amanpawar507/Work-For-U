@@ -1,5 +1,6 @@
 const { freelancer } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
+const { getProject } = require("./project");
 //const { getSkill } = require("./freelanceFunctions");
 const { ObjectId } = require("mongodb");
 
@@ -64,6 +65,7 @@ const createFreelancer = async ({
   if (!emailPattern.test(emailId)) throw "Email ID not valid";
 
   let skillsArrayF = await getSkill(skills);
+  let projectArrayF = await getProject(projects);
   const freelancerCollection = await freelancer();
   //console.log();
   const newEntry = {
@@ -72,7 +74,7 @@ const createFreelancer = async ({
     password,
     introduction,
     skills: skillsArrayF,
-    projects,
+    projects: projectArrayF,
     overallRating,
     reviews,
     location,
