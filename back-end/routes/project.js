@@ -42,7 +42,7 @@ router.post('/',async(req,res) => {
 
 //-----------------------------------------getAll-------------------------------------------------------
 
-router.get('projects/', async (req, res) => {
+router.get('/', async (req, res) => {
   
     try {
       const projectList = await project.getAll();
@@ -55,7 +55,7 @@ router.get('projects/', async (req, res) => {
 
 //------------------------------------------get------------------------------------------------------
 
-router.get('projects/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const project = await project.get(req.params.id);
     res.status(200).json(project);
