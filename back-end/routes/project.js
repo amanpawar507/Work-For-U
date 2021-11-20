@@ -40,12 +40,21 @@ router.post("/", async (req, res) => {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
-}catch(error){
+    let result = await project.createProject(
+      name,
+      description,
+      tenureMonths,
+      skillsRequired,
+      hourlyPay,
+      status,
+      createdBy
+    );
+    res.json(result);
+  } catch (error) {
     console.log(error);
-    res.status(500).json({error: error.messsage});
-}
-}
-)
+    res.status(500).json({ error: error.messsage });
+  }
+});
 
 //-----------------------------------------get---------------------------------------------------------
 

@@ -10,6 +10,8 @@ const getCurrentTime = () => {
     return dateTime;
 }
 
+//-----------------------------------------get---------------------------------------------------------
+
 const getProject = async projectId => {
     if(!projectId) throw "provide a project ID to fetch";
     if(typeof projectId !== "string") throw "Invalid project ID";
@@ -25,6 +27,8 @@ const getProject = async projectId => {
         ...foundEntry
     }
 }
+
+//-----------------------------------------create---------------------------------------------------------
 
 const createProject = async (name, description, tenureMonths, skillsRequired, hourlyPay, status, createdBy) => {
     if(!name || !description || !tenureMonths || !skillsRequired || !hourlyPay || !status || !createdBy) throw "Missing fields";
