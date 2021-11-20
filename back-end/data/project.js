@@ -30,6 +30,8 @@ const getProject = async (projectId) => {
   };
 };
 
+//-----------------------------------------create---------------------------------------------------------
+
 const createProject = async (data) => {
   const {
     name,
@@ -109,6 +111,7 @@ const getAll = async () => {
 };
 
 module.exports = {
-  createProject,
-  getProject,
-};
+    createProject,
+    getProject,
+    getAll
+}
