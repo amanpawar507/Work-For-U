@@ -38,7 +38,6 @@ router.post("/", async (req, res) => {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
-    module.exports = router;
     let result = await project.createProject(
       name,
       description,
