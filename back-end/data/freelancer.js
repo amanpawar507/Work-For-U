@@ -48,7 +48,6 @@ const createFreelancer = async ({
     typeof emailId !== "string" ||
     typeof password !== "string" ||
     typeof introduction !== "string" ||
-    (typeof skills !== "object" && !skills.length) ||
     (Array.isArray(skills) && !skills.length) ||
     (Array.isArray(projects) && !projects.length) ||
     typeof overallRating !== "number" ||
@@ -59,15 +58,18 @@ const createFreelancer = async ({
   )
     throw "Invalid type of data";
 
-  //let skillsArrayF = await getSkill(skills);
-  const freelancerCollection = await freelancer();
+  var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  if (!emailPattern.test(emailId)) throw "Email ID not valid";
 
+  let skillsArrayF = await getSkill(skills);
+  const freelancerCollection = await freelancer();
+  //console.log();
   const newEntry = {
     fullName,
     emailId,
     password,
     introduction,
-    skills,
+    skills: skillsArrayF,
     projects,
     overallRating,
     reviews,
