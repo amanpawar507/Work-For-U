@@ -94,5 +94,6 @@ const getAll = async () => {
 
 module.exports = {
     createProject,
-    getProject
+    getProject,
+    getAll
 }
