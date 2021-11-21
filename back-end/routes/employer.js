@@ -3,18 +3,16 @@ const express = require("express");
 const router = express.Router();
 const { employer } = require("../data");
 
-router.post("/create_employer", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const { fullName, emailId, password, companyName, projects, createdAt } =
+    const { fullName, emailId, password, companyName } =
       req.body;
 
     if (
       !fullName ||
       !emailId ||
       !password ||
-      !companyName ||
-      !projects ||
-      !createdAt
+      !companyName 
     ) {
       res.status(400).json({ error: "Missing fields" });
       return;
@@ -23,8 +21,7 @@ router.post("/create_employer", async (req, res) => {
       typeof fullName !== "string" ||
       typeof emailId !== "string" ||
       typeof password !== "string" ||
-      typeof companyName !== "string" ||
-      (Array.isArray(projects) && !projects.length)
+      typeof companyName !== "string" 
     ) {
       res.status(400).json({ error: "Invalid type of data" });
       return;
@@ -33,7 +30,7 @@ router.post("/create_employer", async (req, res) => {
     let resultE = await employer.createEmployer(req.body);
     res.json(resultE);
   } catch (error) {
-    console.log(error);
+    console.log('from data: ', error);
     res.status(500).json({ error: error.messsage });
   }
 });

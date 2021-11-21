@@ -1,5 +1,5 @@
 const dbConnection = require("../config/mongoConnection");
-const { skill, project, freelancer } = require("../data");
+const { skill, project, freelancer, employer } = require("../data");
 
 
 async function main() {
@@ -130,6 +130,37 @@ async function main() {
     return;
   }
 
+  let employer1;
+  let employer2;
+
+  try {
+   let result = await employer.createEmployer({
+    fullName: 'Aman Pawar', 
+    emailId: 'aman@gmail.com', 
+    password: 'dcdvjcbd', 
+    companyName: 'someCompany1' 
+   })
+   console.log(result);
+   employer1 = result;
+  } catch (error) {
+    console.log('from route: ', error);
+    return;
+  }
+
+  try {
+    let result = await employer.createEmployer({
+     fullName: 'Ameya Yadav', 
+     emailId: 'ameya@gmail.com', 
+     password: 'nkvbnkj', 
+     companyName: 'someCompany2' 
+    })
+    console.log(result);
+    employer2 = result;
+   } catch (error) {
+     console.log('from route: ',error);
+     return;
+   }
+
   //name, description, tenureMonths, skillsRequired, hourlyPay, status, createdBy
   try {
     let result = await project.createProject({
@@ -138,7 +169,7 @@ async function main() {
       tenureMonths: 3,
       skillsRequired: skills1,
       hourlyPay: 34,
-      createdBy: "Aman Pawar",
+      createdBy: employer1._id
     });
     if (!result) {
       console.log("could not create");
@@ -156,7 +187,7 @@ async function main() {
       tenureMonths: 2,
       skillsRequired: skills2,
       hourlyPay: 30,
-      createdBy: "Aman Pawar",
+      createdBy: employer2._id
     });
     if (!result) {
       console.log("could not create");
@@ -174,7 +205,7 @@ async function main() {
       tenureMonths: 2,
       skillsRequired: skills1,
       hourlyPay: 37,
-      createdBy: "Saurabh Mane",
+      createdBy: employer1._id
     });
     if (!result) {
       console.log("could not create");
@@ -192,7 +223,7 @@ async function main() {
       tenureMonths: 3,
       skillsRequired: skills2,
       hourlyPay: 33,
-      createdBy: "Ameya Yadav",
+      createdBy: employer2._id
     });
     if (!result) {
       console.log("could not create");
