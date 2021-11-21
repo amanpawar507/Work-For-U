@@ -1,0 +1,66 @@
+[
+    {
+    "_id":"61995b395d2a811df3b1e942",
+    "fullName":"Aman Pawar",
+    "emailId":"aman@gmail.com",
+    "password":"qwerty",
+    "introduction":"My name is Aman",
+    "skills":[
+        {
+            "id":"61995a7b14103374949cc0e0",
+            "name":"MongoDB"
+        },{
+            "id": "61995a7b14103374949cc0e1",
+            "name": "Marketing Strategy"
+        }
+    ],
+    "overallRating":5,
+    "reviews":"Abc",
+    "location":"USA",
+    "successRate":3,
+    "expectedPay":34,
+    "createdAt":"2021-11-20 15:31:53"
+},
+{"_id":"61995b395d2a811df3b1e942",
+    "fullName":"Aman Pawar",
+    "emailId":"aman@gmail.com",
+    "password":"qwerty",
+    "introduction":"My name is Aman",
+    "skills":[
+        {
+            "id":"61995a7b14103374949cc0e0",
+            "name":"MongoDB"
+        },{
+            "id": "61995a7b14103374949cc0e1",
+            "name": "Marketing Strategy"
+        }
+    ],
+    "overallRating":5,
+    "reviews":"Abc",
+    "location":"USA",
+    "successRate":3,
+    "expectedPay":34,
+    "createdAt":"2021-11-20 15:31:53"
+},
+{"_id":"61995b395d2a811df3b1e942",
+    "fullName":"Aman Pawar",
+    "emailId":"aman@gmail.com",
+    "password":"qwerty",
+    "introduction":"My name is Aman",
+    "skills":[
+        {
+            "id":"61995a7b14103374949cc0e0",
+            "name":"MongoDB"
+        },{
+            "id": "61995a7b14103374949cc0e1",
+            "name": "Marketing Strategy"
+        }
+    ],
+    "overallRating":5,
+    "reviews":"Abc",
+    "location":"USA",
+    "successRate":3,
+    "expectedPay":34,
+    "createdAt":"2021-11-20 15:31:53"
+}
+]

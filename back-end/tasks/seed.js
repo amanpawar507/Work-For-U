@@ -1,6 +1,6 @@
 const dbConnection = require("../config/mongoConnection");
-const { skill } = require("../data");
-const { project } = require("../data");
+const { skill, project, freelancer } = require("../data");
+
 
 async function main() {
   const db = await dbConnection();
@@ -52,6 +52,8 @@ async function main() {
       createdBy: "Ameya Yadav",
     },
   ];
+
+  
 
   let skills1 = [];
   let skills2 = [];
@@ -136,7 +138,6 @@ async function main() {
       tenureMonths: 3,
       skillsRequired: skills1,
       hourlyPay: 34,
-      status: 1,
       createdBy: "Aman Pawar",
     });
     if (!result) {
@@ -155,7 +156,6 @@ async function main() {
       tenureMonths: 2,
       skillsRequired: skills2,
       hourlyPay: 30,
-      status: 2,
       createdBy: "Aman Pawar",
     });
     if (!result) {
@@ -174,7 +174,6 @@ async function main() {
       tenureMonths: 2,
       skillsRequired: skills1,
       hourlyPay: 37,
-      status: 1,
       createdBy: "Saurabh Mane",
     });
     if (!result) {
@@ -193,13 +192,68 @@ async function main() {
       tenureMonths: 3,
       skillsRequired: skills2,
       hourlyPay: 33,
-      status: 3,
       createdBy: "Ameya Yadav",
     });
     if (!result) {
       console.log("could not create");
       throw "some error";
     }
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  try {
+     await freelancer.createFreelancer({
+      fullName:"Aman Pawar",
+      emailId:"aman@gmail.com",
+      password:"qwerty",
+      introduction:"My name is Aman",
+      skills:skills1,
+      overallRating:5,
+      reviews:"Abc",
+      location:"USA",
+      successRate:3,
+      expectedPay:34
+    })
+
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  try {
+    await freelancer.createFreelancer({
+      fullName:"Rohan Naik",
+      emailId:"rohan@gmail.com",
+      password:"rohanQwerty",
+      introduction:"My name is Rohan",
+      skills:skills2,
+      overallRating:4,
+      reviews:"nbcjw",
+      location:"USA",
+      successRate:4,
+      expectedPay:30
+    })
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  try {
+    await freelancer.createFreelancer({
+      fullName:"Vidhi Roy",
+      emailId:"vidhi@gmail.com",
+      password:"vidhiQwerty",
+      introduction:"My name is Vidhi",
+      skills:skills1,
+      overallRating:4,
+      reviews:"bncwbwd",
+      location:"USA",
+      successRate:3,
+      expectedPay:32
+    })
+
   } catch (error) {
     console.log(error);
     return;

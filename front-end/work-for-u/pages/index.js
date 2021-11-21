@@ -1,7 +1,10 @@
 import { Layout } from "../components/core"
 
 export default function Home() {
+
   return (
-    <Layout>Hello</Layout>
+    <Layout>
+      please wait...
+    </Layout>
   )
 }

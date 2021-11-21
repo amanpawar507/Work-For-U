@@ -37,7 +37,6 @@ const createProject = async (data) => {
     tenureMonths,
     skillsRequired,
     hourlyPay,
-    status,
     createdBy,
   } = data;
   if (
@@ -46,7 +45,6 @@ const createProject = async (data) => {
     !tenureMonths ||
     !skillsRequired ||
     !hourlyPay ||
-    !status ||
     !createdBy
   )
     throw "Missing fields";
@@ -56,7 +54,6 @@ const createProject = async (data) => {
     typeof tenureMonths !== "number" ||
     (typeof skillsRequired !== "object" && !skillsRequired.length) ||
     typeof hourlyPay !== "number" ||
-    typeof status !== "number" ||
     typeof createdBy !== "string"
   )
     throw "Invalid type of data";
@@ -71,7 +68,7 @@ const createProject = async (data) => {
     tenureMonths,
     skillsRequired: skillsArray,
     hourlyPay,
-    status,
+    status: 0,
     createdBy,
     assignedTo: null,
     createdAt: getCurrentTime(),
@@ -108,7 +105,60 @@ const getAll = async () => {
   return projectList;
 };
 
+const updateProject = async data => {
+  const {
+    id,
+    name,
+    description,
+    tenureMonths,
+    skillsRequired,
+    hourlyPay
+  } = data;
+
+  if(
+    !id ||
+    !name ||
+    !description ||
+    !tenureMonths ||
+    !skillsRequired ||
+    !hourlyPay 
+  ) throw "missing fields";
+
+  if(
+    typeof id !== "string" ||
+    typeof name !== "string" ||
+    typeof description !== "string" ||
+    typeof tenureMonths !== "number" ||
+    (typeof skillsRequired !== "object" && !skillsRequired.length ) ||
+    typeof hourlyPay !== "number" 
+  ) throw "Invalid fields";
+
+  const projectExist = await getProject(id);
+  if(!projectExist) throw "No project exist for the given ID"
+
+  let skillsArray = await getSkill(skillsRequired);
+
+  const updateReq = {
+    name,
+    description,
+    tenureMonths,
+    skillsRequired: skillsArray,
+    hourlyPay
+  }
+  const projectCollection = await project();
+  let objectId = ObjectId(id);
+  const updateInfo = await projectCollection.updateOne({_id: objectId},{$set: updateReq});
+  if(updateInfo.modifiedCount === 0) throw "Could not update the project";
+  
+  const updatedProject = await getProject(id);
+  return updatedProject;
+
+}
+
+
 module.exports = {
   createProject,
   getProject,
+  getAll,
+  updateProject
 };

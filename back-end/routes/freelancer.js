@@ -63,4 +63,14 @@ router.post("/create_freelancer", async (req, res) => {
   }
 });
 
+router.get('/all', async (req,res) => {
+  try {
+    const result = await freelancer.getAllFreelancers();
+    res.status(200).json(result);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.messsage });
+  }
+})
+
 module.exports = router;
