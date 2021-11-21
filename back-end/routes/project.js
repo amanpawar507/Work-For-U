@@ -153,4 +153,24 @@ router.get('/', async (req, res) => {
     }
   })
 
+  router.get("/all/employer/:id", async(req,res) => {
+    try {
+      const id = req.params.id;
+      if(!id) {
+        res.status(400).json({error: "pass an ID"});
+        return;
+      }
+      if(typeof id !== "string") {
+        res.status(400).json({error: "invalid type of ID"});
+        return;
+      }
+
+      const result = await project.getAllEmployerProjects(id);
+      res.json(result);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({error: error.message ? error.message : error});
+    }
+  })
+
 module.exports = router;

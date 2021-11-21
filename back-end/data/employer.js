@@ -13,21 +13,18 @@ const getCurrentTime = () => {
   return dateTime;
 };
 
-const createEmployer = async ({
-  fullName,
-  emailId,
-  password,
-  companyName,
-  projects,
-  createdAt,
-}) => {
+const createEmployer = async data => {
+  const {
+    fullName,
+    emailId,
+    password,
+    companyName
+  } = data;
   if (
     !fullName ||
     !emailId ||
     !password ||
-    !companyName ||
-    !projects ||
-    !createdAt
+    !companyName
   )
     throw "Missing Fields";
 
@@ -35,19 +32,18 @@ const createEmployer = async ({
     typeof fullName !== "string" ||
     typeof emailId !== "string" ||
     typeof password !== "string" ||
-    typeof companyName !== "string" ||
-    (Array.isArray(projects) && !projects.length)
+    typeof companyName !== "string" 
   )
     throw "Invalid type of data";
 
   //let = await getSkill(skillsRequired);
-  let projectArrayE = await getProject(projects);
+
   const employerCollection = await employer();
   const newEntry = {
     fullName,
     emailId,
     password,
-    projects: projectArrayE,
+    projects: [],
     companyName,
     createdAt: getCurrentTime(),
   };
@@ -59,10 +55,9 @@ const createEmployer = async ({
   });
   if (!newEntryInfo) throw "Could not find the employer";
 
-  return {
-    _id: newEntryInfo._id.toString(),
-    ...newEntryInfo,
-  };
+  let stringId = newEntryInfo._id.toString();
+  newEntryInfo._id = stringId
+  return newEntryInfo;
 };
 
 module.exports = {

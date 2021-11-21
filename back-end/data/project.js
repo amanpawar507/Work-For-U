@@ -94,7 +94,7 @@ const createProject = async (data) => {
 
 const getAll = async () => {
   //Exceptions
-  if (arguments.length != 0) throw `No parameter required`;
+  // if (arguments.length != 0) throw `No parameter required`;
 
   const projectCollection = await project();
   const projectList = await projectCollection.find({}).toArray();
@@ -106,6 +106,18 @@ const getAll = async () => {
   //Output
   return projectList;
 };
+
+const getAllEmployerProjects = async employerID => {
+  if(!employerID) throw "Pass a employerID to search";
+  if(typeof employerID !== 'string') throw "Invalid employer ID";
+  
+  const pCollection = await project();
+
+  const foundList = await pCollection.find({createdBy: employerID}).toArray();
+  if(!foundList) "throw could not find projects for the employerID";
+
+  return foundList;
+}
 
 const updateProject = async data => {
   const {
@@ -162,5 +174,6 @@ module.exports = {
   createProject,
   getProject,
   getAll,
-  updateProject
+  updateProject,
+  getAllEmployerProjects
 };
