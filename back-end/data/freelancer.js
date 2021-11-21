@@ -93,14 +93,77 @@ const createFreelancer = async data => {
   };
 };
 
-const getAllFreelancers = async () => {
+//-----------------------------------------getAll---------------------------------------------------------
+
+const getAll = async () => {
+
+    
+  //Exceptions
+
   const freelancerCollection = await freelancer();
-  let allEntries = await freelancerCollection.find({}).toArray();
-  allEntries = allEntries.map(i => {return {_id: i._id.toString(), ...i}})
-  return allEntries
+  const freelancerList = await freelancerCollection.find({}).toArray();
+
+  for(let i of freelancerList){
+      i._id = i._id.toString();
+   }
+
+  //Output
+  return freelancerList;
 }
 
+
+//-----------------------------------------get---------------------------------------------------------
+
+const getFreelancer = async feelancerId => {
+  if(!feelancerId) throw "provide a project ID to fetch";
+  if(typeof feelancerId !== "string") throw "Invalid project ID";
+
+  const objId = ObjectId(feelancerId);
+
+  const freelancerCollection = await freelancer();
+  let foundEntry = await freelancerCollection.findOne({_id: objId});
+  if(!foundEntry) throw "could not find project for the given ID";
+
+  return {
+      _id: foundEntry._id.toString(),
+      ...foundEntry
+  }
+}
+
+//-----------------------------------------getonbasisofSkillLocation---------------------------------------------------------
+
+const searchType = async filterObj =>{
+
+  if(!filterObj.query || !filterObj.filterkey) throw "Please provide all the details"
+  if(typeof(filterObj.query) !== "string" || typeof(filterObj.filterkey) !== "string") throw "Invalid type of input object"
+  if((filterObj.query).trim().length === 0 || (filterObj.filterkey).trim().length === 0) throw "empty spaces for input object"
+  
+  const freelancerCollection = await freelancer();
+  const freelancerList = await freelancerCollection.find({}).toArray();
+  let resultarr = [];
+
+  if(filterObj.filterkey == 'name'){
+  
+    for(let i of freelancerList){
+      if((i.name).includes(filterObj.query)){
+        resultarr.push(i);
+      }
+    }
+  }
+  else if(filterObj.filterkey == 'skill'){
+    for(let i of freelancerList){
+      if((i.skill).includes(filterObj.query)){
+        resultarr.push(i);
+      }
+    }
+  }
+  else throw "Unidentified object value";
+
+  return resultarr;
+}
 module.exports = {
   createFreelancer,
-  getAllFreelancers
+  getAll,
+  getFreelancer,
+  searchType
 };
