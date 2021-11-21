@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "@chakra-ui/react";
+import { Box, Container, Spacer } from "@chakra-ui/react";
 import { Header } from "./header";
 
 
@@ -7,7 +7,9 @@ export const Layout = ({children}) => {
     return(
         <Container maxW={'container.lg'} background={'brand.900'} display={'flex'} flexDirection={'column'}>
             <Header/>
-            {children}
+            <Box w={'100%'} mt={'40px'}>
+                {children}
+            </Box>
         </Container>
     )
 }

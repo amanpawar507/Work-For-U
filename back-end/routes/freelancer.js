@@ -67,7 +67,7 @@ router.post("/create_freelancer", async (req, res) => {
 
 //-----------------------------------------getAll---------------------------------------------------------
 
-router.get('/', async (req, res) => {
+router.get('/all', async (req, res) => {
   
   try {
     const freelancerList = await freelancer.getAll();

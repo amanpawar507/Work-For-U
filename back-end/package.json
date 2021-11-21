@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js",
-    "seed": "node tasks/seed.js"
+    "start": "PORT=5000 nodemon app.js",
+    "seed": "node tasks/seed.js",
+    "seed2": "node tasks/seed2.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/amanpawar507/Group_9_CS546_A#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "mongodb": "^4.1.4",
     "nodemon": "^2.0.15"

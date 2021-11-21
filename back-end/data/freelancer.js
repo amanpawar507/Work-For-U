@@ -14,35 +14,32 @@ const getCurrentTime = () => {
   return dateTime;
 };
 
-//-----------------------------------------create---------------------------------------------------------
+const createFreelancer = async data => {
 
-const createFreelancer = async ({
-  fullName,
-  emailId,
-  password,
-  introduction,
-  skills,
-  projects,
-  overallRating,
-  reviews,
-  location,
-  successRate,
-  expectedPay,
-  createdAt,
-}) => {
+  const {
+    fullName,
+    emailId,
+    password,
+    introduction,
+    skills,
+    overallRating,
+    reviews,
+    location,
+    successRate,
+    expectedPay,
+  } = data;
+
   if (
     !fullName ||
     !emailId ||
     !password ||
     !introduction ||
     !skills ||
-    !projects ||
     !overallRating ||
     !reviews ||
     !location ||
     !successRate ||
-    !expectedPay ||
-    !createdAt
+    !expectedPay
   )
     throw "Missing Fields";
 
@@ -52,7 +49,6 @@ const createFreelancer = async ({
     typeof password !== "string" ||
     typeof introduction !== "string" ||
     (Array.isArray(skills) && !skills.length) ||
-    (Array.isArray(projects) && !projects.length) ||
     typeof overallRating !== "number" ||
     (Array.isArray(reviews) && !reviews.length) ||
     typeof location !== "string" ||
@@ -65,16 +61,16 @@ const createFreelancer = async ({
   if (!emailPattern.test(emailId)) throw "Email ID not valid";
 
   let skillsArrayF = await getSkill(skills);
-  let projectArrayF = await getProject(projects);
+  //console.log(skillsArrayF);
   const freelancerCollection = await freelancer();
-  //console.log();
+
   const newEntry = {
     fullName,
     emailId,
     password,
     introduction,
     skills: skillsArrayF,
-    projects: projectArrayF,
+    projects: [],
     overallRating,
     reviews,
     location,
@@ -103,7 +99,6 @@ const getAll = async () => {
 
     
   //Exceptions
-  if(arguments.length!=0) throw `No parameter required`;
 
   const freelancerCollection = await freelancer();
   const freelancerList = await freelancerCollection.find({}).toArray();

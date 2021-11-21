@@ -43,7 +43,7 @@ const getSkill = async (idArray) => {
   });
   console.log(objIds);
   const found = await skillCollection.find({ _id: { $in: objIds } }).toArray();
-  console.log(found);
+  console.log('found: ', found[0]);
   if (!found) throw "could not find the skill for the given ID";
 
   return found;
