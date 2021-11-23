@@ -70,7 +70,6 @@ const createFreelancer = async data => {
     password,
     introduction,
     skills: skillsArrayF,
-    projects: [],
     overallRating,
     reviews,
     location,
@@ -115,14 +114,14 @@ const getAll = async () => {
 //-----------------------------------------get---------------------------------------------------------
 
 const getFreelancer = async feelancerId => {
-  if(!feelancerId) throw "provide a project ID to fetch";
-  if(typeof feelancerId !== "string") throw "Invalid project ID";
+  if(!feelancerId) throw "provide a freelancer ID to fetch";
+  if(typeof feelancerId !== "string") throw "Invalid freelancer ID";
 
   const objId = ObjectId(feelancerId);
 
   const freelancerCollection = await freelancer();
   let foundEntry = await freelancerCollection.findOne({_id: objId});
-  if(!foundEntry) throw "could not find project for the given ID";
+  if(!foundEntry) throw "could not find freelancer for the given ID";
 
   return {
       _id: foundEntry._id.toString(),
@@ -161,6 +160,19 @@ const searchType = async filterObj =>{
 
   return resultarr;
 }
+
+
+
+
+const getFreelancerProjects = async freelancerId => {
+  if(!freelancerId) throw "pass a freelancer id to search projects for";
+  if(typeof freelancerId !== "string") throw "Invalid freelancer ID";
+
+  const freelancerCollection = await freelancer();
+  
+  const exist = await freelancerCollection.find
+}
+
 module.exports = {
   createFreelancer,
   getAll,

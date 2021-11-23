@@ -1,5 +1,6 @@
 const { project } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
+const { getFreelancer } = require('./freelancer');
 const { ObjectId } = require("mongodb");
 
 const getCurrentTime = () => {
@@ -69,6 +70,7 @@ const createProject = async (data) => {
     description,
     tenureMonths,
     skillsRequired: skillsArray,
+    requested:[],
     hourlyPay,
     status: 0,
     createdBy,
@@ -169,11 +171,57 @@ const updateProject = async data => {
 
 }
 
+//-----------------------------------------addingRequestToFreelancer---------------------------------------------------------
+
+const addRequest = async (freelancerId, projectId) => {
+  if(!freelancerId || !projectId) throw "Please pass both freelancer ID and project ID";
+  if(typeof freelancerId !== "string" || typeof projectId !== "string") throw "Invalid type of request";
+
+  let foundProject = await getProject(projectId);
+  await getFreelancer(freelancerId);
+
+  let objProjectId = ObjectId(projectId);
+
+  const projectCollection = await project();
+
+  const exist = await projectCollection.findOne({requested :{$in:[freelancerId]}});
+  console.log(exist);
+  if(exist) throw `The freelancer ${exist.status === 0 ? "has a request for" : "is working on"} this project`;
+
+  const insertedRequest = await projectCollection.updateOne({_id: objProjectId}, {$push: {requested: freelancerId}});
+  if(insertedRequest.modifiedCount === 0) throw "Could not add request";
+
+  foundProject = await getProject(projectId);
+  let found = foundProject.requested.find(i => i === freelancerId);
+  if(!found) throw "could not find freelancer id in the requests";
+
+  return {addedRequest: true};
+  
+}
+
+//-----------------------------------------getFreelancerRequests---------------------------------------------------------
+
+const getFreelancerRequests = async freelancerId => {
+  if(!freelancerId) throw "please pass a freelancer ID";
+  if(typeof freelancerId !== "string") throw "Invalid freelancer ID";
+  
+  await getFreelancer(freelancerId);
+  
+  const projectCollection = await project();
+  const found = await projectCollection.find({"requested": {$in: [freelancerId]}}).toArray();
+  if(!found || found.length === 0) throw "No request found for the given freelancer";
+
+  return found;
+
+}
+
 
 module.exports = {
   createProject,
   getProject,
   getAll,
   updateProject,
-  getAllEmployerProjects
+  getAllEmployerProjects,
+  addRequest,
+  getFreelancerRequests
 };
