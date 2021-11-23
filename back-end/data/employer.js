@@ -43,7 +43,6 @@ const createEmployer = async data => {
     fullName,
     emailId,
     password,
-    projects: [],
     companyName,
     createdAt: getCurrentTime(),
   };
