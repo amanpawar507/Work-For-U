@@ -59,6 +59,22 @@ const createEmployer = async data => {
   return newEntryInfo;
 };
 
+const getEmployer = async employerID => {
+    
+  if(!employerID) throw "You must provide an ID to search for";
+  if(typeof(employerID) !== "string") throw "You must provide an ID in string only"
+  if (!ObjectId.isValid(employerID.trim())) throw "Please provide a valid objectID."
+
+  const employerCollection = await employer();
+  
+  let findID = await employerCollection.findOne({_id : ObjectId(employerID.trim()) });
+  if(findID === null) throw "Employer does not exist for the given id ${employerID.trim()}";
+  findID._id = findID._id.toString();
+  
+  return findID;
+}
+
 module.exports = {
   createEmployer,
+  getEmployer
 };

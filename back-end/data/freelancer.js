@@ -128,6 +128,21 @@ const getFreelancer = async feelancerId => {
       ...foundEntry
   }
 }
+//-----------------------------------------getfreelancer2---------------------------------------------------------
+const getFreelancer2 = async freelancerID => {
+    
+  if(!freelancerID) throw "You must provide an ID to search for";
+  if(typeof(freelancerID) !== "string") throw "You must provide an ID in string only"
+  if (!ObjectId.isValid(freelancerID.trim())) throw "Please provide a valid objectID."
+
+  const freelancerCollection = await freelancer();
+  
+  let findID = await freelancerCollection.findOne({_id : ObjectId(freelancerID.trim()) });
+  if(findID === null) throw "Freelancer does not exist for the given id ${freelancerID.trim()}";
+  findID._id = findID._id.toString();
+  
+  return findID;
+}
 
 //-----------------------------------------getonbasisofSkillLocation---------------------------------------------------------
 
@@ -168,5 +183,6 @@ module.exports = {
   createFreelancer,
   getAll,
   getFreelancer,
+  getFreelancer2,
   searchType
 };
