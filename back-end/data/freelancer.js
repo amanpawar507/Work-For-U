@@ -164,15 +164,6 @@ const searchType = async filterObj =>{
 
 
 
-const getFreelancerProjects = async freelancerId => {
-  if(!freelancerId) throw "pass a freelancer id to search projects for";
-  if(typeof freelancerId !== "string") throw "Invalid freelancer ID";
-
-  const freelancerCollection = await freelancer();
-  
-  const exist = await freelancerCollection.find
-}
-
 module.exports = {
   createFreelancer,
   getAll,

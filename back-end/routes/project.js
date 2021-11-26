@@ -13,7 +13,6 @@ router.post("/", async (req, res) => {
       tenureMonths,
       skillsRequired,
       hourlyPay,
-      status,
       createdBy,
     } = request;
     if (
@@ -22,7 +21,6 @@ router.post("/", async (req, res) => {
       !tenureMonths ||
       !skillsRequired ||
       !hourlyPay ||
-      !status ||
       !createdBy
     ) {
       res.status(400).json({ error: "Missing fields" });
@@ -34,25 +32,23 @@ router.post("/", async (req, res) => {
       typeof tenureMonths !== "number" ||
       (typeof skillsRequired !== "object" && !skillsRequired.length) ||
       typeof hourlyPay !== "number" ||
-      typeof status !== "number" ||
       typeof createdBy !== "string"
     ) {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
     let result = await project.createProject(
-      name,
+      {name,
       description,
       tenureMonths,
       skillsRequired,
       hourlyPay,
-      status,
-      createdBy
+      createdBy}
     );
     res.json(result);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.messsage });
+    res.status(500).json({ error: error.messsage? error.message : error });
   }
 });
 
@@ -173,7 +169,7 @@ router.get('/', async (req, res) => {
     }
   })
 
-  router.post("/addRequest", async (req,res) => {
+  router.post("/requests/add", async (req,res) => {
     try {
       const {freelancerId, projectId} = req.body;
       if(!freelancerId || !projectId) {
@@ -212,6 +208,34 @@ router.get('/', async (req, res) => {
       }
 
       const result = await project.getFreelancerRequests(freelancerId);
+      res.json(result);
+
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({error: error.message ? error.message : error});
+    }
+  })
+
+  router.patch("/requests/update", async (req,res) => {
+    try {
+      const {freelancerId, projectId, status} = req.body;
+
+      if(!freelancerId || !projectId || !status) {
+        res.status(400).json({error: "please pass all fields"});
+        return;
+      }
+
+      if(typeof freelancerId !== "string" || typeof projectId !== "string" || typeof status !== "string") {
+        res.status(400).json({error: "Invalid fields"});
+        return;
+      }
+      console.log(status.trim().toLowerCase());
+      if(status.trim().toLowerCase() !== "accept" && status.trim().toLowerCase() !== "reject") {
+        res.status(400).json({error: "Invalid status"});
+        return;
+      }
+
+      const result = await project.updateFreelancerRequest(projectId, freelancerId, status);
       res.json(result);
 
     } catch (error) {

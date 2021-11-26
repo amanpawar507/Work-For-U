@@ -49,8 +49,7 @@ const createProject = async (data) => {
     !skillsRequired ||
     !hourlyPay ||
     !createdBy
-  )
-    throw "Missing fields";
+  ) throw "Missing fields";
   if (
     typeof name !== "string" ||
     typeof description !== "string" ||
@@ -58,10 +57,9 @@ const createProject = async (data) => {
     (typeof skillsRequired !== "object" && !skillsRequired.length) ||
     typeof hourlyPay !== "number" ||
     typeof createdBy !== "string"
-  )
-    throw "Invalid type of data";
+  ) throw "Invalid type of data";
 
-  let skillsArray = await getSkill(skillsRequired);
+  //let skillsArray = await getSkill(skillsRequired);
 
   const projectCollection = await project();
 
@@ -69,7 +67,7 @@ const createProject = async (data) => {
     name,
     description,
     tenureMonths,
-    skillsRequired: skillsArray,
+    skillsRequired: skillsRequired,
     requested:[],
     hourlyPay,
     status: 0,
@@ -215,6 +213,36 @@ const getFreelancerRequests = async freelancerId => {
 
 }
 
+//-----------------------------------------updateFreelancerRequest---------------------------------------------------------
+
+
+const updateFreelancerRequest = async (projectId, freelancerId, status) => {
+  if(!freelancerId || !projectId || !status) throw "Please pass both freelancer ID and project ID";
+
+  if(typeof freelancerId !== "string" || typeof projectId !== "string" || typeof status !== "string") throw "Invalid type of request";
+
+  if(status.trim().toLowerCase() !== "accept" && status.trim().toLowerCase() !== "reject") throw "Invalid status";
+
+  let foundProject = await getProject(projectId);
+  await getFreelancer(freelancerId);
+
+  let objProjectId = ObjectId(projectId);
+
+  const projectCollection = await project();
+
+  let updateInfo;
+
+  if(status.trim().toLowerCase() === "accept") {
+    updateInfo = await projectCollection.updateOne({_id: objProjectId},{$set:{assignedTo: freelancerId,status: 1}});
+  }else{
+    updateInfo = await projectCollection.updateOne({_id: objProjectId},{$pull:{requested: freelancerId}});
+  }
+  if(updateInfo.modifiedCount === 0) throw "could not update the project";
+
+  foundProject = await getProject(projectId);
+  return foundProject;
+}
+
 
 module.exports = {
   createProject,
@@ -223,5 +251,6 @@ module.exports = {
   updateProject,
   getAllEmployerProjects,
   addRequest,
-  getFreelancerRequests
+  getFreelancerRequests,
+  updateFreelancerRequest
 };
