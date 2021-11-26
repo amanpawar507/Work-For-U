@@ -30,6 +30,22 @@ const getProject = async (projectId) => {
     ...foundEntry,
   };
 };
+//-----------------------------------------getProject2---------------------------------------------------
+const getProject2 = async projectID => {
+    
+  if(!projectID) throw "You must provide an ID to search for";
+  if(typeof(projectID) !== "string") throw "You must provide an ID in string only"
+  if (!ObjectId.isValid(projectID.trim())) throw "Please provide a valid objectID."
+
+  const projectCollection = await project();
+  
+  let findID = await projectCollection.findOne({_id : ObjectId(projectID.trim()) });
+  if(findID === null) throw "Project does not exist for the given id ${projectID.trim()}";
+  findID._id = findID._id.toString();
+  
+  return findID;
+}
+
 
 //-----------------------------------------create---------------------------------------------------------
 
@@ -219,6 +235,7 @@ const getFreelancerRequests = async freelancerId => {
 module.exports = {
   createProject,
   getProject,
+  getProject2,
   getAll,
   updateProject,
   getAllEmployerProjects,
