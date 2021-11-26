@@ -24,6 +24,18 @@ router.post('/', async (req,res) => {
     }
 });
 
+router.get("/", async(req,res) => {
+    try {
+        let result = await skill.getAllSkills();
+        if(result) {
+            res.json(result);
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({error: error.messsage? error.message:error});
+    }
+})
+
 // router.get('/:id', async (req,res) => {
 //     try {
 //         const {name} = req.body;
@@ -45,3 +57,5 @@ router.post('/', async (req,res) => {
 //         res.status(500).json({error: error.messsage});
 //     }
 // });
+
+module.exports = router;
