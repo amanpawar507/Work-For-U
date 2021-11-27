@@ -32,6 +32,14 @@ const createSkill = async (name) => {
   return addedEntryInfo;
 };
 
+const getAllSkills = async() => {
+  const skillCollection = await skill();
+  let found = await skillCollection.find({}).toArray();
+  if(!found) throw "could not find aany skill";
+  found = found.map(i => {return {_id:i._id.toString(),...i}});
+  return found;
+}
+
 const getSkill = async (idArray) => {
   if (!idArray) throw "provide an ID to search";
   if (typeof idArray !== "object" && !idArray.length) throw "Invalid Id array";
@@ -42,8 +50,10 @@ const getSkill = async (idArray) => {
     objIds.push(ObjectId(element));
   });
   console.log(objIds);
-  const found = await skillCollection.find({ _id: { $in: objIds } }).toArray();
+  let found = await skillCollection.find({ _id: { $in: objIds } }).toArray();
   if (!found) throw "could not find the skill for the given ID";
+
+  found = found.map(i => {return {...i,_id: i._id.toString()}});
 
   return found;
 };
@@ -51,4 +61,5 @@ const getSkill = async (idArray) => {
 module.exports = {
   createSkill,
   getSkill,
+  getAllSkills
 };

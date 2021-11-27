@@ -1,7 +1,7 @@
 import { Box, Button, Heading, HStack, IconButton, Text, VStack } from "@chakra-ui/react"
 import {MdInfo,MdEdit} from "react-icons/md"
 
-export const ProjectCard = ({name, status}) => {
+export const ProjectCard = ({name, status,onDetailsClick,onEditClick}) => {
 
     const getStatus = status => {
         switch (status) {
@@ -25,8 +25,8 @@ export const ProjectCard = ({name, status}) => {
                 <HStack textAlign={'left'} w={'100%'} justifyContent={'space-between'}>
                     <Text>Status: {getStatus(status)}</Text>
                     <HStack>
-                        <IconButton color={'brand.900'} icon={<MdInfo/>}/>
-                        <IconButton color={'brand.900'} icon={<MdEdit/>}/>
+                        <IconButton color={'brand.900'} icon={<MdInfo/>} onClick={() => onDetailsClick()}/>
+                        <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>
                     </HStack>
                 </HStack>
             </VStack>

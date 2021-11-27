@@ -111,25 +111,9 @@ const getAll = async () => {
 }
 
 
+
 //-----------------------------------------get---------------------------------------------------------
-
-const getFreelancer = async feelancerId => {
-  if(!feelancerId) throw "provide a freelancer ID to fetch";
-  if(typeof feelancerId !== "string") throw "Invalid freelancer ID";
-
-  const objId = ObjectId(feelancerId);
-
-  const freelancerCollection = await freelancer();
-  let foundEntry = await freelancerCollection.findOne({_id: objId});
-  if(!foundEntry) throw "could not find freelancer for the given ID";
-
-  return {
-      _id: foundEntry._id.toString(),
-      ...foundEntry
-  }
-}
-//-----------------------------------------getfreelancer2---------------------------------------------------------
-const getFreelancer2 = async freelancerID => {
+const getFreelancer = async freelancerID => {
     
   if(!freelancerID) throw "You must provide an ID to search for";
   if(typeof(freelancerID) !== "string") throw "You must provide an ID in string only"
@@ -138,9 +122,9 @@ const getFreelancer2 = async freelancerID => {
   const freelancerCollection = await freelancer();
   
   let findID = await freelancerCollection.findOne({_id : ObjectId(freelancerID.trim()) });
-  if(findID === null) throw "Freelancer does not exist for the given id ${freelancerID.trim()}";
+  if(findID === null) throw `Freelancer does not exist for the given id ${freelancerID.trim()}`;
   findID._id = findID._id.toString();
-  
+  console.log(findID);
   return findID;
 }
 
@@ -179,19 +163,9 @@ const searchType = async filterObj =>{
 
 
 
-const getFreelancerProjects = async freelancerId => {
-  if(!freelancerId) throw "pass a freelancer id to search projects for";
-  if(typeof freelancerId !== "string") throw "Invalid freelancer ID";
-
-  const freelancerCollection = await freelancer();
-  
-  const exist = await freelancerCollection.find
-}
-
 module.exports = {
   createFreelancer,
   getAll,
   getFreelancer,
-  getFreelancer2,
   searchType
 };
