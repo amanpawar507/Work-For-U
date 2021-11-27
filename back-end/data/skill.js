@@ -50,8 +50,10 @@ const getSkill = async (idArray) => {
     objIds.push(ObjectId(element));
   });
   console.log(objIds);
-  const found = await skillCollection.find({ _id: { $in: objIds } }).toArray();
+  let found = await skillCollection.find({ _id: { $in: objIds } }).toArray();
   if (!found) throw "could not find the skill for the given ID";
+
+  found = found.map(i => {return {...i,_id: i._id.toString()}});
 
   return found;
 };

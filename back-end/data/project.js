@@ -30,21 +30,7 @@ const getProject = async (projectId) => {
     ...foundEntry,
   };
 };
-//-----------------------------------------getProject2---------------------------------------------------
-const getProject2 = async projectID => {
-    
-  if(!projectID) throw "You must provide an ID to search for";
-  if(typeof(projectID) !== "string") throw "You must provide an ID in string only"
-  if (!ObjectId.isValid(projectID.trim())) throw "Please provide a valid objectID."
 
-  const projectCollection = await project();
-  
-  let findID = await projectCollection.findOne({_id : ObjectId(projectID.trim()) });
-  if(findID === null) throw "Project does not exist for the given id ${projectID.trim()}";
-  findID._id = findID._id.toString();
-  
-  return findID;
-}
 
 
 //-----------------------------------------create---------------------------------------------------------
@@ -75,7 +61,7 @@ const createProject = async (data) => {
     typeof createdBy !== "string"
   ) throw "Invalid type of data";
 
-  //let skillsArray = await getSkill(skillsRequired);
+  let skillsArray = await getSkill(skillsRequired);
 
   const projectCollection = await project();
 
@@ -83,7 +69,7 @@ const createProject = async (data) => {
     name,
     description,
     tenureMonths,
-    skillsRequired: skillsRequired,
+    skillsRequired: skillsArray,
     requested:[],
     hourlyPay,
     status: 0,
@@ -180,7 +166,8 @@ const updateProject = async data => {
   const updateInfo = await projectCollection.updateOne({_id: objectId},{$set: updateReq});
   if(updateInfo.modifiedCount === 0) throw "Could not update the project";
   
-  const updatedProject = await getProject(id);
+  let updatedProject = await getProject(id);
+  updatedProject = {_id: updatedProject._id.toString(),...updatedProject};
   return updatedProject;
 
 }
@@ -263,7 +250,6 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
 module.exports = {
   createProject,
   getProject,
-  getProject2,
   getAll,
   updateProject,
   getAllEmployerProjects,
