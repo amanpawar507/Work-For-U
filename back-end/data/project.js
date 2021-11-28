@@ -185,8 +185,7 @@ const addRequest = async (freelancerId, projectId) => {
 
   const projectCollection = await project();
 
-  const exist = await projectCollection.findOne({requested :{$in:[freelancerId]}});
-  console.log(exist);
+  const exist = await projectCollection.findOne({_id:objProjectId,requested :{$in:[freelancerId]}});
   if(exist) throw `The freelancer ${exist.status === 0 ? "has a request for" : "is working on"} this project`;
 
   const insertedRequest = await projectCollection.updateOne({_id: objProjectId}, {$push: {requested: freelancerId}});
@@ -246,6 +245,25 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
   return foundProject;
 }
 
+//-----------------------------------------deleteProject----------------------------------------------------------------
+
+const deleteProject = async projectId => {
+  if(!projectId) throw "Please pass an ID";
+  if(typeof projectId !== "string") throw "Invalid projectID";
+
+  const found = await getProject(projectId);
+  
+  if(found.status !== 0) throw "Sorry cannot delete this project as it has been accepted by a freelancer";
+
+  let objID = ObjectId(projectId);
+
+  const projCollection = await project();
+  const deleteInfo = await projCollection.deleteOne({_id: objID});
+  if(deleteInfo.deletedCount === 0) throw "could not delete project";
+
+  return {deleted: true};
+}
+
 
 module.exports = {
   createProject,
@@ -255,5 +273,6 @@ module.exports = {
   getAllEmployerProjects,
   addRequest,
   getFreelancerRequests,
-  updateFreelancerRequest
+  updateFreelancerRequest,
+  deleteProject
 };
