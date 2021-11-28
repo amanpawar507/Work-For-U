@@ -14,20 +14,23 @@ import {
     Box,
     Progress,
     Select,
-    toast
+    useToast
   } from "@chakra-ui/react"
 import axios from "axios";
 import { useContext, useEffect,useState } from "react"
 import { UserContext } from "../contexts/userContext";
 
 
-  export const RequestModal = ({isOpen, onClose, selectedFreelancer,handleSubmit, submitting,onSubmit}) => {
+  export const RequestModal = ({isOpen, onClose, selectedFreelancer}) => {
 
     const [availableProjects, setAvailableProjects] = useState([]);
+    const [sending, setSending] = useState(false);
     const [selectedProject, setSelectedProject] = useState(null)
     const [loading, setLoading] = useState(false);
 
     const {user} = useContext(UserContext);
+
+    const toast = useToast();
 
     useEffect(() => {
         if(!user || !selectedFreelancer || !isOpen) return;
@@ -59,6 +62,29 @@ import { UserContext } from "../contexts/userContext";
     },[user,selectedFreelancer,isOpen])
 
 
+    const handleAddRequest = async projectId => {
+        try {
+            setSending(true);
+            const {data} = await axios.post("http://localhost:5000/project/requests/add",{freelancerId: selectedFreelancer._id, projectId: projectId});
+            if(data.addedRequest) toast({
+                title: "Request sent successfully",
+                status:"success",
+                duration: 2000
+            });
+            setSending(false);
+            onClose(); 
+        } catch (error) {
+            console.log(error);
+            toast({
+                title: "Request could not be sent",
+                status:"error",
+                duration: 2000
+            });
+            onClose();
+        }
+    }
+
+
       return(
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -69,7 +95,7 @@ import { UserContext } from "../contexts/userContext";
             {loading && <Box p={"50px 0"}>
                         <Progress size="xs" isIndeterminate />
                     </Box>}
-                {!loading && <form onSubmit={e => {e.preventDefault(); onSubmit(selectedProject)}}>
+                {!loading && <form onSubmit={e => {e.preventDefault(); handleAddRequest(selectedProject)}}>
                     <FormControl isRequired>
                         <FormLabel htmlFor="name">Select project</FormLabel>
                         <Select placeholder="Select option" onChange={e => setSelectedProject(e.target.value)} value={selectedProject}> 
@@ -80,7 +106,7 @@ import { UserContext } from "../contexts/userContext";
                             ml="80%"
                             colorScheme="teal"
                             type="submit"
-                            isLoading={submitting}
+                            isLoading={sending}
                         >
                             Submit
                         </Button>

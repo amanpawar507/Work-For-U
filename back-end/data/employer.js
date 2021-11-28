@@ -2,6 +2,8 @@ const { employer } = require("../config/mongoCollections");
 const { getProject } = require("./project");
 //const { getSkill } = require("./freelanceFunctions");
 const { ObjectId } = require("mongodb");
+const bCrypt = require('bcrypt');
+const saltRounds = 16;
 
 const getCurrentTime = () => {
   var today = new Date();
@@ -37,12 +39,12 @@ const createEmployer = async data => {
     throw "Invalid type of data";
 
   //let = await getSkill(skillsRequired);
-
+  const hash = await bCrypt.hash(password, saltRounds);
   const employerCollection = await employer();
   const newEntry = {
     fullName,
-    emailId,
-    password,
+    emailId:emailId.toLowerCase(),
+    password:hash,
     companyName,
     createdAt: getCurrentTime(),
   };
