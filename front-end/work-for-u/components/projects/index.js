@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Box, Button, Grid, Text, useDisclosure, useToast } from "@chakra-ui/react"
 import axios from "axios"
 import { ProjectCard } from "./projectCard";
 import { AddProjectModal } from "./addProjectModal";
 import { ProjectDetailsModal } from "./projectDetailsModal";
+import { UserContext } from "../contexts/userContext";
 
 export const Projects = () => {
 
@@ -12,18 +13,21 @@ export const Projects = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
 
+    const {user} = useContext(UserContext);
+
     const {isOpen,onOpen,onClose} = useDisclosure();
     const {isOpen: isDetailsOpen, onOpen: onDetailsOpen, onClose: onDetailsClose} = useDisclosure();
 
     const toast = useToast();
 
     useEffect(() => {
+        if(!user) return;
         const getAllProjects = async () => {
-            const {data} = await axios.get("http://localhost:5000/project/");
+            const {data} = await axios.get(`http://localhost:5000/project/all/employer/${user._id}`);
             setProjects(data);
         }
         getAllProjects();
-    },[])
+    },[user])
 
 
     const handleCreateProject = async details => {
@@ -90,12 +94,26 @@ export const Projects = () => {
         onOpen();
     }
 
+    const handleDeleteProject = async id => {
+        try {
+            const {data} = await axios.delete(`http://localhost:5000/project/${id}`);
+            console.log(data);
+            if(data.deleted) {
+                setProjects(prevValue => {
+                    return prevValue.filter( i => i._id !== id);
+                });
+            }
+        } catch (error) {
+            toast({title: error.message? error.message : error, status:"error", duration: 2000});
+        }
+    }
+
     return(
         <Box w={'100%'}>
             <Button minW={'100px'} variant={'outline'} color={'brand.300'} borderColor={'brand.300'} mb='20px' onClick={() => onOpen()}>Add</Button>
             <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                 {
-                    projects.map((i,idx) => <ProjectCard key={idx} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)}/>)
+                    projects.map((i,idx) => <ProjectCard key={idx} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)}/>)
                 }
             </Grid>
             <AddProjectModal isOpen={isOpen} onClose={onClose} onSubmit={handleCreateProject} submitting={isSubmitting} isEdit={isEdit} selectedProject={selectedProject}/>

@@ -1,6 +1,6 @@
-import { VStack, Image, Text } from "@chakra-ui/react"
+import { VStack, Image, Text, HStack,Button } from "@chakra-ui/react"
 
- export const FreelancerCard = ({name,rating, skill}) => {
+ export const FreelancerCard = ({name,rating, skill,onRequest}) => {
      return (
          <VStack w="xs" background={'brand.500'} textAlign={'left'} borderRadius={'5px'} overflow={'hidden'}>
              <Image
@@ -16,9 +16,14 @@ import { VStack, Image, Text } from "@chakra-ui/react"
                 <Text fontSize={'lg'} w={'100%'}>
                     {skill}
                 </Text>
-                <Text fontSize={'lg'} w={'100%'}>
-                    {rating}
-                </Text>
+                <HStack w={'100%'} justifyContent={'space-between'}>
+                    <Text fontSize={'lg'} w={'100%'}>
+                        {rating}/5
+                    </Text>
+                    <Button  background={'brand.900'} onClick={()=>onRequest()}>
+                        Request
+                    </Button>
+                </HStack>
              </VStack>
          </VStack>
      )

@@ -183,7 +183,7 @@ router.get('/', async (req, res) => {
 
       const result = await project.addRequest(freelancerId,projectId);
       if(result.addedRequest) {
-        res.json({message: "successfully added request"});
+        res.json(result);
       }else{
         res.status(500).json({message: "could not add request for some reason"});
       }
@@ -238,6 +238,28 @@ router.get('/', async (req, res) => {
       const result = await project.updateFreelancerRequest(projectId, freelancerId, status);
       res.json(result);
 
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({error: error.message ? error.message : error});
+    }
+  })
+
+  router.delete("/:id", async (req,res) => {
+    try {
+      const id = req.params.id;
+      if(!id) {
+        res.status(400).json({error: "Please pass a projectID"});
+        return;
+      }
+      if(typeof id !== "string") {
+        res.status(400).json({error: "Invalid ID"});
+        return;
+      }
+
+      const result = await project.deleteProject(id);
+      if(result.deleted) {
+        res.json(result);
+      }
     } catch (error) {
       console.log(error);
       res.status(500).json({error: error.message ? error.message : error});
