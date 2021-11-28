@@ -3,6 +3,8 @@ const { getSkill } = require("./skill");
 const { getProject } = require("./project");
 //const { getSkill } = require("./freelanceFunctions");
 const { ObjectId } = require("mongodb");
+const bCrypt = require('bcrypt');
+const saltRounds = 16;
 
 const getCurrentTime = () => {
   var today = new Date();
@@ -22,10 +24,7 @@ const createFreelancer = async data => {
     password,
     introduction,
     skills,
-    overallRating,
-    reviews,
     location,
-    successRate,
     expectedPay,
   } = data;
 
@@ -35,10 +34,7 @@ const createFreelancer = async data => {
     !password ||
     !introduction ||
     !skills ||
-    !overallRating ||
-    !reviews ||
     !location ||
-    !successRate ||
     !expectedPay
   )
     throw "Missing Fields";
@@ -49,10 +45,7 @@ const createFreelancer = async data => {
     typeof password !== "string" ||
     typeof introduction !== "string" ||
     (Array.isArray(skills) && !skills.length) ||
-    typeof overallRating !== "number" ||
-    (Array.isArray(reviews) && !reviews.length) ||
     typeof location !== "string" ||
-    typeof successRate !== "number" ||
     typeof expectedPay !== "number"
   )
     throw "Invalid type of data";
@@ -62,18 +55,19 @@ const createFreelancer = async data => {
 
   let skillsArrayF = await getSkill(skills);
   //console.log(skillsArrayF);
+  const hash = await bCrypt.hash(password, saltRounds);
   const freelancerCollection = await freelancer();
 
   const newEntry = {
     fullName,
     emailId,
-    password,
+    password:hash,
     introduction,
     skills: skillsArrayF,
-    overallRating,
-    reviews,
+    overallRating:0,
+    reviews:[],
     location,
-    successRate,
+    successRate: 0,
     expectedPay,
     createdAt: getCurrentTime(),
   };

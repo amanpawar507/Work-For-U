@@ -4,6 +4,7 @@ const router = express.Router();
 const { employer } = require("../data");
 const { route } = require("./project");
 
+
 router.post("/", async (req, res) => {
   try {
     const { fullName, emailId, password, companyName } =

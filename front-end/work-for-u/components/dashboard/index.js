@@ -8,7 +8,6 @@ export const Dashboard = () => {
 
     const [listofFreelancers, setListOfFreelancers] = useState([]);
     const [selectedFreelancer, setSelectedFreelancer] = useState(null);
-    const [sending, setSending] = useState(false);
     const {isOpen, onOpen, onClose} = useDisclosure();
 
     const toast = useToast();
@@ -26,27 +25,6 @@ export const Dashboard = () => {
         onOpen();
     }
 
-    const handleAddRequest = async projectId => {
-        try {
-            setSending(true);
-            const {data} = await axios.post("http://localhost:5000/project/requests/add",{freelancerId: selectedFreelancer._id, projectId: projectId});
-            if(data.addedRequest) toast({
-                title: "Request sent successfully",
-                status:"success",
-                duration: 2000
-            });
-            setSending(false);
-            onClose(); 
-        } catch (error) {
-            console.log(error);
-            toast({
-                title: "Request could not be sent",
-                status:"error",
-                duration: 2000
-            });
-            onClose();
-        }
-    }
 
     return (
         <>
@@ -60,7 +38,7 @@ export const Dashboard = () => {
                     />    
                 )}
             </HStack>
-            <RequestModal isOpen={isOpen} onClose={() => onClose()} selectedFreelancer={selectedFreelancer} onSubmit={handleAddRequest} submitting={sending}/>
+            <RequestModal isOpen={isOpen} onClose={() => onClose()} selectedFreelancer={selectedFreelancer}/>
         </>
 
     )

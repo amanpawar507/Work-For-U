@@ -81,6 +81,7 @@ import {
     }
 
     const handleCheck = value => {
+        console.log(value);
         setProjectDetails(prevValue => {
             return {
                 ...prevValue,

@@ -5,7 +5,7 @@ const { freelancer } = require("../data");
 
 //-----------------------------------------create---------------------------------------------------------
 
-router.post("/create_freelancer", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const {
       fullName,
@@ -13,14 +13,8 @@ router.post("/create_freelancer", async (req, res) => {
       password,
       introduction,
       skills,
-      projects,
-      overallRating,
-      reviews,
       location,
-      successRate,
-      expectedPay,
-      createdAt,
-    } = req.body;
+      expectedPay    } = req.body;
 
     if (
       !fullName ||
@@ -28,13 +22,8 @@ router.post("/create_freelancer", async (req, res) => {
       !password ||
       !introduction ||
       !skills ||
-      !projects ||
-      !overallRating ||
-      !reviews ||
       !location ||
-      !successRate ||
-      !expectedPay ||
-      !createdAt
+      !expectedPay 
     ) {
       res.status(400).json({ error: "Missing fields" });
       return;
@@ -46,11 +35,7 @@ router.post("/create_freelancer", async (req, res) => {
       typeof introduction !== "string" ||
       (typeof skills !== "object" && !skills.length) ||
       //(Array.isArray(skills) && !skills.length) ||
-      (Array.isArray(projects) && !projects.length) ||
-      typeof overallRating !== "number" ||
-      (Array.isArray(reviews) && !reviews.length) ||
       typeof location !== "string" ||
-      typeof successRate !== "number" ||
       typeof expectedPay !== "number"
     ) {
       res.status(400).json({ error: "Invalid type of data" });
