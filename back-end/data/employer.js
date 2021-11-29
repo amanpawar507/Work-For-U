@@ -37,7 +37,7 @@ const createEmployer = async data => {
     typeof companyName !== "string" 
   )
     throw "Invalid type of data";
-
+    if(!emailId.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) throw "The username has to be in the mentioned format";
   //let = await getSkill(skillsRequired);
   const hash = await bCrypt.hash(password, saltRounds);
   const employerCollection = await employer();
@@ -76,7 +76,25 @@ const getEmployer = async employerID => {
   return findID;
 }
 
+async function checker(emailId, password){
+  if(!emailId|| !password) throw "All fields to have valid values";
+  if(typeof(emailId) !=='string' || typeof(password) !=='string')  throw "All the parameters has to be string";
+  if(emailId.trim().length == 0 || password.trim().length == 0) throw "All the parameters has to be string";
+  if(!emailId.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) throw "Incorrect username or password";
+  if(password.length<6) throw "Incorrect username or password";
+
+  const employerCollection = await employer();
+  let user = await employerCollection.findOne({emailId : emailId.toLowerCase()})
+  if(!user || !user._id) throw "Either the emailId or password is invalid"
+  let mat = await bcrypt.compare(password, user.password);
+  if(!mat) throw "Either the emailId or password is invalid"
+  return {authenticated: true}
+
+}
+
+
 module.exports = {
   createEmployer,
-  getEmployer
+  getEmployer,
+  checker
 };
