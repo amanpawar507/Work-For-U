@@ -31,6 +31,30 @@ import { UserContext } from "../contexts/userContext";
         return setLoading(true);
     },[isOpen])
 
+    useEffect(() => {
+        if(!projectDetails) return;
+        const getEmployer= async() => {
+            try {
+                const {data} = await axios.get(`http://localhost:5000/employer/${projectDetails.createdBy}`);
+                setCreatedBy(data.fullName); 
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        const getFreelancer = async() => {
+            try {
+                const {data} = await axios.get(`http://localhost:5000/freelancer/${projectDetails.assignedTo}`);
+                setAssignedTo(data.fullName); 
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        if(projectDetails.assignedTo) {
+            getEmployer();
+            getFreelancer();
+        }
+    },[projectDetails])
+
       return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -51,8 +75,8 @@ import { UserContext } from "../contexts/userContext";
                         projectDetails.status === 1 ? "In progress" :
                         "Completed"
                     }</Text>
-                    <Text mb='5px'><strong>createdBy:</strong> {user && user.fullName}</Text>
-                    {projectDetails.status !== 0 && <Text>Assigned to: {projectDetails.assignedTo}</Text>}
+                    <Text mb='5px'><strong>createdBy:</strong> {createdBy}</Text>
+                    {projectDetails.status !== 0 && <Text><strong>Assigned to:</strong> {assignedTo}</Text>}
                     <Text mb='5px'><strong>Created on:</strong> {projectDetails.createdAt}</Text>
                 </Box>}
             </ModalBody>

@@ -169,6 +169,26 @@ router.get('/', async (req, res) => {
     }
   })
 
+  router.get("/all/freelancer/:id", async(req,res) => {
+    try {
+      const id = req.params.id;
+      if(!id) {
+        res.status(400).json({error: "pass an ID"});
+        return;
+      }
+      if(typeof id !== "string") {
+        res.status(400).json({error: "invalid type of ID"});
+        return;
+      }
+
+      const result = await project.getAllFreelancerProjects(id);
+      res.json(result);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({error: error.message ? error.message : error});
+    }
+  })
+
   router.post("/requests/add", async (req,res) => {
     try {
       const {freelancerId, projectId} = req.body;
@@ -219,18 +239,18 @@ router.get('/', async (req, res) => {
   router.patch("/requests/update", async (req,res) => {
     try {
       const {freelancerId, projectId, status} = req.body;
-
-      if(!freelancerId || !projectId || !status) {
+      console.log(req.body);
+      if(!freelancerId || !projectId || (!status && status !== 0)) {
         res.status(400).json({error: "please pass all fields"});
         return;
       }
 
-      if(typeof freelancerId !== "string" || typeof projectId !== "string" || typeof status !== "string") {
+      if(typeof freelancerId !== "string" || typeof projectId !== "string" || typeof status !== "number") {
         res.status(400).json({error: "Invalid fields"});
         return;
       }
-      console.log(status.trim().toLowerCase());
-      if(status.trim().toLowerCase() !== "accept" && status.trim().toLowerCase() !== "reject") {
+
+      if(status < 0 || status > 3) {
         res.status(400).json({error: "Invalid status"});
         return;
       }

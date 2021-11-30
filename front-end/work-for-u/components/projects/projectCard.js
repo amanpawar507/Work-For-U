@@ -1,10 +1,13 @@
 import { Box, Button, Heading, HStack, IconButton, Text, VStack } from "@chakra-ui/react"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import {MdInfo,MdEdit,MdDelete} from "react-icons/md"
+import { UserContext } from "../contexts/userContext";
 
-export const ProjectCard = ({name, status,onDetailsClick,onEditClick,onDeleteClick}) => {
+export const ProjectCard = ({name, status,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick}) => {
 
     const [deleteOpen, setDeleteOpen] = useState(false);
+
+    const {isFreelancer} = useContext(UserContext);
 
     const getStatus = status => {
         switch (status) {
@@ -28,9 +31,10 @@ export const ProjectCard = ({name, status,onDetailsClick,onEditClick,onDeleteCli
                 <HStack textAlign={'left'} w={'100%'} justifyContent={'space-between'}>
                     <Text>Status: {getStatus(status)}</Text>
                     <HStack>
+                        <Button variant={'outline'} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>
                         <IconButton color={'brand.900'} icon={<MdInfo/>} onClick={() => onDetailsClick()}/>
-                        <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>
-                        <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>
+                        {!isFreelancer && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
+                        {!isFreelancer && <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>}
                     </HStack>
                 </HStack>
             </VStack>
