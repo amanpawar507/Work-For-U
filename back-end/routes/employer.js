@@ -3,19 +3,14 @@ const express = require("express");
 const router = express.Router();
 const { employer } = require("../data");
 const { route } = require("./project");
-
+const data = require("../data");
+const employerData = data.employer;
 
 router.post("/", async (req, res) => {
   try {
-    const { fullName, emailId, password, companyName } =
-      req.body;
+    const { fullName, emailId, password, companyName } = req.body;
 
-    if (
-      !fullName ||
-      !emailId ||
-      !password ||
-        !companyName 
-    ) {
+    if (!fullName || !emailId || !password || !companyName) {
       res.status(400).json({ error: "Missing fields" });
       return;
     }
@@ -23,7 +18,7 @@ router.post("/", async (req, res) => {
       typeof fullName !== "string" ||
       typeof emailId !== "string" ||
       typeof password !== "string" ||
-      typeof companyName !== "string" 
+      typeof companyName !== "string"
     ) {
       res.status(400).json({ error: "Invalid type of data" });
       return;
@@ -32,7 +27,7 @@ router.post("/", async (req, res) => {
     let resultE = await employer.createEmployer(req.body);
     res.json(resultE);
   } catch (error) {
-    console.log('from data: ', error);
+    console.log("from data: ", error);
     res.status(500).json({ error: error.messsage });
   }
 });
@@ -41,41 +36,43 @@ router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
 
-    if(!id) {
-      res.status(400).json({error: "please provide an Id"});
+    if (!id) {
+      res.status(400).json({ error: "please provide an Id" });
       return;
     }
-    
-    if(typeof id !== "string") {
-      res.status(400).json({error: "Invalid ID"})
+
+    if (typeof id !== "string") {
+      res.status(400).json({ error: "Invalid ID" });
       return;
     }
 
     let result = await employer.getEmployer(id);
     res.json(result);
-
   } catch (error) {
-    console.log('from data: ', error);
+    console.log("from data: ", error);
     res.status(500).json({ error: error.messsage });
+  }
+});
+
+router.get("/delete/:id", async (req, res) => {
+  try {
+    const employer = await employerData.remove(req.params.id);
+    res.redirect("/login/");
+  } catch (e) {
+    console.log(e);
+    res.status(404).json({ message: "There is no employer with that ID" });
   }
 });
 
 router.post("/login", async (req, res) => {
   try {
-    const { emailId, password } =
-      req.body;
+    const { emailId, password } = req.body;
 
-    if (
-      !emailId ||
-      !password 
-        ) {
+    if (!emailId || !password) {
       res.status(400).json({ error: "Missing fields" });
       return;
     }
-    if (
-      typeof emailId !== "string" ||
-      typeof password !== "string"
-    ) {
+    if (typeof emailId !== "string" || typeof password !== "string") {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
@@ -83,15 +80,14 @@ router.post("/login", async (req, res) => {
     let verifyUser = await employer.checker(req.body);
     res.json(verifyUser);
   } catch (error) {
-    console.log('from data: ', error);
+    console.log("from data: ", error);
     res.status(500).json({ error: error.messsage });
   }
 });
 
-
-router.get('/logout', async (req, res) => {
+router.get("/logout", async (req, res) => {
   req.session.destroy();
-  res.redirect('../login');
-})
+  res.redirect("../login");
+});
 
 module.exports = router;
