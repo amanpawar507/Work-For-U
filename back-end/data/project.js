@@ -121,9 +121,27 @@ const getAllEmployerProjects = async (employerID) => {
   return foundList;
 };
 
-const updateProject = async (data) => {
-  const { id, name, description, tenureMonths, skillsRequired, hourlyPay } =
-    data;
+const getAllFreelancerProjects = async freelancerID => {
+  if(!freelancerID) throw "Pass a freelancerID to search";
+  if(typeof freelancerID !== 'string') throw "Invalid freeelancer ID";
+  
+  const pCollection = await project();
+
+  const foundList = await pCollection.find({assignedTo: freelancerID}).toArray();
+  if(!foundList) "throw could not find projects for the freelancerID";
+
+  return foundList;
+}
+
+const updateProject = async data => {
+  const {
+    id,
+    name,
+    description,
+    tenureMonths,
+    skillsRequired,
+    hourlyPay
+  } = data;
 
   if (
     !id ||
@@ -245,6 +263,7 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
     throw "Invalid status";
 
   let foundProject = await getProject(projectId);
+  if(!foundProject) throw "Could not find the project";
   await getFreelancer(freelancerId);
 
   let objProjectId = ObjectId(projectId);
@@ -296,6 +315,7 @@ module.exports = {
   getAll,
   updateProject,
   getAllEmployerProjects,
+  getAllFreelancerProjects,
   addRequest,
   getFreelancerRequests,
   updateFreelancerRequest,
