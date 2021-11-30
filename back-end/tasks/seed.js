@@ -165,7 +165,7 @@ async function main() {
   try {
     let result = await project.createProject({
       name: "WorkForU",
-      description: "This",
+      description: "This is a B2B website for employers to hire freelancers",
       tenureMonths: 3,
       skillsRequired: skills1,
       hourlyPay: 34,
