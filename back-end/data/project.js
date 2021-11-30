@@ -121,6 +121,18 @@ const getAllEmployerProjects = async employerID => {
   return foundList;
 }
 
+const getAllFreelancerProjects = async freelancerID => {
+  if(!freelancerID) throw "Pass a freelancerID to search";
+  if(typeof freelancerID !== 'string') throw "Invalid freeelancer ID";
+  
+  const pCollection = await project();
+
+  const foundList = await pCollection.find({assignedTo: freelancerID}).toArray();
+  if(!foundList) "throw could not find projects for the freelancerID";
+
+  return foundList;
+}
+
 const updateProject = async data => {
   const {
     id,
@@ -221,11 +233,12 @@ const getFreelancerRequests = async freelancerId => {
 const updateFreelancerRequest = async (projectId, freelancerId, status) => {
   if(!freelancerId || !projectId || !status) throw "Please pass both freelancer ID and project ID";
 
-  if(typeof freelancerId !== "string" || typeof projectId !== "string" || typeof status !== "string") throw "Invalid type of request";
+  if(typeof freelancerId !== "string" || typeof projectId !== "string" || typeof status !== "number") throw "Invalid type of request";
 
-  if(status.trim().toLowerCase() !== "accept" && status.trim().toLowerCase() !== "reject") throw "Invalid status";
+  if(status < 0 || status > 3) throw "Invalid status";
 
   let foundProject = await getProject(projectId);
+  if(!foundProject) throw "Could not find the project";
   await getFreelancer(freelancerId);
 
   let objProjectId = ObjectId(projectId);
@@ -234,10 +247,12 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
 
   let updateInfo;
 
-  if(status.trim().toLowerCase() === "accept") {
-    updateInfo = await projectCollection.updateOne({_id: objProjectId},{$set:{assignedTo: freelancerId,status: 1}});
-  }else{
+  if(foundProject.status === 0 && status === 1) {
+    updateInfo = await projectCollection.updateOne({_id: objProjectId},{$set:{assignedTo: freelancerId,status: status}});
+  }else if(status === 0){
     updateInfo = await projectCollection.updateOne({_id: objProjectId},{$pull:{requested: freelancerId}});
+  } else{
+    updateInfo = await projectCollection.updateOne({_id: objProjectId},{$set:{status: status}});
   }
   if(updateInfo.modifiedCount === 0) throw "could not update the project";
 
@@ -271,6 +286,7 @@ module.exports = {
   getAll,
   updateProject,
   getAllEmployerProjects,
+  getAllFreelancerProjects,
   addRequest,
   getFreelancerRequests,
   updateFreelancerRequest,

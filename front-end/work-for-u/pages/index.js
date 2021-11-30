@@ -1,5 +1,7 @@
+import { Box, Button, HStack, Text } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router"
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
+import { UserContext } from "../components/contexts/userContext";
 import { Layout } from "../components/core"
 
 
@@ -7,13 +9,21 @@ export default function Home() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    router.push('/employer');
-  },[])
+  const {user ,handleTypeSelect} = useContext(UserContext);
+
+  // useEffect(() => {
+  //   router.push('/employer');
+  // },[])
 
   return (
     <Layout>
-      please wait...
+      <Box w={'100%'} h={'90vh'} display={'flex'} flexDirection={'column'} justifyContent={'center'}>
+        <Text textAlign={'center'} fontSize='2xl'>I am a...</Text>
+        <HStack justifyContent={'center'}>
+          <Button variant={'outline'} color={'brand.500'} onClick={()=>handleTypeSelect(1)}>Employer</Button>
+          <Button variant={'outline'} color={'brand.500'} onClick={()=>handleTypeSelect(2)}>Freelancer</Button>
+        </HStack>
+      </Box>
     </Layout>
   )
 }
