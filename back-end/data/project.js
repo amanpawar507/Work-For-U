@@ -1,6 +1,6 @@
 const { project } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
-const { getFreelancer } = require('./freelancer');
+//const { getFreelancer } = require('./freelancer');
 const { ObjectId } = require("mongodb");
 
 const getCurrentTime = () => {
@@ -31,8 +31,6 @@ const getProject = async (projectId) => {
   };
 };
 
-
-
 //-----------------------------------------create---------------------------------------------------------
 
 const createProject = async (data) => {
@@ -51,7 +49,8 @@ const createProject = async (data) => {
     !skillsRequired ||
     !hourlyPay ||
     !createdBy
-  ) throw "Missing fields";
+  )
+    throw "Missing fields";
   if (
     typeof name !== "string" ||
     typeof description !== "string" ||
@@ -59,7 +58,8 @@ const createProject = async (data) => {
     (typeof skillsRequired !== "object" && !skillsRequired.length) ||
     typeof hourlyPay !== "number" ||
     typeof createdBy !== "string"
-  ) throw "Invalid type of data";
+  )
+    throw "Invalid type of data";
 
   let skillsArray = await getSkill(skillsRequired);
 
@@ -70,7 +70,7 @@ const createProject = async (data) => {
     description,
     tenureMonths,
     skillsRequired: skillsArray,
-    requested:[],
+    requested: [],
     hourlyPay,
     status: 0,
     createdBy,
@@ -109,48 +109,44 @@ const getAll = async () => {
   return projectList;
 };
 
-const getAllEmployerProjects = async employerID => {
-  if(!employerID) throw "Pass a employerID to search";
-  if(typeof employerID !== 'string') throw "Invalid employer ID";
-  
+const getAllEmployerProjects = async (employerID) => {
+  if (!employerID) throw "Pass a employerID to search";
+  if (typeof employerID !== "string") throw "Invalid employer ID";
+
   const pCollection = await project();
 
-  const foundList = await pCollection.find({createdBy: employerID}).toArray();
-  if(!foundList) "throw could not find projects for the employerID";
+  const foundList = await pCollection.find({ createdBy: employerID }).toArray();
+  if (!foundList) "throw could not find projects for the employerID";
 
   return foundList;
-}
+};
 
-const updateProject = async data => {
-  const {
-    id,
-    name,
-    description,
-    tenureMonths,
-    skillsRequired,
-    hourlyPay
-  } = data;
+const updateProject = async (data) => {
+  const { id, name, description, tenureMonths, skillsRequired, hourlyPay } =
+    data;
 
-  if(
+  if (
     !id ||
     !name ||
     !description ||
     !tenureMonths ||
     !skillsRequired ||
-    !hourlyPay 
-  ) throw "missing fields";
+    !hourlyPay
+  )
+    throw "missing fields";
 
-  if(
+  if (
     typeof id !== "string" ||
     typeof name !== "string" ||
     typeof description !== "string" ||
     typeof tenureMonths !== "number" ||
-    (typeof skillsRequired !== "object" && !skillsRequired.length ) ||
-    typeof hourlyPay !== "number" 
-  ) throw "Invalid fields";
+    (typeof skillsRequired !== "object" && !skillsRequired.length) ||
+    typeof hourlyPay !== "number"
+  )
+    throw "Invalid fields";
 
   const projectExist = await getProject(id);
-  if(!projectExist) throw "No project exist for the given ID"
+  if (!projectExist) throw "No project exist for the given ID";
 
   let skillsArray = await getSkill(skillsRequired);
 
@@ -159,24 +155,28 @@ const updateProject = async data => {
     description,
     tenureMonths,
     skillsRequired: skillsArray,
-    hourlyPay
-  }
+    hourlyPay,
+  };
   const projectCollection = await project();
   let objectId = ObjectId(id);
-  const updateInfo = await projectCollection.updateOne({_id: objectId},{$set: updateReq});
-  if(updateInfo.modifiedCount === 0) throw "Could not update the project";
-  
-  let updatedProject = await getProject(id);
-  updatedProject = {_id: updatedProject._id.toString(),...updatedProject};
-  return updatedProject;
+  const updateInfo = await projectCollection.updateOne(
+    { _id: objectId },
+    { $set: updateReq }
+  );
+  if (updateInfo.modifiedCount === 0) throw "Could not update the project";
 
-}
+  let updatedProject = await getProject(id);
+  updatedProject = { _id: updatedProject._id.toString(), ...updatedProject };
+  return updatedProject;
+};
 
 //-----------------------------------------addingRequestToFreelancer---------------------------------------------------------
 
 const addRequest = async (freelancerId, projectId) => {
-  if(!freelancerId || !projectId) throw "Please pass both freelancer ID and project ID";
-  if(typeof freelancerId !== "string" || typeof projectId !== "string") throw "Invalid type of request";
+  if (!freelancerId || !projectId)
+    throw "Please pass both freelancer ID and project ID";
+  if (typeof freelancerId !== "string" || typeof projectId !== "string")
+    throw "Invalid type of request";
 
   let foundProject = await getProject(projectId);
   await getFreelancer(freelancerId);
@@ -185,45 +185,64 @@ const addRequest = async (freelancerId, projectId) => {
 
   const projectCollection = await project();
 
-  const exist = await projectCollection.findOne({_id:objProjectId,requested :{$in:[freelancerId]}});
-  if(exist) throw `The freelancer ${exist.status === 0 ? "has a request for" : "is working on"} this project`;
+  const exist = await projectCollection.findOne({
+    _id: objProjectId,
+    requested: { $in: [freelancerId] },
+  });
+  if (exist)
+    throw `The freelancer ${
+      exist.status === 0 ? "has a request for" : "is working on"
+    } this project`;
 
-  const insertedRequest = await projectCollection.updateOne({_id: objProjectId}, {$push: {requested: freelancerId}});
-  if(insertedRequest.modifiedCount === 0) throw "Could not add request";
+  const insertedRequest = await projectCollection.updateOne(
+    { _id: objProjectId },
+    { $push: { requested: freelancerId } }
+  );
+  if (insertedRequest.modifiedCount === 0) throw "Could not add request";
 
   foundProject = await getProject(projectId);
-  let found = foundProject.requested.find(i => i === freelancerId);
-  if(!found) throw "could not find freelancer id in the requests";
+  let found = foundProject.requested.find((i) => i === freelancerId);
+  if (!found) throw "could not find freelancer id in the requests";
 
-  return {addedRequest: true};
-  
-}
+  return { addedRequest: true };
+};
 
 //-----------------------------------------getFreelancerRequests---------------------------------------------------------
 
-const getFreelancerRequests = async freelancerId => {
-  if(!freelancerId) throw "please pass a freelancer ID";
-  if(typeof freelancerId !== "string") throw "Invalid freelancer ID";
-  
+const getFreelancerRequests = async (freelancerId) => {
+  if (!freelancerId) throw "please pass a freelancer ID";
+  if (typeof freelancerId !== "string") throw "Invalid freelancer ID";
+
   await getFreelancer(freelancerId);
-  
+
   const projectCollection = await project();
-  const found = await projectCollection.find({"requested": {$in: [freelancerId]}}).toArray();
-  if(!found || found.length === 0) throw "No request found for the given freelancer";
+  const found = await projectCollection
+    .find({ requested: { $in: [freelancerId] } })
+    .toArray();
+  if (!found || found.length === 0)
+    throw "No request found for the given freelancer";
 
   return found;
-
-}
+};
 
 //-----------------------------------------updateFreelancerRequest---------------------------------------------------------
 
-
 const updateFreelancerRequest = async (projectId, freelancerId, status) => {
-  if(!freelancerId || !projectId || !status) throw "Please pass both freelancer ID and project ID";
+  if (!freelancerId || !projectId || !status)
+    throw "Please pass both freelancer ID and project ID";
 
-  if(typeof freelancerId !== "string" || typeof projectId !== "string" || typeof status !== "string") throw "Invalid type of request";
+  if (
+    typeof freelancerId !== "string" ||
+    typeof projectId !== "string" ||
+    typeof status !== "string"
+  )
+    throw "Invalid type of request";
 
-  if(status.trim().toLowerCase() !== "accept" && status.trim().toLowerCase() !== "reject") throw "Invalid status";
+  if (
+    status.trim().toLowerCase() !== "accept" &&
+    status.trim().toLowerCase() !== "reject"
+  )
+    throw "Invalid status";
 
   let foundProject = await getProject(projectId);
   await getFreelancer(freelancerId);
@@ -234,36 +253,42 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
 
   let updateInfo;
 
-  if(status.trim().toLowerCase() === "accept") {
-    updateInfo = await projectCollection.updateOne({_id: objProjectId},{$set:{assignedTo: freelancerId,status: 1}});
-  }else{
-    updateInfo = await projectCollection.updateOne({_id: objProjectId},{$pull:{requested: freelancerId}});
+  if (status.trim().toLowerCase() === "accept") {
+    updateInfo = await projectCollection.updateOne(
+      { _id: objProjectId },
+      { $set: { assignedTo: freelancerId, status: 1 } }
+    );
+  } else {
+    updateInfo = await projectCollection.updateOne(
+      { _id: objProjectId },
+      { $pull: { requested: freelancerId } }
+    );
   }
-  if(updateInfo.modifiedCount === 0) throw "could not update the project";
+  if (updateInfo.modifiedCount === 0) throw "could not update the project";
 
   foundProject = await getProject(projectId);
   return foundProject;
-}
+};
 
 //-----------------------------------------deleteProject----------------------------------------------------------------
 
-const deleteProject = async projectId => {
-  if(!projectId) throw "Please pass an ID";
-  if(typeof projectId !== "string") throw "Invalid projectID";
+const deleteProject = async (projectId) => {
+  if (!projectId) throw "Please pass an ID";
+  if (typeof projectId !== "string") throw "Invalid projectID";
 
   const found = await getProject(projectId);
-  
-  if(found.status !== 0) throw "Sorry cannot delete this project as it has been accepted by a freelancer";
+
+  if (found.status !== 0)
+    throw "Sorry cannot delete this project as it has been accepted by a freelancer";
 
   let objID = ObjectId(projectId);
 
   const projCollection = await project();
-  const deleteInfo = await projCollection.deleteOne({_id: objID});
-  if(deleteInfo.deletedCount === 0) throw "could not delete project";
+  const deleteInfo = await projCollection.deleteOne({ _id: objID });
+  if (deleteInfo.deletedCount === 0) throw "could not delete project";
 
-  return {deleted: true};
-}
-
+  return { deleted: true };
+};
 
 module.exports = {
   createProject,
@@ -274,5 +299,5 @@ module.exports = {
   addRequest,
   getFreelancerRequests,
   updateFreelancerRequest,
-  deleteProject
+  deleteProject,
 };
