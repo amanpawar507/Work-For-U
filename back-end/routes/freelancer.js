@@ -116,6 +116,36 @@ router.get('/searchFreelancer/', async (req,res) => {
       res.status(500).json({error: error.messsage});
   }
 })
+///---------------------------------------login------------------------------------------------
+router.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } =
+      req.body;
+
+    if (
+      !emailId ||
+      !password 
+        
+    ) {
+      res.status(400).json({ error: "Missing fields" });
+      return;
+    }
+    if (
+      typeof emailId !== "string" ||
+      typeof password !== "string" 
+      
+    ) {
+      res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+
+    let verifyUser = await freelancer.checker(req.body);
+    res.json(verifyUser);
+  } catch (error) {
+    console.log('from data: ', error);
+    res.status(500).json({ error: error.messsage });
+  }
+});
 /////-------------------------------------logout-----------------------------------------------
 router.get('/logout', async (req, res) => {
   req.session.destroy();
