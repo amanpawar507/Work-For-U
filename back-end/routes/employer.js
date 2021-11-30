@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
       !fullName ||
       !emailId ||
       !password ||
-      !companyName 
+        !companyName 
     ) {
       res.status(400).json({ error: "Missing fields" });
       return;
@@ -58,6 +58,12 @@ router.get("/:id", async (req, res) => {
     console.log('from data: ', error);
     res.status(500).json({ error: error.messsage });
   }
+})
+
+
+router.get('/logout', async (req, res) => {
+  req.session.destroy();
+  res.redirect('../login');
 })
 
 module.exports = router;

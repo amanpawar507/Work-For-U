@@ -116,5 +116,9 @@ router.get('/searchFreelancer/', async (req,res) => {
       res.status(500).json({error: error.messsage});
   }
 })
-
+/////-------------------------------------logout-----------------------------------------------
+router.get('/logout', async (req, res) => {
+  req.session.destroy();
+  res.redirect('../login');
+})
 module.exports = router;
