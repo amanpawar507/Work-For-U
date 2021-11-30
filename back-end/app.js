@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 var cors = require("cors");
+const session = require('express-session');
 var options = {
   "origin": "*",
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -14,6 +15,13 @@ const configRoutes = require('./routes');
 app.use(express.json());
 
 configRoutes(app);
+
+app.use(session({
+  name: 'AuthCookie',
+  secret: 'some secret string!',
+  resave: false,
+  saveUninitialized: true
+}));
 
 app.listen(5000, () => {
   console.log("We've now got a server!");
