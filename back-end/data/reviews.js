@@ -233,7 +233,7 @@ async function calAvgRating(freelancerId) {
   //Check if the restaurant with the given id exists
   const oneFreelance = await freelanceCollection.findOne({ _id: parsedId });
   if (oneFreelance === null) {
-    throw "No sneaker with that id.";
+    throw "No freelancer with that id.";
   }
 
   const reviewCollection = await reviews();
@@ -254,7 +254,7 @@ async function calAvgRating(freelancerId) {
 
   if (overallRating > 0) {
     overallRating = overallRating / reviews.length;
-    overallRating = rating.toFixed(2);
+    overallRating = rating.toFixed(1);
   }
 
   let updatedFreelancer = await freelanceCollection.updateOne(
