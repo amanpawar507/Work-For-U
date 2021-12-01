@@ -221,24 +221,24 @@ const remove = async (reviewId) => {
 };
 
 //Function to calculate Average rating
-async function calAvgRating(productId) {
+async function calAvgRating(freelancerId) {
   let rating = 0;
-  validate.checkStr(productId, "Product id");
+  validate.checkStr(freelancerId, "Product id");
   //checkValidId(productId);
   //Convert id into a valid ObjectID
-  let parsedId = ObjectId(productId.trim());
+  let parsedId = ObjectId(freelancerId.trim());
 
-  const sneakerCollection = await freelancer();
+  const freelanceCollection = await freelancer();
 
   //Check if the restaurant with the given id exists
-  const sneaker = await sneakerCollection.findOne({ _id: parsedId });
-  if (sneaker === null) {
+  const oneFreelance = await freelanceCollection.findOne({ _id: parsedId });
+  if (oneFreelance === null) {
     throw "No sneaker with that id.";
   }
 
   const reviewCollection = await reviews();
 
-  let reviews = sneaker.reviews;
+  let reviews = oneFreelance.reviews;
   let overallRating = 0;
   reviews.forEach(async (element) => {
     //Convert id into a valid ObjectID
@@ -257,12 +257,15 @@ async function calAvgRating(productId) {
     overallRating = rating.toFixed(2);
   }
 
-  let updatedSneaker = await sneakerCollection.updateOne(
+  let updatedFreelancer = await freelanceCollection.updateOne(
     { _id: parsedId },
     { $set: { overallRating: overallRating } }
   );
 
-  if (updatedSneaker.modifiedCount === 0 && sneaker.overallRating != rating) {
+  if (
+    updatedFreelancer.modifiedCount === 0 &&
+    oneFreelance.overallRating != rating
+  ) {
     throw "Could not update the freelancer rating.";
   } else {
     return true;
