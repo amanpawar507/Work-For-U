@@ -21,5 +21,4 @@ module.exports = {
   skill: getCollectionFn("skill"),
   freelancer: getCollectionFn("freelancer"),
   employer: getCollectionFn("employer"),
-  reviews: getCollectionFn("reviews"),
 };

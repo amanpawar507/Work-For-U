@@ -1,132 +1,128 @@
 const express = require("express");
 const router = express.Router();
 const data = require("../data");
-const reviewsData = data.reviews;
-const validate = require("../data/valid");
+const reData = data.reviews;
 
-const { ObjectId } = require("mongodb");
+const freelancerData = data.freelancer;
 
-router.get("/freelancer/:id", async (req, res) => {
-  try {
-    validate.checkStr(req.params.id, "Review Id");
-    //validation.checkValidObjectId(req.params.id);
-    const reviews = await reviewsData.getAll(req.params.id);
-    if (reviews.length > 0) {
-      res.status(200).json(reviews);
-    } else {
-      res.status(404).json(reviews);
-    }
-  } catch (e) {
-    res.status(500).json({ Error: e });
-  }
-});
-
-router.post("/", async (req, res) => {
+router.post("/:freelancerId", async (req, res) => {
   const reviewData = req.body;
 
   try {
-    validate.checkStr(reviewData.reviewedBy, "Reviewed By");
-    validate.checkStr(reviewData.reviewFor, "Review For");
-    validate.checkStr(reviewData.title, "Title");
-    validate.checkStr(reviewData.review, "Review");
-    validate.isNumber(reviewData.rating, "Rating");
-    validate.checkRating(reviewData.rating);
+    if (
+      !reviewData.title ||
+      !reviewData.reviewer ||
+      !reviewData.rating ||
+      !reviewData.review
+    )
+      throw "All fields need to have valid values";
+    if (
+      typeof req.params.freelancerId != "string" ||
+      typeof reviewData.title != "string" ||
+      typeof reviewData.reviewer != "string" ||
+      typeof reviewData.review != "string"
+    )
+      throw "Input not in string format";
+    if (
+      req.params.freelancerId.trim().length < 1 ||
+      reviewData.title.trim().length < 1 ||
+      reviewData.reviewer.trim().length < 1 ||
+      reviewData.review.trim().length < 1
+    )
+      throw "Input cannot be empty string";
+    const check = freelancerData.getFreelancer(req.params.freelancerId);
+    if (check == null) throw "Restaurant does not exist";
+    if (isNaN(reviewData.rating)) throw "Rating not valid";
+    if (reviewData.rating < 1 || reviewData.rating > 5)
+      throw "Rating should be between 1-5";
+    // let today = new Date();
+    // let dateParameter = new Date(reviewData.dateOfReview);
+    // if (dateParameter == "Invalid Date") throw "Date is not valid";
+    // if (
+    //   dateParameter.getDate() != today.getDate() ||
+    //   dateParameter.getMonth() != today.getMonth() ||
+    //   dateParameter.getFullYear() != today.getFullYear()
+    // )
+    //   throw "Date should be valid and today's date";
   } catch (e) {
-    res.status(400).json({ Error: e });
+    res.status(400).json({ error: e });
     return;
   }
 
   try {
-    const review = await reviewsData.create(
-      reviewData.reviewedBy,
-      reviewData.reviewFor,
-      reviewData.title,
-      reviewData.review,
-      reviewData.rating
+    const { title, reviewer, rating, review } = reviewData;
+    const newPost = await reData.create(
+      req.params.freelancerId,
+      title,
+      reviewer,
+      rating,
+      review
     );
-    res.status(200).json(review);
+    res.status(200).json(newPost);
   } catch (e) {
-    res.status(500).json({ Error: e });
+    res.status(400).json({ error: e });
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:freelancerId", async (req, res) => {
   try {
-    validate.checkStr(req.params.id, "Review Id");
-    //validation.checkValidObjectId(req.params.id);
+    if (!req.params.freelancerId) throw "Restaurant Id must be provided";
+    if (typeof req.params.freelancerId != "string")
+      throw "Input not in string format";
+    if (req.params.freelancerId.trim().length < 1)
+      throw "Input cannot be empty string";
+
+    const check2 = await freelancerData.getFreelancer(req.params.freelancerId);
+    if (check2 == null) throw "Restaurant does not exist";
   } catch (e) {
-    res.status(400).json({ Error: e });
-    return;
+    res.status(404).json({ error: e });
   }
+
   try {
-    const review = await reviewsData.get(req.params.id);
-    res.status(200).json(review);
+    const reviewl = await reData.getAll(req.params.freelancerId);
+    res.status(200).json(reviewl);
   } catch (e) {
-    res.status(404).json({ Error: e });
+    res.status(404).json({ Error: "e" });
   }
 });
 
-router.put("/:id", async (req, res) => {
-  const reviewData = req.body;
-
+router.get("/review/:reviewId", async (req, res) => {
   try {
-    validate.checkStr(req.params.id, "id");
-    //validation.checkValidObjectId(req.params.id);
-    validate.checkStr(reviewData.reviewedBy, "Reviewed By");
-    //validation.checkValidObjectId(reviewData.reviewedBy;
-    validate.checkStr(reviewData.reviewFor, "Review For");
-    //validation.checkValidObjectId(reviewData.reviewedBy);
-    validate.checkStr(reviewData.title, "Title");
-    validate.checkStr(reviewData.review, "Review");
-    validate.isNumber(reviewData.rating, "Rating");
-    validate.checkRating(reviewData.rating);
+    if (!req.params.reviewId) throw "Review Id must be provided";
+    if (typeof req.params.reviewId != "string")
+      throw "Input not in string format";
+    if (req.params.reviewId.trim().length < 1)
+      throw "Input cannot be empty string";
   } catch (e) {
-    res.status(400).json({ Error: e });
-    return;
+    res.status(404).json({ Error: "e" });
   }
-
   try {
-    await reviewsData.get(req.params.id);
+    const review1 = await reData.get(req.params.reviewId);
+    res.status(200).json(review1);
   } catch (e) {
-    res.status(404).json({ Error: e });
-    return;
-  }
-
-  try {
-    const review = await reviewsData.update(
-      req.params.id,
-      reviewData.reviewedBy,
-      reviewData.reviewFor,
-      reviewData.title,
-      reviewData.review,
-      reviewData.rating
-    );
-    res.status(200).json(review);
-  } catch (e) {
-    res.status(500).json({ Error: e });
+    res
+      .status(404)
+      .json({ Error: "No review found with that ID" + req.params.reviewId });
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:reviewId", async (req, res) => {
   try {
-    validate.checkStr(req.params.id, "id");
-    //validation.checkValidObjectId(req.params.id);
+    if (!req.params.reviewId) throw "Review Id must be provided";
+    if (typeof req.params.reviewId != "string")
+      throw "Input not in string format";
+    if (req.params.reviewId.trim().length < 1)
+      throw "Input cannot be empty string";
+    const check = reData.get(req.params.reviewId);
+    if (check == null) throw "Review does not exist";
   } catch (e) {
-    res.status(400).json({ Error: e });
-    return;
+    res.status(404).json({ Error: "e" });
   }
-
   try {
-    await reviewsData.get(req.params.id);
+    await reData.remove(req.params.reviewId);
+    res.status(200).json({ reviewID: req.params.reviewId, deleted: true });
   } catch (e) {
     res.status(404).json({ Error: e });
-    return;
-  }
-  try {
-    const review = await reviewsData.remove(req.params.id);
-    res.status(200).json(review);
-  } catch (e) {
-    res.status(500).json({ Error: e });
   }
 });
 
