@@ -77,7 +77,7 @@ router.post("/login", async (req, res) => {
       return;
     }
 
-    let verifyUser = await employer.checker(req.body);
+    let verifyUser = await employer.checker(emailId,password);
     res.json(verifyUser);
   } catch (error) {
     console.log("from data: ", error);

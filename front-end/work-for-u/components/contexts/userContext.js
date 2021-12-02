@@ -20,8 +20,16 @@ const UserContextProvider = ({children}) => {
             let userExist = localStorage.getItem('user');
             let isFreelancer = localStorage.getItem('isFreelancer');
             console.log(userExist);
-            if(!userExist) {
-              router.push('/');
+            if(isFreelancer === undefined || isFreelancer === null) {
+              router.push("/")
+            }else if(!userExist){
+                debugger
+                // if(isFreelancer === "true") {
+                //     router.push("/freelancer/login")
+                // }
+                // if(isFreelancer === "false") {
+                //     router.push("/employer/login")
+                // }
             }
             else{
                 if(isFreelancer || isFreelancer === "true") {
@@ -43,7 +51,7 @@ const UserContextProvider = ({children}) => {
             setUser(data);
             setIsFreelancer(false);
             localStorage.setItem("user",data._id);
-            localStorage.setItem("isFreelancer",false);
+            
             // router.push('/employer');
         }
         setLoading(false);
@@ -64,9 +72,9 @@ const UserContextProvider = ({children}) => {
 
     const handleTypeSelect = type => {
         if(type === 1) {
-            getEmployer();
+            localStorage.setItem("isFreelancer",false);
         }else{
-            getFreelancer()
+            localStorage.setItem("isFreelancer",true);
         }
     }
 
