@@ -44,7 +44,7 @@ import { UserContext } from "../contexts/userContext";
         const getFreelancer = async() => {
             try {
                 const {data} = await axios.get(`http://localhost:5000/freelancer/${projectDetails.assignedTo}`);
-                setAssignedTo(data.fullName); 
+                 setAssignedTo(data.fullName); 
             } catch (error) {
                 console.log(error);
             }
