@@ -121,7 +121,7 @@ const getFreelancer = async (freelancerID) => {
   return findID;
 };
 
-//-----------------------------------------getonbasisofSkillLocation---------------------------------------------------------
+//-----------------------------------------getonbasisofSkillAndName---------------------------------------------------------
 
 const searchType = async (filterObj) => {
   if (!filterObj.query || !filterObj.filterkey)
@@ -149,8 +149,10 @@ const searchType = async (filterObj) => {
     }
   } else if (filterObj.filterkey == "skill") {
     for (let i of freelancerList) {
-      if (i.skill.includes(filterObj.query)) {
-        resultarr.push(i);
+      for(let j of i.skills){
+        if (j.includes(filterObj.query)) {
+          resultarr.push(i);
+        }
       }
     }
   } else throw "Unidentified object value";
