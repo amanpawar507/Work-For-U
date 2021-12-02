@@ -37,26 +37,26 @@ const UserContextProvider = ({children}) => {
 
     const getEmployer = async() => {
         setLoading(true);
-        const {data} = await axios.get("http://localhost:5000/employer/61a55b51c6ff9fc004c17d99")
+        const {data} = await axios.get("http://localhost:5000/employer/61a9111e2bc375ba7d6a04b7")
         if(data) {
             setUser(data);
             setIsFreelancer(false);
             localStorage.setItem("user",data._id);
             localStorage.setItem("isFreelancer",false);
-            router.push('/employer');
+            // router.push('/employer');
         }
         setLoading(false);
     }
 
     const getFreelancer = async() => {
         setLoading(true);
-        const {data} = await axios.get("http://localhost:5000/freelancer/61a55b5ec6ff9fc004c17da0")
+        const {data} = await axios.get("http://localhost:5000/freelancer/61a9112a2bc375ba7d6a04be")
         if(data) {
             setUser(data);
             setIsFreelancer(true);
             localStorage.setItem("user",data._id);
             localStorage.setItem("isFreelancer",true);
-            router.push('/freelancer/register');
+            // router.push('/freelancer/');
         }
         setLoading(false);
     }
