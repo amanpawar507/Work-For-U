@@ -22,7 +22,8 @@ const UserContextProvider = ({children}) => {
             console.log(userExist);
             if(!userExist) {
               router.push('/');
-            }else{
+            }
+            else{
                 if(isFreelancer || isFreelancer === "true") {
                     getFreelancer();
                 }else{
@@ -43,7 +44,7 @@ const UserContextProvider = ({children}) => {
             setIsFreelancer(false);
             localStorage.setItem("user",data._id);
             localStorage.setItem("isFreelancer",false);
-            router.push('/employer');
+            // router.push('/employer');
         }
         setLoading(false);
     }
@@ -56,7 +57,7 @@ const UserContextProvider = ({children}) => {
             setIsFreelancer(true);
             localStorage.setItem("user",data._id);
             localStorage.setItem("isFreelancer",true);
-            router.push('/freelancer/register');
+            // router.push('/freelancer');
         }
         setLoading(false);
     }
