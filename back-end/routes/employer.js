@@ -52,7 +52,7 @@ router.get("/:id", async (req, res) => {
       let result = await employer.getEmployer(id);
       res.json(result);
     //}else{
-      res.status(401).json({message: "unauthorized access!"});
+      //res.status(401).json({message: "unauthorized access!"});
     //}
   } catch (error) {
     console.log("from data: ", error);
