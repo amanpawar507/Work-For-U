@@ -210,6 +210,28 @@ const remove = async (freelancerID) => {
 };
 //---------------------------------------------get recommended freelancers-----------------------------------------------
 
+const getRecommended = async employerId => {
+  if(!employerId) throw "Please pass an employer ID";
+  if(typeof employerId !== "string") throw "Invalid type of employerID";
+  if(employerId.trim().length === 0) throw "empty spaces found";
+  ObjectId(employerId);
+  const employerFound = await getEmployer(employerId);
+  const allProjects = await getAllEmployerProjects(employerId);
+  let skillsRequired = [];
+  allProjects.map(i => {
+    skillsRequired = [...skillsRequired,...i.skillsRequired]
+  });
+  skillsRequired = skillsRequired.map(i=>i._id);
+  skillsRequired = Array.from(new Set(skillsRequired));
+  const freelancerCollection = await freelancer();
+  let matchedFreelancers = await freelancerCollection.find({'skills._id': {$in: skillsRequired}}).toArray();
+  if(!matchedFreelancers) throw "could not find recommendations";
+  for (let i of matchedFreelancers) {
+    i._id = i._id.toString();
+  }
+  return matchedFreelancers;
+}
+
 
 
 module.exports = {
@@ -219,5 +241,6 @@ module.exports = {
   searchType,
   checker,
   remove,
-  createIndices
+  createIndices,
+  getRecommended
 };

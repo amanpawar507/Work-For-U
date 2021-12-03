@@ -133,6 +133,32 @@ router.post("/searchFreelancer", async (req, res) => {
 
 //-------------------------------------get recommended freelancer-----------------------------------------------
 
+router.get("/recommended/:id", async(req,res) => {
+  try {
+    // if(req.session.email) {
+      const id = req.params.id;
+      if(!id) {
+        res.status(400).json({error: "Please provide an employerId"});
+        return;
+      }
+      if(typeof id !== "string") {
+        res.status(400).json({error: "Invalid type of employerId"});
+        return;
+      }
+      if(id.trim().length === 0) {
+        res.status(400).json({error: "Just empty spaces"});
+        return;
+      }
+      const recommendations = await freelancer.getRecommended(id);
+      res.json(recommendations);
+    // }else{
+    //   res.status(401).json({message: "unauthorized access!"});
+    // }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.messsage });
+  }
+})
 
 
 //----------------------------------------delete------------------------------------------------

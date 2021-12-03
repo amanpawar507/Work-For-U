@@ -23,11 +23,16 @@ export const Projects = () => {
     useEffect(() => {
         if(!user) return;
         const getAllProjects = async () => {
-            const {data} = await axios.get(`http://localhost:5000/project/all/employer/${user._id}`);
+            if(!isFreelancer){
+                const {data} = await axios.get(`http://localhost:5000/project/all/employer/${user._id}`);
+            }
+            else{
+                const {data} = await axios.get(`http://localhost:5000/project/all/freelancer/${user._id}`);
+            }
             setProjects(data);
         }
         getAllProjects();
-    },[user])
+    },[user,isFreelancer])
 
 
     const handleCreateProject = async details => {
