@@ -15,6 +15,16 @@ const getCurrentTime = () => {
   return dateTime;
 };
 
+// const createIndices = async() => {
+//   const employerCollection = await employer();
+//   const result = await employerCollection.createIndex({
+//     fullName: "text",
+//     skills: "text",
+//     location: "text"
+//   });
+//   console.log(result);
+// }
+
 const createEmployer = async (data) => {
   const { fullName, emailId, password, companyName } = data;
   if (!fullName || !emailId || !password || !companyName)
@@ -88,7 +98,7 @@ async function checker(emailId, password) {
   if (!user || !user._id) throw "Either the emailId or password is invalid";
   let mat = await bCrypt.compare(password, user.password);
   if (!mat) throw "Either the emailId or password is invalid";
-  return { authenticated: true };
+  return { _id:user._id.toString(),...user};
 }
 
 //------------------------------------------delete employer------------------------------------------

@@ -1,5 +1,6 @@
 import { Box, Button, Checkbox, CheckboxGroup, Flex, FormLabel, HStack, Select, Textarea, useToast } from "@chakra-ui/react"
 import axios from "axios";
+import { useRouter } from "next/dist/client/router";
 import { useEffect, useState } from "react";
 import { InputComp } from "../common/Input"
 
@@ -21,6 +22,7 @@ export const Register = ({isFreelancer}) => {
     const [allStates, setAllStates] = useState([]);
     const [skillList, setSkillList] = useState([]);
     const [skillSet,setSkillSet] = useState([]);
+    const router = useRouter();
 
     const toast = useToast();
 
@@ -76,6 +78,11 @@ export const Register = ({isFreelancer}) => {
                 }
                 const {data} = await axios.post("http://localhost:5000/freelancer/",request);
                 console.log(data);
+                toast({
+                    title: "registration successfull",
+                    status: "success",
+                    duration: 2000
+                });
             }else{
                 delete request.expectedPay;
                 delete request.introduction;
@@ -130,7 +137,7 @@ export const Register = ({isFreelancer}) => {
                     <Button colorScheme={'teal'} mt='10px' w="100%" type="submit" isLoading={submitting}>
                         Register
                     </Button>
-                    <Button colorScheme={'teal'} mt='10px' w="100%" isDisabled={submitting}>
+                    <Button colorScheme={'teal'} mt='10px' w="100%" isDisabled={submitting} onClick={() => router.push('/login')}>
                         Back to login
                     </Button>
                 </form>
