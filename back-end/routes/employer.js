@@ -4,7 +4,9 @@ const router = express.Router();
 const { employer } = require("../data");
 const { route } = require("./project");
 const data = require("../data");
+const e = require("express");
 const employerData = data.employer;
+
 
 router.post("/", async (req, res) => {
   try {
@@ -34,20 +36,24 @@ router.post("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const id = req.params.id;
+    //if(req.session.email) {
+      const id = req.params.id;
 
-    if (!id) {
-      res.status(400).json({ error: "please provide an Id" });
-      return;
-    }
-
-    if (typeof id !== "string") {
-      res.status(400).json({ error: "Invalid ID" });
-      return;
-    }
-
-    let result = await employer.getEmployer(id);
-    res.json(result);
+      if (!id) {
+        res.status(400).json({ error: "please provide an Id" });
+        return;
+      }
+  
+      if (typeof id !== "string") {
+        res.status(400).json({ error: "Invalid ID" });
+        return;
+      }
+  
+      let result = await employer.getEmployer(id);
+      res.json(result);
+    //}else{
+      res.status(401).json({message: "unauthorized access!"});
+    //}
   } catch (error) {
     console.log("from data: ", error);
     res.status(500).json({ error: error.messsage });
@@ -77,17 +83,20 @@ router.post("/login", async (req, res) => {
       return;
     }
 
-    let verifyUser = await employer.checker(req.body);
+    let verifyUser = await employer.checker(emailId,password);
+    req.session.email = emailId;
+    req.session.save();
+    console.log(req.session);
     res.json(verifyUser);
   } catch (error) {
     console.log("from data: ", error);
-    res.status(500).json({ error: error.messsage });
+    res.status(400).json({ error: error.messsage ? error.message : error });
   }
 });
 
 router.get("/logout", async (req, res) => {
   req.session.destroy();
-  res.redirect("../login");
+  res.json({loggedOut: true})
 });
 
 module.exports = router;

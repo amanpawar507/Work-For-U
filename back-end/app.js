@@ -14,7 +14,7 @@ const configRoutes = require('./routes');
 
 app.use(express.json());
 
-configRoutes(app);
+
 
 app.use(session({
   name: 'AuthCookie',
@@ -23,6 +23,18 @@ app.use(session({
   saveUninitialized: true
 }));
 
+
+app.use((req,res,next) => {
+  console.log('Current Timestamp: ', new Date().toUTCString());
+  console.log('Request Method: ', req.method);
+  console.log('Request Route: ', req.originalUrl);
+  console.log(`User is${req.session.email ? "" : " not"} authenticated`)
+
+  next();
+})
+
+
+configRoutes(app);
 app.listen(5000, () => {
   console.log("We've now got a server!");
   console.log('Your routes will be running on http://localhost:5000');

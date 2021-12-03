@@ -17,6 +17,7 @@ export const Header = ({isFreelancer}) => {
                 <Button color='brand.300' variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}`)}>Dashboard</Button>
                 <Button color='brand.300' variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/projects`)}>Projects</Button>
                 <Button color='brand.300' variant='ghost'>Profile</Button>
+                <Button color='brand.300' variant='ghost' onClick={() => router.push(`/logout`)}>Logout</Button>
             </HStack>
         </HStack>
     )

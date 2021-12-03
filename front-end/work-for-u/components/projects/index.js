@@ -13,7 +13,7 @@ export const Projects = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
 
-    const {user, isFreelancer} = useContext(UserContext);
+    const {user,isFreelancer} = useContext(UserContext);
 
     const {isOpen,onOpen,onClose} = useDisclosure();
     const {isOpen: isDetailsOpen, onOpen: onDetailsOpen, onClose: onDetailsClose} = useDisclosure();
@@ -78,8 +78,8 @@ export const Projects = () => {
             }
 
         } catch (error) {
-            console.log(error);
-            toast({title: error.message? error.message : error,
+            console.log(error.response.data);
+            toast({title: error.error? error.error : error,
                 status: "error",
                 duration: 2000
             });
@@ -114,31 +114,15 @@ export const Projects = () => {
     }
 
     return(
-        <>
-        {
-            !isFreelancer ? 
-            <Box w={'100%'}>
-                <Button minW={'100px'} variant={'outline'} color={'brand.300'} borderColor={'brand.300'} mb='20px' onClick={() => onOpen()}>Add</Button>
-                <Grid templateColumns="repeat(3, 1fr)" gap={4}>
-                    {
-                        projects.map((i,idx) => <ProjectCard key={idx} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)}/>)
-                    }
-                </Grid>
-                <AddProjectModal isOpen={isOpen} onClose={onClose} onSubmit={handleCreateProject} submitting={isSubmitting} isEdit={isEdit} selectedProject={selectedProject}/>
-                <ProjectDetailsModal isOpen={isDetailsOpen} onClose={onDetailsClose} projectDetails={selectedProject}/>
-            </Box> 
-            : 
-            <Box w={'100%'}>
-                <p></p>
-                <Grid templateColumns="repeat(3, 1fr)" gap={4}>
-                    {
-                        projects.map((i,idx) => <ProjectCard key={idx} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)}/>)
-                    }
-                </Grid>
-                <AddProjectModal isOpen={isOpen} onClose={onClose} onSubmit={handleCreateProject} submitting={isSubmitting} isEdit={isEdit} selectedProject={selectedProject}/>
-                <ProjectDetailsModal isOpen={isDetailsOpen} onClose={onDetailsClose} projectDetails={selectedProject}/>
-            </Box>
-        }
-        </>
+        <Box w={'100%'}>
+            {!isFreelancer && <Button minW={'100px'} variant={'outline'} color={'brand.300'} borderColor={'brand.300'} mb='20px' onClick={() => onOpen()}>Add</Button>}
+            <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+                {
+                    projects.map((i,idx) => <ProjectCard key={idx} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)}/>)
+                }
+            </Grid>
+            <AddProjectModal isOpen={isOpen} onClose={onClose} onSubmit={handleCreateProject} submitting={isSubmitting} isEdit={isEdit} selectedProject={selectedProject}/>
+            <ProjectDetailsModal isOpen={isDetailsOpen} onClose={onDetailsClose} projectDetails={selectedProject}/>
+        </Box>
     )
 }

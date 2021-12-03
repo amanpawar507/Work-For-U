@@ -2,7 +2,7 @@ import { Layout } from "../../components";
 
 const { Projects } = require("../../components/projects")
 
-const FreelancerProjectPage = () => {
+const FreelancerProjectsPage = () => {
     return(
         <Layout>
             <Projects/>
@@ -10,4 +10,4 @@ const FreelancerProjectPage = () => {
     )
 }
 
-export default FreelancerProjectPage;
+export default FreelancerProjectsPage;
