@@ -152,7 +152,7 @@ const searchType = async (filterObj) => {
   const freelancerList = await freelancerCollection.find({}).toArray();
   let resultarr = [];
 
-  if (filterObj.filterkey == "name") {
+  if (filterObj.filterkey === "name") {
     for (let i of freelancerList) {
       if(i.fullName.length > filterObj.query.length) {
         if (i.fullName.toLowerCase().includes(filterObj.query.toLowerCase())) {
@@ -165,7 +165,7 @@ const searchType = async (filterObj) => {
       }
     }
     return resultarr;
-  } else if (filterObj.filterkey == "skill") {
+  } else if (filterObj.filterkey === "skill") {
     for (let i of freelancerList) {
       for(let j of i.skills){
         if (j.name.toLowerCase().includes(filterObj.query.toLowerCase())) {
