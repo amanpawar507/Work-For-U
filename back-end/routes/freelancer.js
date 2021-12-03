@@ -56,9 +56,14 @@ router.post("/", async (req, res) => {
 //-----------------------------------------getAll---------------------------------------------------------
 
 router.get("/all", async (req, res) => {
-  try {
-    const freelancerList = await freelancer.getAll();
-    res.json(freelancerList);
+    try {
+      // console.log(req.session.email);
+      // if(req.session.email) {
+        const freelancerList = await freelancer.getAll();
+        res.json(freelancerList);
+      // }else{
+      //   res.status(401).json({message: "unauthorized access!"});
+      // }
   } catch (e) {
     let error = e.toString();
     res.status(500).json({ error: error });
@@ -69,22 +74,26 @@ router.get("/all", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const id = req.params.id;
-    if (!id) {
-      res.status(400).json({ error: "Please provide an ID" });
-      return;
-    }
-    if (typeof id !== "string") {
-      res.status(400).json({ error: "Invalid type of ID" });
-      return;
-    }
-    if (id.trim().length === 0) {
-      res.status(400).json({ error: "empty spaces for ID" });
-      return;
-    }
-
-    let result = await freelancer.getFreelancer(id);
-    res.json(result);
+    // if(req.session.email) {
+      const id = req.params.id;
+      if (!id) {
+        res.status(400).json({ error: "Please provide an ID" });
+        return;
+      }
+      if (typeof id !== "string") {
+        res.status(400).json({ error: "Invalid type of ID" });
+        return;
+      }
+      if (id.trim().length === 0) {
+        res.status(400).json({ error: "empty spaces for ID" });
+        return;
+      }
+  
+      let result = await freelancer.getFreelancer(id);
+      res.json(result);
+    // }else{
+    //   res.status(401).json({message: "unauthorized access!"});
+    // }
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.messsage });
@@ -93,30 +102,38 @@ router.get("/:id", async (req, res) => {
 
 //-----------------------------------------getonbasisofNameOrSkill---------------------------------------------------------
 
-router.get("/searchFreelancer/", async (req, res) => {
+router.post("/searchFreelancer", async (req, res) => {
   try {
-    const obj = req.body; //{query,filterkey}
-    // const id = req.params.id;
-    if (!obj.query || !obj.filterkey) {
-      res.status(400).json({ error: "Please provide all the details" });
-      return;
-    }
-    if (typeof obj.query !== "string" || typeof obj.filterkey !== "string") {
-      res.status(400).json({ error: "Invalid type of input object" });
-      return;
-    }
-    if (obj.query.trim().length === 0 || obj.filterkey.trim().length === 0) {
-      res.status(400).json({ error: "empty spaces for input object" });
-      return;
-    }
-
-    let result = await freelancer.searchType(obj);
-    res.json(result);
+    // if(req.session.email) {
+      const obj = req.body; //{query,filterkey}
+      // const id = req.params.id;
+      if (!obj.query || !obj.filterkey) {
+        res.status(400).json({ error: "Please provide all the details" });
+        return;
+      }
+      if (typeof obj.query !== "string" || typeof obj.filterkey !== "string") {
+        res.status(400).json({ error: "Invalid type of input object" });
+        return;
+      }
+      if (obj.query.trim().length === 0 || obj.filterkey.trim().length === 0) {
+        res.status(400).json({ error: "empty spaces for input object" });
+        return;
+      }
+  
+      let result = await freelancer.searchType(obj);
+      res.json(result);
+    // }else{
+    //   res.status(401).json({message: "unauthorized access!"});
+    // }
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.messsage });
   }
 });
+
+//-------------------------------------get recommended freelancer-----------------------------------------------
+
+
 
 //----------------------------------------delete------------------------------------------------
 
@@ -143,16 +160,19 @@ router.post("/login", async (req, res) => {
       return;
     }
 
-    let verifyUser = await freelancer.checker(req.body);
+    let verifyUser = await freelancer.checker(emailId, password);
     res.json(verifyUser);
   } catch (error) {
     console.log("from data: ", error);
-    res.status(500).json({ error: error.messsage });
+    res.status(500).json({ error: error.messsage ? error.message : error});
   }
 });
+
+
+
 //-------------------------------------logout-----------------------------------------------
 router.get("/logout", async (req, res) => {
   req.session.destroy();
-  res.redirect("../login");
+  res.json({loggedOut: true})
 });
 module.exports = router;

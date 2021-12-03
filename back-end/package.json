@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "SET PORT=5000 && nodemon app.js",
-    "seed": "node tasks/seed.js",
+    "start": "PORT=5000 nodemon app.js",
+    "seed": "node tasks/seed3.js",
     "seed2": "node tasks/seed2.js"
   },
   "repository": {

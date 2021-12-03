@@ -1,7 +1,7 @@
 import { Layout } from "../../components"
 import { Login } from "../../components/login"
 
-const FreelancerLoginPage = () => {
+const LoginPage = () => {
     return (
         <Layout>
             <Login/>
@@ -9,4 +9,4 @@ const FreelancerLoginPage = () => {
     )
 }
 
-export default FreelancerLoginPage
+export default LoginPage
