@@ -5,6 +5,7 @@ import { ProjectCard } from "./projectCard";
 import { AddProjectModal } from "./addProjectModal";
 import { ProjectDetailsModal } from "./projectDetailsModal";
 import { UserContext } from "../contexts/userContext";
+import client from "../../utils/client";
 
 export const Projects = () => {
 
@@ -23,7 +24,7 @@ export const Projects = () => {
     useEffect(() => {
         if(!user) return;
         const getAllProjects = async () => {
-            const {data} = await axios.get(`http://localhost:5000/project/all/employer/${user._id}`);
+            const {data} = await client.get(`http://localhost:5000/project/all/employer/${user._id}`);
             setProjects(data);
         }
         getAllProjects();
@@ -46,7 +47,7 @@ export const Projects = () => {
             if(details._id) {
                 let id = details._id;
                 delete details._id;
-                const {data} = await axios.patch(`http://localhost:5000/project/${id}`,
+                const {data} = await client.patch(`http://localhost:5000/project/${id}`,
                     {
                         ...details, 
                         tenureMonths: tenure,
@@ -59,7 +60,7 @@ export const Projects = () => {
                 setIsSubmitting(false);
                 onClose();
             }else{
-                const {data} = await axios.post("http://localhost:5000/project/",
+                const {data} = await client.post("http://localhost:5000/project/",
                     {
                         ...details, 
                         tenureMonths: tenure,
@@ -96,7 +97,7 @@ export const Projects = () => {
 
     const handleDeleteProject = async id => {
         try {
-            const {data} = await axios.delete(`http://localhost:5000/project/${id}`);
+            const {data} = await client.delete(`http://localhost:5000/project/${id}`);
             console.log(data);
             if(data.deleted) {
                 setProjects(prevValue => {

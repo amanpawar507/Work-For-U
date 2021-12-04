@@ -15,8 +15,8 @@ import {
     Box,
     Progress
   } from "@chakra-ui/react"
-  import axios from "axios";
   import { Checkbox, CheckboxGroup } from "@chakra-ui/react"
+import client from "../../utils/client";
 
   export const AddProjectModal = ({isOpen,onClose,onSubmit,submitting,isEdit,selectedProject}) => {
 
@@ -34,7 +34,7 @@ import {
     useEffect(() => {
         try {
             const getAllSkills = async () => {
-                const {data} = await axios.get("http://localhost:5000/skills/");
+                const {data} = await client.get("http://localhost:5000/skills/");
                 setSkillList(data);
                 setLoading(false);
             } 
