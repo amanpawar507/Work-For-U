@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const { freelancer } = require("../data");
 const data = require("../data");
+const {generateToken} = require("../middlewares/JWT");
 const freelancerData = data.employer;
 
 //-----------------------------------------create---------------------------------------------------------
@@ -187,7 +188,8 @@ router.post("/login", async (req, res) => {
     }
 
     let verifyUser = await freelancer.checker(emailId, password);
-    res.json(verifyUser);
+    let token = generateToken(verifyUser);
+    res.json({token: token,user: verifyUser});
   } catch (error) {
     console.log("from data: ", error);
     res.status(500).json({ error: error.messsage ? error.message : error});

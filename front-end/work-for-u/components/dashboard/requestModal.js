@@ -16,8 +16,9 @@ import {
     Select,
     useToast
   } from "@chakra-ui/react"
-import axios from "axios";
+
 import { useContext, useEffect,useState } from "react"
+import client from "../../utils/client";
 import { UserContext } from "../contexts/userContext";
 
 
@@ -37,7 +38,7 @@ import { UserContext } from "../contexts/userContext";
         const getUserProjects = async() => {
             try {
                 setLoading(true);
-                const {data} = await axios.get(`http://localhost:5000/project/all/employer/${user._id}`);
+                const {data} = await client.get(`http://localhost:5000/project/all/employer/${user._id}`);
                 console.log("data: ",data);
                 if(data.length > 0) {
                     let available = [];
@@ -65,7 +66,7 @@ import { UserContext } from "../contexts/userContext";
     const handleAddRequest = async projectId => {
         try {
             setSending(true);
-            const {data} = await axios.post("http://localhost:5000/project/requests/add",{freelancerId: selectedFreelancer._id, projectId: projectId});
+            const {data} = await client.post("http://localhost:5000/project/requests/add",{freelancerId: selectedFreelancer._id, projectId: projectId});
             if(data.addedRequest) toast({
                 title: "Request sent successfully",
                 status:"success",

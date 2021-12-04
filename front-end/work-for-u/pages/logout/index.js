@@ -9,7 +9,7 @@ const Logout = () => {
     const {setUser} = useContext(UserContext);
 
     useEffect(() => {
-        localStorage.removeItem('user');
+        localStorage.removeItem('accessToken');
         localStorage.removeItem('isFreelancer');
         setUser(null);
         router.push("/");

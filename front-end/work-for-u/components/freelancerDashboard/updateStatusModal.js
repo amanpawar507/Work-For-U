@@ -27,7 +27,7 @@ import { useEffect, useState } from 'react';
                     return;
                 }
                 setLoading(true);
-                const {data} = await axios.patch("http://localhost:5000/project/requests/update",{
+                const {data} = await client.patch("http://localhost:5000/project/requests/update",{
                     freelancerId: selectedProject.assignedTo,
                     projectId: selectedProject._id,
                     status: status

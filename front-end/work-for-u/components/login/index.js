@@ -27,7 +27,7 @@ export const Login = () => {
             setChecking(false);
             router.push(`/${isFreelancer?"freelancer":"employer"}`)
         } catch (error) {
-            console.log(error.response.data);
+            console.log(error);
             toast({
                 title: error.response? error.response.data.error:error,
                 status: "error",

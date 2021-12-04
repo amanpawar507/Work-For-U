@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/dist/client/router";
 import React, { createContext, useEffect, useState } from "react";
+import client from "../../utils/client";
 
 
 export const UserContext = createContext();
@@ -17,7 +18,7 @@ const UserContextProvider = ({children}) => {
         try {
 
          
-            let userExist = localStorage.getItem('user');
+            let userExist = localStorage.getItem('accessToken');
             let isFreelancer = localStorage.getItem('isFreelancer');
             console.log(userExist);
             if(isFreelancer === undefined || isFreelancer === null) {
@@ -26,10 +27,10 @@ const UserContextProvider = ({children}) => {
             else{
                 if(isFreelancer === "true") {
                     setIsFreelancer(true);
-                    if(userExist) setFreelancer(userExist);
+                    if(userExist && userExist !== undefined) setCurrentUser(userExist);
                 }else{
                     setIsFreelancer(false);
-                    if(userExist) setEmployer(userExist);
+                    if(userExist && userExist !== undefined) setCurrentUser(userExist);
                 }
             }
         } catch (error) {
@@ -38,22 +39,21 @@ const UserContextProvider = ({children}) => {
         }
     },[]);
 
-    const setEmployer = async(id) => {
-        const {data} = await axios.get(`http://localhost:5000/employer/${id}`)
+    const setCurrentUser = async(id) => {
+        const {data} = await client.get(`http://localhost:5000/reCreate`)
+        console.log(data);
         if(data) {
-            setUser(data);
-            localStorage.setItem("user",data._id);
+            setUser(data.user);
         }
     }
 
-    const setFreelancer = async(id) => {
-        const {data} = await axios.get(`http://localhost:5000/freelancer/${id}`)
-        if(data) {
-            setUser(data);
-            localStorage.setItem("user",data._id);
-            // router.push('/freelancer');
-        }
-    }
+    // const setFreelancer = async(id) => {
+    //     const {data} = await client.get(`http://localhost:5000/freelancer/${id}`)
+    //     if(data) {
+    //         setUser(data.user);
+    //         // router.push('/freelancer');
+    //     }
+    // }
 
     const handleTypeSelect = type => {
         if(type === 1) {
@@ -68,8 +68,8 @@ const UserContextProvider = ({children}) => {
 
     const saveUser = user => {
         if(!user) return;
-        setUser(user);
-        localStorage.setItem('user',user._id);
+        setUser(user.user);
+        localStorage.setItem('accessToken',user.token);
     }
 
     return (

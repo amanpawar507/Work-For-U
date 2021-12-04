@@ -5,6 +5,7 @@ const { employer } = require("../data");
 const { route } = require("./project");
 const data = require("../data");
 const e = require("express");
+const {generateToken} = require("../middlewares/JWT");
 const employerData = data.employer;
 
 
@@ -84,10 +85,10 @@ router.post("/login", async (req, res) => {
     }
 
     let verifyUser = await employer.checker(emailId,password);
-    req.session.email = emailId;
-    req.session.save();
-    console.log(req.session);
-    res.json(verifyUser);
+
+    const token = generateToken(verifyUser);
+ console.log(token);
+    res.json({token: token,user: verifyUser});
   } catch (error) {
     console.log("from data: ", error);
     res.status(400).json({ error: error.messsage ? error.message : error });
