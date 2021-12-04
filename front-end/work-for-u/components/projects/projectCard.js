@@ -31,7 +31,7 @@ export const ProjectCard = ({name, status,onDetailsClick,onEditClick,onDeleteCli
                 <HStack textAlign={'left'} w={'100%'} justifyContent={'space-between'}>
                     <Text>Status: {getStatus(status)}</Text>
                     <HStack>
-                        <Button variant={'outline'} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>
+                        {isFreelancer && <Button variant={'outline'} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>}
                         <IconButton color={'brand.900'} icon={<MdInfo/>} onClick={() => onDetailsClick()}/>
                         {!isFreelancer && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
                         {!isFreelancer && <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>}

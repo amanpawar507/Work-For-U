@@ -5,6 +5,7 @@ import { ProjectCard } from "./projectCard";
 import { AddProjectModal } from "./addProjectModal";
 import { ProjectDetailsModal } from "./projectDetailsModal";
 import { UserContext } from "../contexts/userContext";
+import client from "../../utils/client";
 
 export const Projects = () => {
 
@@ -13,7 +14,7 @@ export const Projects = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
 
-    const {user} = useContext(UserContext);
+    const {user,isFreelancer} = useContext(UserContext);
 
     const {isOpen,onOpen,onClose} = useDisclosure();
     const {isOpen: isDetailsOpen, onOpen: onDetailsOpen, onClose: onDetailsClose} = useDisclosure();
@@ -23,11 +24,16 @@ export const Projects = () => {
     useEffect(() => {
         if(!user) return;
         const getAllProjects = async () => {
-            const {data} = await axios.get(`http://localhost:5000/project/all/employer/${user._id}`);
+            if(!isFreelancer){
+                const {data} = await client.get(`http://localhost:5000/project/all/employer/${user._id}`);
+            }
+            else{
+                const {data} = await client.get(`http://localhost:5000/project/all/freelancer/${user._id}`);
+            }
             setProjects(data);
         }
         getAllProjects();
-    },[user])
+    },[user,isFreelancer])
 
 
     const handleCreateProject = async details => {
@@ -46,7 +52,7 @@ export const Projects = () => {
             if(details._id) {
                 let id = details._id;
                 delete details._id;
-                const {data} = await axios.patch(`http://localhost:5000/project/${id}`,
+                const {data} = await client.patch(`http://localhost:5000/project/${id}`,
                     {
                         ...details, 
                         tenureMonths: tenure,
@@ -59,7 +65,7 @@ export const Projects = () => {
                 setIsSubmitting(false);
                 onClose();
             }else{
-                const {data} = await axios.post("http://localhost:5000/project/",
+                const {data} = await client.post("http://localhost:5000/project/",
                     {
                         ...details, 
                         tenureMonths: tenure,
@@ -73,8 +79,8 @@ export const Projects = () => {
             }
 
         } catch (error) {
-            console.log(error);
-            toast({title: error.message? error.message : error,
+            console.log(error.response.data);
+            toast({title: error.error? error.error : error,
                 status: "error",
                 duration: 2000
             });
@@ -96,7 +102,7 @@ export const Projects = () => {
 
     const handleDeleteProject = async id => {
         try {
-            const {data} = await axios.delete(`http://localhost:5000/project/${id}`);
+            const {data} = await client.delete(`http://localhost:5000/project/${id}`);
             console.log(data);
             if(data.deleted) {
                 setProjects(prevValue => {
@@ -110,7 +116,7 @@ export const Projects = () => {
 
     return(
         <Box w={'100%'}>
-            <Button minW={'100px'} variant={'outline'} color={'brand.300'} borderColor={'brand.300'} mb='20px' onClick={() => onOpen()}>Add</Button>
+            {!isFreelancer && <Button minW={'100px'} variant={'outline'} color={'brand.300'} borderColor={'brand.300'} mb='20px' onClick={() => onOpen()}>Add</Button>}
             <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                 {
                     projects.map((i,idx) => <ProjectCard key={idx} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)}/>)

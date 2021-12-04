@@ -1,9 +1,9 @@
 import { Box, HStack, Stat, StatHelpText, StatLabel, StatNumber, Text, useDisclosure, useToast } from "@chakra-ui/react";
-import axios from "axios";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../components/contexts/userContext";
 import { ProjectCard } from "../../components/projects/projectCard";
+import client from "../../utils/client";
 import { ProjectDetailsModal } from "../projects/projectDetailsModal";
 import { UpdateStatusModal } from "./updateStatusModal";
 
@@ -26,7 +26,7 @@ export const FreelancerDashboard = () => {
         if(!user) return;
         const getData = async() => {
             try {
-                const {data} = await axios.get(`http://localhost:5000/project/all/freelancer/${user._id}`);
+                const {data} = await client.get(`http://localhost:5000/project/all/freelancer/${user._id}`);
                 console.log(data);
                 if(data.length > 3) {
                     setRecentProjects(data.slice(0,2))

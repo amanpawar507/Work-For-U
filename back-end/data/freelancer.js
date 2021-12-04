@@ -1,6 +1,7 @@
 const { freelancer } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
-const { getProject } = require("./project");
+const {getEmployer} = require('./employer');
+const { getProject,getAllEmployerProjects } = require("./project");
 //const { getSkill } = require("./freelanceFunctions");
 const { ObjectId } = require("mongodb");
 const bCrypt = require("bcrypt");
@@ -15,6 +16,16 @@ const getCurrentTime = () => {
   var dateTime = date + " " + time;
   return dateTime;
 };
+
+const createIndices = async() => {
+  const freelancerCollection = await freelancer();
+  const result = await freelancerCollection.createIndex({
+    fullName: "text",
+    skills: "text",
+    location: "text"
+  });
+  console.log(result);
+}
 
 const createFreelancer = async (data) => {
   const {
@@ -141,23 +152,31 @@ const searchType = async (filterObj) => {
   const freelancerList = await freelancerCollection.find({}).toArray();
   let resultarr = [];
 
-  if (filterObj.filterkey == "name") {
+  if (filterObj.filterkey === "name") {
     for (let i of freelancerList) {
-      if (i.name.includes(filterObj.query)) {
-        resultarr.push(i);
-      }
-    }
-  } else if (filterObj.filterkey == "skill") {
-    for (let i of freelancerList) {
-      for(let j of i.skills){
-        if (j.includes(filterObj.query)) {
+      if(i.fullName.length > filterObj.query.length) {
+        if (i.fullName.toLowerCase().includes(filterObj.query.toLowerCase())) {
+          resultarr.push(i);
+        }
+      }else{
+        if (filterObj.query.toLowerCase().includes(i.fullName.toLowerCase())) {
           resultarr.push(i);
         }
       }
     }
+    return resultarr;
+  } else if (filterObj.filterkey === "skill") {
+    for (let i of freelancerList) {
+      for(let j of i.skills){
+        if (j.name.toLowerCase().includes(filterObj.query.toLowerCase())) {
+          resultarr.push(i);
+        }
+      }
+    }
+    return resultarr;
   } else throw "Unidentified object value";
 
-  return resultarr;
+  
 };
 /////-----------------------------------------checkFreelancer-----------------------------------------------------
 async function checker(emailId, password) {
@@ -170,14 +189,14 @@ async function checker(emailId, password) {
     throw "Incorrect username or password";
   if (password.length < 6) throw "Incorrect username or password";
 
-  const employerCollection = await employer();
-  let user = await employerCollection.findOne({
+  const freelancerCollection = await freelancer();
+  let user = await freelancerCollection.findOne({
     emailId: emailId.toLowerCase(),
   });
   if (!user || !user._id) throw "Either the emailId or password is invalid";
-  let mat = await bcrypt.compare(password, user.password);
+  let mat = await bCrypt.compare(password, user.password);
   if (!mat) throw "Either the emailId or password is invalid";
-  return { authenticated: true };
+  return { _id:user._id.toString(),...user};
 }
 //--------------------------------------------delete freelancer-----------------------------------------------
 const remove = async (freelancerID) => {
@@ -189,7 +208,31 @@ const remove = async (freelancerID) => {
   }
   return { Deleted: true };
 };
-//---------------------------------------------rating and review-----------------------------------------------
+//---------------------------------------------get recommended freelancers-----------------------------------------------
+
+const getRecommended = async employerId => {
+  if(!employerId) throw "Please pass an employer ID";
+  if(typeof employerId !== "string") throw "Invalid type of employerID";
+  if(employerId.trim().length === 0) throw "empty spaces found";
+  ObjectId(employerId);
+  const employerFound = await getEmployer(employerId);
+  const allProjects = await getAllEmployerProjects(employerId);
+  let skillsRequired = [];
+  allProjects.map(i => {
+    skillsRequired = [...skillsRequired,...i.skillsRequired]
+  });
+  skillsRequired = skillsRequired.map(i=>i._id);
+  skillsRequired = Array.from(new Set(skillsRequired));
+  const freelancerCollection = await freelancer();
+  let matchedFreelancers = await freelancerCollection.find({'skills._id': {$in: skillsRequired}}).toArray();
+  if(!matchedFreelancers) throw "could not find recommendations";
+  for (let i of matchedFreelancers) {
+    i._id = i._id.toString();
+  }
+  return matchedFreelancers;
+}
+
+
 
 module.exports = {
   createFreelancer,
@@ -198,4 +241,6 @@ module.exports = {
   searchType,
   checker,
   remove,
+  createIndices,
+  getRecommended
 };

@@ -15,6 +15,16 @@ const getCurrentTime = () => {
   return dateTime;
 };
 
+// const createIndices = async() => {
+//   const employerCollection = await employer();
+//   const result = await employerCollection.createIndex({
+//     fullName: "text",
+//     skills: "text",
+//     location: "text"
+//   });
+//   console.log(result);
+// }
+
 const createEmployer = async (data) => {
   const { fullName, emailId, password, companyName } = data;
   if (!fullName || !emailId || !password || !companyName)
@@ -79,16 +89,16 @@ async function checker(emailId, password) {
     throw "All the parameters has to be string";
   if (!emailId.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
     throw "Incorrect username or password";
-  if (password.length < 6) throw "Incorrect username or password";
+  //if (password.length < 6) throw "Incorrect username or password";
 
   const employerCollection = await employer();
   let user = await employerCollection.findOne({
     emailId: emailId.toLowerCase(),
   });
   if (!user || !user._id) throw "Either the emailId or password is invalid";
-  let mat = await bcrypt.compare(password, user.password);
+  let mat = await bCrypt.compare(password, user.password);
   if (!mat) throw "Either the emailId or password is invalid";
-  return { authenticated: true };
+  return { _id:user._id.toString(),...user};
 }
 
 //------------------------------------------delete employer------------------------------------------

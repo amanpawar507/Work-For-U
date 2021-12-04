@@ -1,7 +1,10 @@
 import { Box, Button, Checkbox, CheckboxGroup, Flex, FormLabel, HStack, Select, Textarea, useToast } from "@chakra-ui/react"
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/dist/client/router";
+import { useContext, useEffect, useState } from "react";
+import client from "../../utils/client";
 import { InputComp } from "../common/Input"
+import { UserContext } from "../contexts/userContext";
 
 
 export const Register = ({isFreelancer}) => {
@@ -21,7 +24,8 @@ export const Register = ({isFreelancer}) => {
     const [allStates, setAllStates] = useState([]);
     const [skillList, setSkillList] = useState([]);
     const [skillSet,setSkillSet] = useState([]);
-
+    const router = useRouter();
+    const {isFreelancer} = useContext(UserContext);
     const toast = useToast();
 
     useEffect(() => {
@@ -30,7 +34,7 @@ export const Register = ({isFreelancer}) => {
                 const {data} = await axios.post("https://countriesnow.space/api/v0.1/countries/states",{country:"United States"});
                 console.log(data)
                 setAllStates(data.data.states)
-                const {data: skills} = await axios.get("http://localhost:5000/skills/");
+                const {data: skills} = await client.get("http://localhost:5000/skills/");
                 setSkillList(skills);
             } catch (error) {
                 console.log(error);
@@ -41,8 +45,8 @@ export const Register = ({isFreelancer}) => {
                 });
             }
         }
-        getData();
-    },[])
+        if(isFreelancer) getData();
+    },[isFreelancer])
 
     const handleChange = e =>{
         const {value,name} = e.target;
@@ -74,16 +78,23 @@ export const Register = ({isFreelancer}) => {
                     ...request,
                     expectedPay: parseFloat(request.expectedPay)
                 }
-                const {data} = await axios.post("http://localhost:5000/freelancer/",request);
+                const {data} = await client.post("http://localhost:5000/freelancer/",request);
                 console.log(data);
+                toast({
+                    title: "registration successfull",
+                    status: "success",
+                    duration: 2000
+                });
             }else{
                 delete request.expectedPay;
                 delete request.introduction;
                 delete request.location;
                 delete request.skills;
-                const {data} = await axios.post("http://localhost:5000/employer/",request);
+                const {data} = await client.post("http://localhost:5000/employer/",request);
                 console.log(data);
+                
             }
+            router.push('/login');
             setSubmitting(false);
         } catch (error) {
             console.log(error)
@@ -130,7 +141,7 @@ export const Register = ({isFreelancer}) => {
                     <Button colorScheme={'teal'} mt='10px' w="100%" type="submit" isLoading={submitting}>
                         Register
                     </Button>
-                    <Button colorScheme={'teal'} mt='10px' w="100%" isDisabled={submitting}>
+                    <Button colorScheme={'teal'} mt='10px' w="100%" isDisabled={submitting} onClick={() => router.push('/login')}>
                         Back to login
                     </Button>
                 </form>

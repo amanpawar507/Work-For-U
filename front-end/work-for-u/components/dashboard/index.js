@@ -1,4 +1,6 @@
+import { useToast } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { HStack, toast, useDisclosure, useToast } from "@chakra-ui/react";
 import { FreelancerCard } from "./freelancerCard";
 import axios from "axios";
@@ -48,3 +50,29 @@ export const Dashboard = () => {
     </>
   );
 };
+=======
+// import axios from 'axios';
+import client from "../../utils/client";
+import { FreelancerList } from "../common/freelancerList";
+
+export const Dashboard = () => {
+
+    const [listofFreelancers, setListOfFreelancers] = useState([]);
+
+
+    const toast = useToast();
+
+    useEffect(() => {
+        const getFreelancers = async() => {
+            const {data} = await client.get("http://localhost:5000/freelancer/all");
+            setListOfFreelancers(data);
+        }
+        getFreelancers();
+    },[])
+
+
+    return (
+       <FreelancerList list={listofFreelancers}/>
+    )
+} 
+>>>>>>> 58cc1ef838d1bc927d59ec02c5976862624a6a4a

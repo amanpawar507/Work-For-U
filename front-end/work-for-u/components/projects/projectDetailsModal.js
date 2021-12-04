@@ -11,8 +11,8 @@ import {
     Progress,
     Box
   } from "@chakra-ui/react"
-  import axios from "axios";
 import { useContext, useEffect, useState } from "react"
+import client from "../../utils/client";
 import { UserContext } from "../contexts/userContext";
 
   export const ProjectDetailsModal = ({isOpen,onClose,projectDetails}) => {
@@ -35,7 +35,7 @@ import { UserContext } from "../contexts/userContext";
         if(!projectDetails) return;
         const getEmployer= async() => {
             try {
-                const {data} = await axios.get(`http://localhost:5000/employer/${projectDetails.createdBy}`);
+                const {data} = await client.get(`http://localhost:5000/employer/${projectDetails.createdBy}`);
                 setCreatedBy(data.fullName); 
             } catch (error) {
                 console.log(error);
@@ -43,7 +43,7 @@ import { UserContext } from "../contexts/userContext";
         }
         const getFreelancer = async() => {
             try {
-                const {data} = await axios.get(`http://localhost:5000/freelancer/${projectDetails.assignedTo}`);
+                const {data} = await client.get(`http://localhost:5000/freelancer/${projectDetails.assignedTo}`);
                  setAssignedTo(data.fullName); 
             } catch (error) {
                 console.log(error);
