@@ -12,6 +12,7 @@ import {
   } from '@chakra-ui/react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import client from '../../utils/client';
 
   export const UpdateStatusModal = ({isOpen,onClose, selectedProject, setUpdatedProject}) => {
 
@@ -22,13 +23,13 @@ import { useEffect, useState } from 'react';
         const handleSubmit = async e => {
             try {
                 e.preventDefault();
+                //debugger;
                 if(status === selectedProject.status) {
                     onClose();
                     return;
                 }
                 setLoading(true);
-                const {data} = await client.patch("http://localhost:5000/project/requests/update",{
-                    freelancerId: selectedProject.assignedTo,
+                const {data} = await client.patch("http://localhost:5000/project/status/update",{
                     projectId: selectedProject._id,
                     status: status
                 });

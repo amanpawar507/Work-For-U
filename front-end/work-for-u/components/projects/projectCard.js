@@ -1,20 +1,26 @@
-import { Box, Button, Heading, HStack, IconButton, Text, VStack } from "@chakra-ui/react"
+import { Box, Button, Heading, HStack, IconButton, Text, useToast, VStack } from "@chakra-ui/react"
 import { useContext, useState } from "react"
 import {MdInfo,MdEdit,MdDelete} from "react-icons/md"
+import client from "../../utils/client";
 import { UserContext } from "../contexts/userContext";
 
-export const ProjectCard = ({name, status,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick}) => {
+export const ProjectCard = ({id, name, status,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick,setUpdatedRequest}) => {
 
     const [deleteOpen, setDeleteOpen] = useState(false);
 
-    const {isFreelancer} = useContext(UserContext);
+    const {isFreelancer,user} = useContext(UserContext);
+
+    const [accepting, setAccepting] = useState(false);
+    const [rejecting, setRejecting] = useState(false);
+
+    const toast = useToast();
 
     const getStatus = status => {
         switch (status) {
             case 0:
                 return "created"
             case 1:
-                return "accepted"
+                return "Not yet started"
             case 2:
                 return "progress"
             case 3: 
@@ -24,17 +30,45 @@ export const ProjectCard = ({name, status,onDetailsClick,onEditClick,onDeleteCli
         }
     }
 
+    const handleAcceptReject = async status => {
+        try {
+            if(status === "accept") {
+                setAccepting(true);
+            }else{
+                setRejecting(true);
+            }
+            const {data} = await client.patch("http://localhost:5000/project/requests/update",{
+                freelancerId: user._id,
+                projectId: id,
+                status: status
+            });
+            setUpdatedRequest(data);
+            setAccepting(false);
+            setRejecting(false);
+        } catch (error) {
+            toast({
+                title: error.response ? error.response.data.error : error,
+                status: "error",
+                duration: 2000
+            })
+            setAccepting(false);
+            setRejecting(false);
+        }
+    }
+
     return(
         <Box p="10px" borderRadius={'10px'} background={'brand.500'} h={'155px'} position={"relative"}>
             <VStack h={'100%'} textAlign={'left'} justifyContent={'space-between'}>
                 <Heading w='100%' maxHeight={'87px'} overflowY={'hidden'}>{name}</Heading>
                 <HStack textAlign={'left'} w={'100%'} justifyContent={'space-between'}>
-                    <Text>Status: {getStatus(status)}</Text>
-                    <HStack>
-                        {isFreelancer && <Button variant={'outline'} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>}
-                        <IconButton color={'brand.900'} icon={<MdInfo/>} onClick={() => onDetailsClick()}/>
+                    {status !== 0 && <Text>{getStatus(status)}</Text>}
+                    <HStack ml={'auto'}>
+                        {status !== 0 && isFreelancer && <Button variant={'outline'} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>}
                         {!isFreelancer && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
                         {!isFreelancer && <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>}
+                        {status === 0 && <Button isLoading={accepting} isDisabled={rejecting} size={'sm'} variant={"solid"} colorScheme={'green'} onClick={() => handleAcceptReject("accept")}>Accept</Button>}
+                        {status === 0 && <Button isLoading={rejecting} isDisabled={accepting}  size={'sm'} variant={"solid"} colorScheme={'red'}  onClick={() => handleAcceptReject("reject")}>Reject</Button>}            
+                        <IconButton color={'brand.900'} icon={<MdInfo/>} onClick={() => onDetailsClick()}/>
                     </HStack>
                 </HStack>
             </VStack>
