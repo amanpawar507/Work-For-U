@@ -2,7 +2,7 @@ import { Button, HStack, Input, InputGroup, InputRightElement, Select } from "@c
 import { useRouter } from "next/dist/client/router"
 import { useState } from "react";
 
-export const Header = ({isFreelancer}) => {
+export const Header = ({isFreelancer,userInfo}) => {
     const [search,setSearch] = useState(null);
     const [filter, setFilter] = useState(null);
     const router = useRouter();
@@ -32,7 +32,7 @@ export const Header = ({isFreelancer}) => {
             <HStack>
                 <Button color='brand.300' variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}`)}>Dashboard</Button>
                 <Button color='brand.300' variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/projects`)}>Projects</Button>
-                <Button color='brand.300' variant='ghost'>Profile</Button>
+                <Button color='brand.300' variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/${userInfo._id}`)}>Profile</Button>
                 <Button color='brand.300' variant='ghost' onClick={() => router.push(`/logout`)}>Logout</Button>
             </HStack>
         </HStack>

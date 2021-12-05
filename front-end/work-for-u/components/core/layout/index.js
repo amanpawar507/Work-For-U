@@ -10,7 +10,7 @@ export const Layout = ({children}) => {
 
     return(
         <Container maxW={'container.lg'} background={'brand.900'} display={'flex'} flexDirection={'column'}>
-            {user && <Header isFreelancer={isFreelancer}/>}
+            {user && <Header isFreelancer={isFreelancer} userInfo={user}/>}
             <Box w={'100%'} mt={'40px'}>
                 {children}
             </Box>
