@@ -282,18 +282,13 @@ router.get('/', async (req, res) => {
       // if(req.session.email) {
         const {freelancerId, projectId, status} = req.body;
         console.log(req.body);
-        if(!freelancerId || !projectId || (!status && status !== 0)) {
+        if(!freelancerId || !projectId || !status ) {
           res.status(400).json({error: "please pass all fields"});
           return;
         }
   
-        if(typeof freelancerId !== "string" || typeof projectId !== "string" || typeof status !== "number") {
+        if(typeof freelancerId !== "string" || typeof projectId !== "string" || typeof status !== "string") {
           res.status(400).json({error: "Invalid fields"});
-          return;
-        }
-  
-        if(status < 0 || status > 3) {
-          res.status(400).json({error: "Invalid status"});
           return;
         }
   
@@ -303,6 +298,26 @@ router.get('/', async (req, res) => {
       // }else{
       //   res.status(401).json({message: "unauthorized access!"});
       // }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({error: error.message ? error.message : error});
+    }
+  })
+  
+  router.patch("/status/update", async(req,res) => {
+    try {
+      const {projectId, status} = req.body;
+      if(!projectId || !status) {
+        res.status(400).json({error: "Pass all fields"});
+        return;
+      }
+      if(typeof projectId !== "string" || typeof status !== "number") {
+        res.status(400).json({error: "Invalid type of fields"});
+        return;
+      }
+
+      const result = await project.updateProjectStatus(projectId, status);
+      res.json(result);
     } catch (error) {
       console.log(error);
       res.status(500).json({error: error.message ? error.message : error});
