@@ -6,7 +6,6 @@ const { project } = require("../data");
 
 router.post("/", async (req, res) => {
   try {
-    if(req.session.email) {
       let request = req.body;
     const {
       name,
@@ -47,10 +46,6 @@ router.post("/", async (req, res) => {
       createdBy}
     );
     res.json(result);
-    }else{
-      res.status(401).json({message: "unauthorized access!"});
-    }
-    
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.messsage? error.message : error });
