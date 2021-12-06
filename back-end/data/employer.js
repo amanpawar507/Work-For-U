@@ -25,6 +25,8 @@ const getCurrentTime = () => {
 //   console.log(result);
 // }
 
+//--------------------------------------Create Employer--------------------------------------------------
+
 const createEmployer = async (data) => {
   const { fullName, emailId, password, companyName } = data;
   if (!fullName || !emailId || !password || !companyName)
@@ -62,6 +64,8 @@ const createEmployer = async (data) => {
   return newEntryInfo;
 };
 
+//--------------------------------------Get Employer--------------------------------------------------
+
 const getEmployer = async (employerID) => {
   if (!employerID) throw "You must provide an ID to search for";
   if (typeof employerID !== "string")
@@ -81,6 +85,8 @@ const getEmployer = async (employerID) => {
   return findID;
 };
 
+//--------------------------------------VerifyUser--------------------------------------------------
+
 async function checker(emailId, password) {
   if (!emailId || !password) throw "All fields to have valid values";
   if (typeof emailId !== "string" || typeof password !== "string")
@@ -99,7 +105,7 @@ async function checker(emailId, password) {
   let mat = await bCrypt.compare(password, user.password);
   if (!mat) throw "Either the emailId or password is invalid";
   return { _id:user._id.toString(),...user};
-}
+};
 
 //------------------------------------------delete employer------------------------------------------
 const remove = async (employerID) => {
@@ -112,9 +118,41 @@ const remove = async (employerID) => {
   return { Deleted: true };
 };
 
+//------------------------------------------GetListEmployer------------------------------------------
+
+const listemployer = async(employeridarr)=>{
+
+  const employerCollection = await employer();
+  const employerList = await employerCollection.find({}).toArray();
+  // const result =[];
+
+  // let result = await employerCollection.find(
+  //   { _id: { $in:  employeridarr } }
+  //   ).toArray()
+
+  // let result = await employerCollection.find({ _id:  employeridarr  }).toArray()
+
+  for(i of employeridarr){
+    
+    let parsedId  = ObjectId(i); 
+    let employer = await employerCollection.findOne({ _id: parsedId });
+    result.push(employer);
+  }
+
+  return result;
+  if(result.length === 0){
+    throw "No employers found";
+  }
+  else{
+    return result;
+  }
+
+};
+
 module.exports = {
   createEmployer,
   getEmployer,
   checker,
   remove,
+  listemployer
 };
