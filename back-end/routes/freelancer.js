@@ -156,8 +156,8 @@ router.get("/recommended/:id", async(req,res) => {
     //   res.status(401).json({message: "unauthorized access!"});
     // }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error.messsage });
+    console.log(error.message);
+    res.status(500).json({ error: error.messsage ? error.message : error });
   }
 })
 

@@ -9,7 +9,7 @@ export const Layout = ({children}) => {
     const {user, isFreelancer} = useContext(UserContext);
 
     return(
-        <Container maxW={'container.lg'} background={'brand.900'} display={'flex'} flexDirection={'column'}>
+        <Container maxW={'container.lg'} background={'rgb(245, 245, 245)'} display={'flex'} flexDirection={'column'}>
             {user && <Header isFreelancer={isFreelancer} userInfo={user}/>}
             <Box w={'100%'} mt={'40px'}>
                 {children}

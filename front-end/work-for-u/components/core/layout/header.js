@@ -21,8 +21,8 @@ export const Header = ({isFreelancer,userInfo}) => {
     return(
         <HStack w={'100%'} p ={'10px 0'} justifyContent={'space-between'}>
             <HStack>
-                <Input w={'200px'} value={search} onChange={handleChange} placeholder="Search" size="md" color="white" />
-                <Select color="white" value={filter} onChange={e => setFilter(e.target.value)} variant={'outline'} placeholder='filter' size={'md'} w={'100px'}>
+                <Input w={'200px'} borderColor={"#BFC0C0"} value={search} onChange={handleChange} placeholder="Search" size="md"  />
+                <Select value={filter} borderColor={"#BFC0C0"}  onChange={e => setFilter(e.target.value)} variant={'outline'} placeholder='filter' size={'md'} w={'100px'}>
                     <option value="name">name</option>
                     <option value="skill">skill</option>
                     <option value='location'>location</option>
@@ -30,10 +30,10 @@ export const Header = ({isFreelancer,userInfo}) => {
                 <Button onClick={handleSearch}>Search</Button>
             </HStack>
             <HStack>
-                <Button color='brand.300' variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}`)}>Dashboard</Button>
-                <Button color='brand.300' variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/projects`)}>Projects</Button>
-                <Button color='brand.300' variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/${userInfo._id}`)}>Profile</Button>
-                <Button color='brand.300' variant='ghost' onClick={() => router.push(`/logout`)}>Logout</Button>
+                <Button  variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}`)}>Dashboard</Button>
+                <Button variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/projects`)}>Projects</Button>
+                <Button variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/${userInfo._id}`)}>Profile</Button>
+                <Button  variant='ghost' onClick={() => router.push(`/logout`)}>Logout</Button>
             </HStack>
         </HStack>
     )

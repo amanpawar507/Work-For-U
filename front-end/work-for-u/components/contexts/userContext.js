@@ -27,10 +27,10 @@ const UserContextProvider = ({children}) => {
             else{
                 if(isFreelancer === "true") {
                     setIsFreelancer(true);
-                    if(userExist && userExist !== undefined) setCurrentUser(userExist);
+                    if(userExist && userExist !== undefined) setCurrentUser();
                 }else{
                     setIsFreelancer(false);
-                    if(userExist && userExist !== undefined) setCurrentUser(userExist);
+                    if(userExist && userExist !== undefined) setCurrentUser();
                 }
             }
         } catch (error) {
@@ -39,21 +39,13 @@ const UserContextProvider = ({children}) => {
         }
     },[]);
 
-    const setCurrentUser = async(id) => {
+    const setCurrentUser = async() => {
         const {data} = await client.get(`http://localhost:5000/reCreate`)
         console.log(data);
         if(data) {
             setUser(data.user);
         }
     }
-
-    // const setFreelancer = async(id) => {
-    //     const {data} = await client.get(`http://localhost:5000/freelancer/${id}`)
-    //     if(data) {
-    //         setUser(data.user);
-    //         // router.push('/freelancer');
-    //     }
-    // }
 
     const handleTypeSelect = type => {
         if(type === 1) {

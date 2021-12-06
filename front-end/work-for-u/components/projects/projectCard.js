@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HStack, IconButton, Text, useToast, VStack } from "@chakra-ui/react"
+import { Badge, Box, Button, Heading, HStack, IconButton, Text, useToast, VStack } from "@chakra-ui/react"
 import { useContext, useState } from "react"
 import {MdInfo,MdEdit,MdDelete} from "react-icons/md"
 import client from "../../utils/client";
@@ -18,13 +18,27 @@ export const ProjectCard = ({id, name, status,onDetailsClick,onEditClick,onDelet
     const getStatus = status => {
         switch (status) {
             case 0:
-                return "created"
+                return "open"
             case 1:
-                return "Not yet started"
+                return "assigned"
             case 2:
-                return "progress"
+                return "ongoing"
             case 3: 
                 return "completed"
+            default:
+                break;
+        }
+    }
+
+    const getColorScheme = status => {
+        switch (status) {
+            case 1:
+                return "orange"
+            case 2:
+                return "yellow"
+            case 3:
+                return "green"
+        
             default:
                 break;
         }
@@ -57,11 +71,11 @@ export const ProjectCard = ({id, name, status,onDetailsClick,onEditClick,onDelet
     }
 
     return(
-        <Box p="10px" borderRadius={'10px'} background={'brand.500'} h={'155px'} position={"relative"}>
+        <Box boxShadow={"md"} p="10px" borderRadius={'10px'} background={'brand.700'} h={'155px'} position={"relative"}>
             <VStack h={'100%'} textAlign={'left'} justifyContent={'space-between'}>
                 <Heading w='100%' maxHeight={'87px'} overflowY={'hidden'}>{name}</Heading>
                 <HStack textAlign={'left'} w={'100%'} justifyContent={'space-between'}>
-                    {status !== 0 && <Text>{getStatus(status)}</Text>}
+                    {status !== 0 && <Badge colorScheme={getColorScheme(status)} borderRadius={'2px'}>{getStatus(status)}</Badge>}
                     <HStack ml={'auto'}>
                         {status !== 0 && isFreelancer && <Button variant={'outline'} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>}
                         {!isFreelancer && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
