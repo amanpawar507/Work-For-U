@@ -5,6 +5,7 @@ const {getEmployer} = require('./employer');
 //const { getSkill } = require("./freelanceFunctions");
 const { ObjectId } = require("mongodb");
 const bCrypt = require("bcrypt");
+const e = require("express");
 const saltRounds = 16;
 
 async function getAllEmployerProjects  (employerID)  {
@@ -249,7 +250,59 @@ const getRecommended = async employerId => {
  
 }
 
+//---------------------------------------------Blacklisting-----------------------------------------------
 
+const Blacklist = async(freelancerID,employerID) =>{
+
+  let verifyfreelancer        = await getFreelancer(freelancerID);
+  let verifyemployer          = await getEmployer(employerID);
+  const freelancerCollection  = await freelancer();
+
+  let parsedId = ObjectId(freelancerID); 
+  let freelanceraction = await freelancerCollection.findOne({ _id: parsedId });
+
+  if ('blacklist' in freelanceraction){
+    for(let i of freelanceraction.blacklist){
+      if(i == employerID){
+        throw "Employer already added to blacklist sequence"
+      }
+    }
+  }
+  const updatedInfo = await freelancerCollection.updateOne({ _id: parsedId },{ $push: { blacklist: employerID } });
+  let updatedfreelancer        = await getFreelancer(freelancerID);
+  return updatedfreelancer;
+}
+
+//---------------------------------------BlacklistDelete------------------------------------------------
+
+
+const Blacklistremove = async(freelancerID,employerID) =>{
+
+  let verifyfreelancer        = await getFreelancer(freelancerID);
+  let verifyemployer          = await getEmployer(employerID);
+  const freelancerCollection  = await freelancer();
+
+  let parsedId = ObjectId(freelancerID); 
+  let freelanceraction = await freelancerCollection.findOne({ _id: parsedId });
+  // let count = -1;
+  
+  if ('blacklist' in freelanceraction){
+    if((freelanceraction.blacklist).length===0){
+      throw "You have not blacklisted anyone yet"
+    }
+    let removedblackist = await freelancerCollection.updateOne({ _id: parsedId }, { $pull: { blacklist: employerID } });
+    if(removedblackist.modifiedCount === 1){
+      let updatedfreelancer        = await getFreelancer(freelancerID);
+      return updatedfreelancer; 
+    }
+    else{
+      throw "Could not delete the employer from blacklist"
+    }
+    
+  }
+  else throw "You have not blacklisted anyone yet"
+
+}
 
 module.exports = {
   createFreelancer,
@@ -259,5 +312,7 @@ module.exports = {
   checker,
   remove,
   createIndices,
-  getRecommended
+  getRecommended,
+  Blacklist,
+  Blacklistremove
 };

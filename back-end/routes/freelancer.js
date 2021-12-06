@@ -4,7 +4,7 @@ const router = express.Router();
 const { freelancer } = require("../data");
 const data = require("../data");
 const {generateToken} = require("../middlewares/JWT");
-const freelancerData = data.employer;
+const employerData = data.employer;
 
 //-----------------------------------------create---------------------------------------------------------
 
@@ -166,7 +166,7 @@ router.get("/recommended/:id", async(req,res) => {
 
 router.get("/delete/:id", async (req, res) => {
   try {
-    const freelancer = await freelancerData.remove(req.params.id);
+    const freelancer = await freelancer.remove(req.params.id);
     res.redirect("/login/");
   } catch (e) {
     console.log(e);
@@ -196,8 +196,61 @@ router.post("/login", async (req, res) => {
   }
 });
 
+//---------------------------------------Blacklisting------------------------------------------------
 
+router.post("/blacklist", async (req, res) => {
+  try {
+    const { freelancerID, EmployerID } = req.body;
 
+    if (!freelancerID || !EmployerID) {
+      res.status(400).json({ error: "Missing fields" });
+      return;
+    }
+    if (typeof freelancerID !== "string" || typeof EmployerID !== "string") {
+      res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+    if(freelancerID.trim().length === 0 || EmployerID.trim().length === 0) {
+      res.status(400).json({error: "Just empty spaces"});
+      return;
+    }
+
+    let result = await freelancer.Blacklist(freelancerID,EmployerID);
+    res.json(result);
+    
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(500).json({ error: error.messsage ? error.message : error});
+  }
+});
+
+//---------------------------------------BlacklistDelete------------------------------------------------
+
+router.delete("/blacklist", async (req, res) => {
+  try {
+    const { freelancerID, EmployerID } = req.body;
+
+    if (!freelancerID || !EmployerID) {
+      res.status(400).json({ error: "Missing fields" });
+      return;
+    }
+    if (typeof freelancerID !== "string" || typeof EmployerID !== "string") {
+      res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+    if(freelancerID.trim().length === 0 || EmployerID.trim().length === 0) {
+      res.status(400).json({error: "Just empty spaces"});
+      return;
+    }
+
+    let result = await freelancer.Blacklistremove(freelancerID,EmployerID);
+    res.json(result);
+    
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(500).json({ error: error.messsage ? error.message : error});
+  }
+});
 //-------------------------------------logout-----------------------------------------------
 router.get("/logout", async (req, res) => {
   req.session.destroy();
