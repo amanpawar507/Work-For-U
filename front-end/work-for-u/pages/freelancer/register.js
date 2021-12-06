@@ -3,7 +3,7 @@ import { Register } from "../../components/register"
 
 const FreelancerRegister = () => {
     return(
-        <Container maxW={'container.lg'} background={'brand.900'} display={'flex'} flexDirection={'column'}>
+        <Container maxW={'container.lg'}  display={'flex'} flexDirection={'column'}>
             <Register isFreelancer/>
         </Container>
     )

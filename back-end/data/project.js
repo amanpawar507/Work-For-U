@@ -109,7 +109,7 @@ const getAll = async () => {
   return projectList;
 };
 
-const getAllEmployerProjects = async (employerID) => {
+async function getAllEmployerProjects  (employerID)  {
   if (!employerID) throw "Pass a employerID to search";
   if (typeof employerID !== "string") throw "Invalid employer ID";
 

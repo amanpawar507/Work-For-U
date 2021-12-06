@@ -9,9 +9,9 @@ const overrides = {
         brand:{
             100:'#FDFCFC',
             300:'#F6EABE',
-            500:'#F6D7A7',
+            500:'#87AAAA',
             700:'#C8E3D4',
-            900:'#87AAAA'
+            900:'#F6D7A7'
         }
     },
     components:{

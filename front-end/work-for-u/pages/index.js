@@ -20,8 +20,8 @@ export default function Home() {
       <Box w={'100%'} h={'90vh'} display={'flex'} flexDirection={'column'} justifyContent={'center'}>
         <Text textAlign={'center'} fontSize='2xl'>I am a...</Text>
         <HStack justifyContent={'center'}>
-          <Button variant={'outline'} color={'brand.500'} onClick={()=>handleTypeSelect(1)}>Employer</Button>
-          <Button variant={'outline'} color={'brand.500'} onClick={()=>handleTypeSelect(2)}>Freelancer</Button>
+          <Button variant={'solid'} color={'brand.500'} bg={'brand.300'} onClick={()=>handleTypeSelect(1)}>Employer</Button>
+          <Button variant={'solid'} color={'brand.300'} onClick={()=>handleTypeSelect(2)}>Freelancer</Button>
         </HStack>
       </Box>
     </Layout>

@@ -63,7 +63,7 @@ export const Login = () => {
                         Submit
                     </Button>
                     <Button disabled={checking} colorScheme={'teal'} mt='10px' w="100%" onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/register`)}>
-                        Haven't joined u, yet?
+                        Haven't joined us, yet?
                     </Button>
                     <Button disabled={checking} colorScheme={'teal'} mt='10px' w="100%" onClick={() => router.push("/")}>
                         {isFreelancer ? 'Not freelancer?' : 'Not employer?'}

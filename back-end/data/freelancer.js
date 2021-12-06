@@ -1,11 +1,23 @@
-const { freelancer } = require("../config/mongoCollections");
+const { freelancer,project } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
 const {getEmployer} = require('./employer');
-const { getProject,getAllEmployerProjects } = require("./project");
+//const {getAllEmployerProjects} = require("./project");
 //const { getSkill } = require("./freelanceFunctions");
 const { ObjectId } = require("mongodb");
 const bCrypt = require("bcrypt");
 const saltRounds = 16;
+
+async function getAllEmployerProjects  (employerID)  {
+  if (!employerID) throw "Pass a employerID to search";
+  if (typeof employerID !== "string") throw "Invalid employer ID";
+
+  const pCollection = await project();
+
+  const foundList = await pCollection.find({ createdBy: employerID }).toArray();
+  if (!foundList) "throw could not find projects for the employerID";
+
+  return foundList;
+};
 
 const getCurrentTime = () => {
   var today = new Date();
@@ -215,21 +227,26 @@ const getRecommended = async employerId => {
   if(typeof employerId !== "string") throw "Invalid type of employerID";
   if(employerId.trim().length === 0) throw "empty spaces found";
   ObjectId(employerId);
-  const employerFound = await getEmployer(employerId);
-  const allProjects = await getAllEmployerProjects(employerId);
-  let skillsRequired = [];
-  allProjects.map(i => {
-    skillsRequired = [...skillsRequired,...i.skillsRequired]
-  });
-  skillsRequired = skillsRequired.map(i=>i._id);
-  skillsRequired = Array.from(new Set(skillsRequired));
-  const freelancerCollection = await freelancer();
-  let matchedFreelancers = await freelancerCollection.find({'skills._id': {$in: skillsRequired}}).toArray();
-  if(!matchedFreelancers) throw "could not find recommendations";
-  for (let i of matchedFreelancers) {
-    i._id = i._id.toString();
-  }
-  return matchedFreelancers;
+  //const employerFound = await getEmployer(employerId);
+  // if(employerFound) {
+    const allProjects = await getAllEmployerProjects(employerId);
+    let skillsRequired = [];
+    allProjects.map(i => {
+      skillsRequired = [...skillsRequired,...i.skillsRequired]
+    });
+    skillsRequired = skillsRequired.map(i=>i._id);
+    skillsRequired = Array.from(new Set(skillsRequired));
+    const freelancerCollection = await freelancer();
+    let matchedFreelancers = await freelancerCollection.find({'skills._id': {$in: skillsRequired}}).toArray();
+    if(!matchedFreelancers) throw "could not find recommendations";
+    for (let i of matchedFreelancers) {
+      i._id = i._id.toString();
+    }
+    return matchedFreelancers;
+  // }else{
+  //   throw "could not find employer"
+  // }
+ 
 }
 
 
