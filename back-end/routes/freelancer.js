@@ -251,6 +251,27 @@ router.delete("/blacklist", async (req, res) => {
     res.status(500).json({ error: error.messsage ? error.message : error});
   }
 });
+
+router.get("/successRate/:freelancerId", async(req,res) => {
+  try {
+    const freelancerId = req.params.freelancerId;
+    if(!freelancerId) {
+      res.status(400).json({error: "Pass a freelancerId"});
+      return;
+    }
+    if(typeof freelancerId !== "string") {
+      res.status(400).json({error: "Invalid type of freelancer Id"});
+      return;
+    }
+
+    let result = await freelancer.getSuccessRate(freelancerId);
+    res.json(result);
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(500).json({ error: error.messsage ? error.message : error});
+  }
+})
+
 //-------------------------------------logout-----------------------------------------------
 router.get("/logout", async (req, res) => {
   req.session.destroy();

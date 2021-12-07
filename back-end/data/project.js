@@ -2,6 +2,8 @@ const { project } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
 const { getFreelancer } = require('./freelancer');
 const { ObjectId } = require("mongodb");
+var addMonths = require('date-fns/addMonths')
+
 
 const getCurrentTime = () => {
   var today = new Date();
@@ -302,7 +304,7 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
   if (status.trim().toLowerCase() === "accept") {
     updateInfo = await projectCollection.updateOne(
       { _id: objProjectId },
-      { $set: { assignedTo: freelancerId, status: 1 } }
+      { $set: { assignedTo: freelancerId, status: 1, assignedOn: getCurrentTime(), dueBy:  addMonths(new Date(), foundProject.tenureMonths).toString()} }
     );
   } else {
     updateInfo = await projectCollection.updateOne(
