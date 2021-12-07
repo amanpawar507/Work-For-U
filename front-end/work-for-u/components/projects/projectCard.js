@@ -1,10 +1,16 @@
-import { Badge, Box, Button, Heading, HStack, IconButton, Text, useToast, VStack } from "@chakra-ui/react"
+import { Badge, Box, Button, Heading, HStack, IconButton, Text, useToast, VStack,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+} from "@chakra-ui/react"
+import { useRouter } from "next/dist/client/router";
 import { useContext, useState } from "react"
-import {MdInfo,MdEdit,MdDelete} from "react-icons/md"
+import {MdInfo,MdEdit,MdDelete, MdMenu,MdPerson} from "react-icons/md"
 import client from "../../utils/client";
 import { UserContext } from "../contexts/userContext";
 
-export const ProjectCard = ({id, name, status,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick,setUpdatedRequest}) => {
+export const ProjectCard = ({id, name, status,assignedTo,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick,setUpdatedRequest,onRateClick}) => {
 
     const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -14,6 +20,7 @@ export const ProjectCard = ({id, name, status,onDetailsClick,onEditClick,onDelet
     const [rejecting, setRejecting] = useState(false);
 
     const toast = useToast();
+    const router = useRouter();
 
     const getStatus = status => {
         switch (status) {
@@ -25,20 +32,26 @@ export const ProjectCard = ({id, name, status,onDetailsClick,onEditClick,onDelet
                 return "ongoing"
             case 3: 
                 return "completed"
+            case 4: 
+                return "incomplete"
             default:
                 break;
         }
     }
 
     const getColorScheme = status => {
+
         switch (status) {
+            case 0:
+                return "gray"
             case 1:
                 return "orange"
             case 2:
                 return "yellow"
             case 3:
                 return "green"
-        
+            case 4:
+                return "red"
             default:
                 break;
         }
@@ -71,18 +84,35 @@ export const ProjectCard = ({id, name, status,onDetailsClick,onEditClick,onDelet
     }
 
     return(
-        <Box boxShadow={"md"} p="10px" borderRadius={'10px'} background={'brand.700'} h={'155px'} position={"relative"}>
+        <Box minW={'256px'} boxShadow={"md"} p="10px" borderRadius={'10px'} background={'brand.700'} h={'155px'} position={"relative"}>
             <VStack h={'100%'} textAlign={'left'} justifyContent={'space-between'}>
                 <Heading w='100%' maxHeight={'87px'} overflowY={'hidden'}>{name}</Heading>
                 <HStack textAlign={'left'} w={'100%'} justifyContent={'space-between'}>
-                    {status !== 0 && <Badge colorScheme={getColorScheme(status)} borderRadius={'2px'}>{getStatus(status)}</Badge>}
+                    {<Badge colorScheme={getColorScheme(status)} borderRadius={'2px'}>{getStatus(status)}</Badge>}
                     <HStack ml={'auto'}>
-                        {status !== 0 && isFreelancer && <Button variant={'outline'} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>}
-                        {!isFreelancer && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
-                        {!isFreelancer && <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>}
-                        {status === 0 && <Button isLoading={accepting} isDisabled={rejecting} size={'sm'} variant={"solid"} colorScheme={'green'} onClick={() => handleAcceptReject("accept")}>Accept</Button>}
-                        {status === 0 && <Button isLoading={rejecting} isDisabled={accepting}  size={'sm'} variant={"solid"} colorScheme={'red'}  onClick={() => handleAcceptReject("reject")}>Reject</Button>}            
-                        <IconButton color={'brand.900'} icon={<MdInfo/>} onClick={() => onDetailsClick()}/>
+                        {status !== 0 && isFreelancer && <Button colorScheme={"gray"} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>}
+                        {!isFreelancer &&  status !== 3 && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
+                        {!isFreelancer &&  status !== 3 && <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>}
+                        {isFreelancer && status === 0 && <Button isLoading={accepting} isDisabled={rejecting} size={'sm'} variant={"solid"} colorScheme={'green'} onClick={() => handleAcceptReject("accept")}>Accept</Button>}
+                        {isFreelancer && status === 0 && <Button isLoading={rejecting} isDisabled={accepting}  size={'sm'} variant={"solid"} colorScheme={'red'}  onClick={() => handleAcceptReject("reject")}>Reject</Button>}
+                        <Menu>
+                            <MenuButton
+                                as={IconButton}
+                                aria-label='Options'
+                                icon={<MdMenu />}
+                                color={'brand.900'} 
+                                closeOnSelect
+                            />
+                            <MenuList>
+                                <MenuItem icon={<MdInfo />} onClick={() => onDetailsClick()}>
+                                    Project Info
+                                </MenuItem>
+                                {assignedTo && <MenuItem icon={<MdPerson />} onClick={() => router.push(`/freelancer/${assignedTo}`)}>
+                                    Freelancer
+                                </MenuItem>}
+                            </MenuList>
+                        </Menu>            
+                        {/* <IconButton color={'brand.900'} icon={<MdInfo/>} onClick={() => onDetailsClick()}/> */}
                     </HStack>
                 </HStack>
             </VStack>

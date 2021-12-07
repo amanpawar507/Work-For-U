@@ -4,6 +4,7 @@ import theme from '../theme'
 import "@fontsource/roboto"
 import UserContextProvider from '../components/contexts/userContext'
 
+
 function MyApp({ Component, pageProps }) {
   return <ChakraProvider theme={theme}>
     <UserContextProvider>

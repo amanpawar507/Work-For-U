@@ -86,6 +86,7 @@ export const Projects = () => {
                         hourlyPay: pay
                     }   
                 );
+                console.log(data);
                 setProjects(prevValue => {
                     return prevValue.map( i => i._id === id ? data : i);
                 });
@@ -97,9 +98,10 @@ export const Projects = () => {
                         ...details, 
                         tenureMonths: tenure,
                         hourlyPay: pay,
-                        createdBy: "619d40caac603228d069b3ba"
+                        createdBy: user._id
                     }   
                 );
+                console.log(data);
                 setProjects(prevValue => [...prevValue,data]);
                 setIsSubmitting(false);
                 onClose();
@@ -214,19 +216,32 @@ export const Projects = () => {
 
     return(
         <Box w={'100%'}>
-            {!isFreelancer && <Button minW={'100px'} variant={'solid'} color={'brand.500'} bg={'brand.900'} mb='20px' onClick={() => onOpen()}>Add</Button>}
-            <Heading mb='10px' fontSize={'2xl'} borderBottom={'1px solid black'}>Requests</Heading>
-            <Grid templateColumns="repeat(3, 1fr)" gap={4}>
-                {
-                    requests.map((i,idx) => <ProjectCard key={idx} id={i._id} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)} setUpdatedRequest={(data) => setUpdatedRequest(data)}/>)
-                }
-            </Grid>
+            {!isFreelancer && <Button minW={'100px'} variant={'solid'} color={'brand.500'} bg={'brand.900'} mb='20px' onClick={() => {setSelectedProject(null); onOpen()}}>Add</Button>}
+            {isFreelancer && <>
+                <Heading mb='10px' fontSize={'2xl'} borderBottom={'1px solid black'}>Requests</Heading>
+                <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+                    {
+                        requests.map((i,idx) => <ProjectCard key={idx} id={i._id} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)} setUpdatedRequest={(data) => setUpdatedRequest(data)}/>)
+                    }
+                </Grid>
+            </>}
             <Heading mt='10px' mb='10px' fontSize={'2xl'} borderBottom={'1px solid black'}>Your projects</Heading>
             <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                 <GridItem colSpan={2}>
                     <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                         {
-                            projects.map((i,idx) => <ProjectCard key={idx} id={i._id}  name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)} onUpdateClick={() => {setSelectedProject(i); onUpdateOpen();}}/>)
+                            projects.map((i,idx) => <ProjectCard 
+                                key={idx} 
+                                id={i._id} 
+                                name={i.name} 
+                                status={i.status} 
+                                assignedTo={i.assignedTo}
+                                onDetailsClick={() => handleShowDetails(i)} 
+                                onEditClick={() => handleEditProject(i)} 
+                                onDeleteClick={() => handleDeleteProject(i._id)} 
+                                onUpdateClick={() => {setSelectedProject(i); onUpdateOpen();}}
+                                onRateClick={() => onRatingOpen()}
+                        />)
                         }
                     </Grid>
                 </GridItem>
