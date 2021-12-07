@@ -20,6 +20,18 @@ async function getAllEmployerProjects  (employerID)  {
   return foundList;
 };
 
+const getAllFreelancerProjects = async freelancerID => {
+  if(!freelancerID) throw "Pass a freelancerID to search";
+  if(typeof freelancerID !== 'string') throw "Invalid freeelancer ID";
+  
+  const pCollection = await project();
+
+  const foundList = await pCollection.find({assignedTo: freelancerID}).toArray();
+  if(!foundList) "throw could not find projects for the freelancerID";
+
+  return foundList;
+}
+
 const getCurrentTime = () => {
   var today = new Date();
   var date =
@@ -304,6 +316,39 @@ const Blacklistremove = async(freelancerID,employerID) =>{
 
 }
 
+const getSuccessRate = async freelancerId => {
+  if(!freelancerId) throw "Pass a freelancer ID";
+  if(typeof freelancerId !== "string") throw "Invalid type of ID";
+  ObjectId(freelancerId);
+
+  const allProjects = await getAllFreelancerProjects(freelancerId);
+  let closedProjects = 0;
+  let completeProjects = 0;
+  let projectBySkills = {};
+  allProjects.forEach(proj => {
+    if(proj.status === 3 || proj.status === 4) {
+      closedProjects += 1
+      if(proj.status === 3) {
+        completeProjects += 1
+        proj.skillsRequired.forEach(skill => {
+          if(projectBySkills[skill.name]) {
+            projectBySkills[skill.name] += 1;
+          }else{
+            projectBySkills[skill.name] = 1
+          }
+        });
+      }
+    }
+  });
+  const successRate = (completeProjects / closedProjects) * 100;
+  return {
+    closedProjects,
+    completeProjects,
+    projectBySkills,
+    successRate
+  }
+}
+
 module.exports = {
   createFreelancer,
   getAll,
@@ -314,5 +359,6 @@ module.exports = {
   createIndices,
   getRecommended,
   Blacklist,
-  Blacklistremove
+  Blacklistremove,
+  getSuccessRate
 };

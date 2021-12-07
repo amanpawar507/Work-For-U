@@ -56,6 +56,7 @@ import client from '../../utils/client';
                         <option value={1}>Accepted</option>
                         <option value={2}>In progress</option>
                         <option value={3}>Completed</option>
+                        <option value={4}>Incomplete</option>
                     </Select>
                     <Button isLoading={loading} variant='solid' colorScheme={'teal'} type="submit" ml="auto">Submit</Button>
                 </FormControl>

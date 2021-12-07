@@ -11,7 +11,7 @@ const FreelanceProfilePage = () => {
     const [info,setInfo] = useState(null);
 
     const {query} = useRouter();
-    const {user} = useContext(UserContext);
+    const {user,isFreelancer} = useContext(UserContext);
     const toast = useToast();
 
     useEffect(() => {
@@ -43,7 +43,7 @@ const FreelanceProfilePage = () => {
     return(
         info && <Layout>
             <Container maxW={"container.md"} pt="20px" h={'600px'}>
-                <Profile isFreelancer={true} isUser={isUser} userInfo={info}/>
+                <Profile isFreelancer={isFreelancer} isUser={isUser} userInfo={info} updateFreelancer={data => setInfo(data)}/>
             </Container>
         </Layout>
 

@@ -120,28 +120,17 @@ const remove = async (employerID) => {
 
 //------------------------------------------GetListEmployer------------------------------------------
 
-const listemployer = async(employeridarr)=>{
-
+const listemployer = async(employeridarr) => {
   const employerCollection = await employer();
-  const employerList = await employerCollection.find({}).toArray();
   // const result =[];
+  const idArr = employeridarr.map(i => ObjectId(i));
+  let result = await employerCollection.find(
+    { _id: { $in:  idArr } }
+    ).toArray()
 
-  // let result = await employerCollection.find(
-  //   { _id: { $in:  employeridarr } }
-  //   ).toArray()
-
-  // let result = await employerCollection.find({ _id:  employeridarr  }).toArray()
-
-  for(i of employeridarr){
-    
-    let parsedId  = ObjectId(i); 
-    let employer = await employerCollection.findOne({ _id: parsedId });
-    result.push(employer);
-  }
-
-  return result;
+  result = result.map(i => {return {_id: i._id.toString(),...i}})
   if(result.length === 0){
-    throw "No employers found";
+    throw "No employers found for the given Ids";
   }
   else{
     return result;

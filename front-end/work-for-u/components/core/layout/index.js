@@ -2,6 +2,8 @@ import React, { useContext } from "react";
 import { Box, Container, Spacer } from "@chakra-ui/react";
 import { Header } from "./header";
 import { UserContext } from "../../contexts/userContext";
+// import { Chart, ArcElement } from 'chart.js';
+// Chart.register(ArcElement);
 
 
 export const Layout = ({children}) => {
