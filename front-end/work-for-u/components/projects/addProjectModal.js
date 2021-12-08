@@ -41,15 +41,16 @@ import client from "../../utils/client";
             if(isOpen) {
                 setLoading(true);
                 getAllSkills();
-            }else{
-                setProjectDetails({
-                    name:null,
-                    description:null,
-                    tenureMonths:null,
-                    skillsRequired:[],
-                    hourlyPay:null
-                })
             }
+            // else{
+                // setProjectDetails({
+                //     name:null,
+                //     description:null,
+                //     tenureMonths:null,
+                //     skillsRequired:[],
+                //     hourlyPay:null
+                // })
+            // }
         } catch (error) {
             console.log(error);
         }
@@ -57,7 +58,16 @@ import client from "../../utils/client";
 
 
     useEffect(() => {
-        if(!isEdit || !selectedProject) return;
+        if(!isEdit || !selectedProject) {
+            setProjectDetails({
+                name:null,
+                description:null,
+                tenureMonths:null,
+                skillsRequired:[],
+                hourlyPay:null
+            })
+            return;
+        }
         let {_id,name,description,tenureMonths,hourlyPay,skillsRequired} = selectedProject;
         let current = {
             _id,

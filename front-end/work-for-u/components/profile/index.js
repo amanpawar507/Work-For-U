@@ -89,7 +89,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                     {(currentUser.blacklist && currentUser.blacklist.includes(userInfo._id) ) ? "Blacklisted": "Blacklist"}
                 </Button>}
             </HStack>
-            <HStack w='100%'  spacing={'20px'} minH={'60%'}>
+            <HStack w='100%'  spacing={'20px'} minH={'60%'} mb='10px'>
                 <Box minW={'250px'} maxW={'400px'} borderRight={'1px solid gray'}>
                     {userInfo.fullName && <InfoText label="Full Name" content={userInfo.fullName}/>}
                     {userInfo.companyName && <InfoText label="Company Name" content={userInfo.companyName}/>}
@@ -104,7 +104,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 {/* </Flex> */}
             </HStack>
             <Divider/>
-            {isFreelancerProfile && <Box w={'500px'} pt='10px'>
+            {isFreelancerProfile && <Box w={'100%'} pt='10px'>
                 {userInfo.reviews.length > 0 ? <ReviewList reviews={userInfo.reviews}/> : <Text>No Reviews yet !</Text>}
             </Box>}
             <RateModal freelancer={userInfo} isOpen={isRatingOpen} onClose={onRatingClose} updateFreelancer={(data) => updateUserInfo(data)}/>

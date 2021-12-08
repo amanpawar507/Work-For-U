@@ -28,7 +28,7 @@ export const Header = ({isFreelancer,userInfo}) => {
     }
 
     return(
-        <HStack w={'100%'} p ={'10px 0'} justifyContent={'space-between'}>
+        <HStack w={'100%'} p ={'10px 0'} justifyContent={'space-between'} top={0} width={'1000px'} position={'fixed'}>
             <HStack>
                 <Heading fontSize={'2xl'} mr='20px' display={'flex'} color={'brand.500'}>WF<Text color={'brand.900'}>U</Text></Heading>
                {!isFreelancer && <Input w={'150px'} borderColor={"#BFC0C0"} value={search} onChange={handleChange} placeholder="Search" size="md"  />}
