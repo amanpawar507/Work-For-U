@@ -11,7 +11,7 @@ const EmployerProfilePage = () => {
     const [info,setInfo] = useState(null);
 
     const {query} = useRouter();
-    const {user} = useContext(UserContext);
+    const {user,isFreelancer} = useContext(UserContext);
     const toast = useToast();
 
     useEffect(() => {
@@ -30,8 +30,9 @@ const EmployerProfilePage = () => {
                 });
             }
         }
-        
+        console.log(user._id === id);
         if(user._id === id) {
+           
             setIsUser(true);
             setInfo(user);
         }else{
@@ -43,7 +44,7 @@ const EmployerProfilePage = () => {
     return(
         info && <Layout>
             <Container maxW={"container.md"} pt="20px" h={'600px'}>
-                <Profile isFreelancer={false} isUser={isUser} userInfo={info}/>
+                <Profile isFreelancerProfile={false} isFreelancer={isFreelancer} isUser={isUser} userInfo={info} updateUserInfo={data => setInfo(data)}/>
             </Container>
         </Layout>
 

@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../components/contexts/userContext";
 import { ProjectCard } from "../../components/projects/projectCard";
 import client from "../../utils/client";
+import { EmptyAlert } from "../common/emptyAlert";
 import { ProjectDetailsModal } from "../projects/projectDetailsModal";
 import { UpdateStatusModal } from "./updateStatusModal";
 
@@ -35,8 +36,9 @@ export const FreelancerDashboard = () => {
                 }
                 let total = 0;
                 data.forEach(element => {
-                    if(element.status === 3) total += element.hourlyPay
+                    if(element.status === 3) total += element.hourlyPay * 8 * 30 * element.tenureMonths
                 });
+                setEarnings(total);
             } catch (error) {
                 if(error.statusCode === 401) router.push("/logout");
                 console.log(error);
@@ -81,9 +83,21 @@ export const FreelancerDashboard = () => {
                     <StatHelpText>Till now</StatHelpText>
                 </Stat>
                 <Text color="brand.500" fontSize={'2xl'} mb='10px' borderBottom='1px solid black'>Recent Projects</Text>
-                <HStack flexWrap={'wrap'}>
-                    {recentProjects.map((i,idx) => <ProjectCard key={idx} name={i.name} status={i.status} onDetailsClick={() => handleDetailsClick(i)} onUpdateClick={() => handleUpdateClick(i)}/>)}
-                </HStack>
+                {recentProjects.length > 0 ? <HStack flexWrap={'wrap'}>
+                    {recentProjects.map((i,idx) => 
+                        <ProjectCard 
+                            key={idx} 
+                            name={i.name} 
+                            status={i.status} 
+                            onDetailsClick={() => handleDetailsClick(i)} 
+                            onUpdateClick={() => handleUpdateClick(i)}
+                            assignedTo={i.assignedTo}
+                            assignedBy={i.createdBy}
+                            />
+                    )}
+                </HStack> : 
+                <EmptyAlert text="No projects accepted yet!"/>
+                }
                 <UpdateStatusModal isOpen={isOpen} onClose={onClose} selectedProject={selectedProject} setUpdatedProject={setUpdatedProject}/>
                 <ProjectDetailsModal isOpen={isDetailsOpen} onClose={onDetailsClose} projectDetails={selectedProject}/>
             </Box>

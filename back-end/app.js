@@ -11,6 +11,8 @@ var options = {
 app.use(cors(options));
 
 const configRoutes = require('./routes');
+const { getFreelancer } = require('./data/freelancer');
+const { getEmployer } = require('./data/employer');
 
 app.use(express.json());
 
@@ -26,12 +28,14 @@ app.use((req,res,next) => {
     // console.log(`User is${req.session.email ? "" : " not"} authenticated`)
 })
 
-app.use("/reCreate",(req,res,next) => {
+app.use("/common/reCreate",async(req,res,next) => {
   try {
     console.log(req.headers);
     console.log(req.headers.accesstoken);
-    const user = verifyUser(req.headers.accesstoken);
-    res.json({user:user});
+    let user = verifyUser(req.headers.accesstoken);
+    req.body.user = user;
+    next();
+    console.log(req)
   } catch (error) {
     console.log(error);
     res.status(401).json({error: "Unauthorized access!"})

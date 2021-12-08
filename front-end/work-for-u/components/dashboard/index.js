@@ -2,6 +2,7 @@ import { Button, HStack, useToast } from "@chakra-ui/react";
 import { useState, useEffect, useContext } from "react";
 // import axios from 'axios';
 import client from "../../utils/client";
+import { EmptyAlert } from "../common/emptyAlert";
 import { FreelancerList } from "../common/freelancerList";
 import { UserContext } from "../contexts/userContext";
 
@@ -43,7 +44,7 @@ export const Dashboard = () => {
                 <Button onClick={() => setShowRecommended(true)} variant={!showRecommended && 'outline'} bg={showRecommended && 'brand.900'} color={!showRecommended && 'brand.500'} size={'sm'} borderRadius="full">Recommended</Button>
                 <Button onClick={() => setShowRecommended(false)} variant={showRecommended && 'outline'} bg={!showRecommended && 'brand.900'} color={showRecommended && 'brand.500'} minW={'50px'} size={'sm'} borderRadius="full">All</Button>
             </HStack>
-            <FreelancerList list={listofFreelancers}/>
+            {listofFreelancers.length > 0 ? <FreelancerList list={listofFreelancers}/> : <EmptyAlert text="No freelancers avaialble. Come back later!"/>}
         </>
     )
 } 

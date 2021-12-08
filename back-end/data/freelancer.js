@@ -160,46 +160,78 @@ const getFreelancer = async (freelancerID) => {
 //-----------------------------------------getonbasisofSkillAndName---------------------------------------------------------
 
 const searchType = async (filterObj) => {
-  if (!filterObj.query || !filterObj.filterkey)
+  if (!filterObj.query)
     throw "Please provide all the details";
   if (
-    typeof filterObj.query !== "string" ||
-    typeof filterObj.filterkey !== "string"
+    typeof filterObj.query !== "string" 
   )
     throw "Invalid type of input object";
   if (
-    filterObj.query.trim().length === 0 ||
-    filterObj.filterkey.trim().length === 0
+    filterObj.query.trim().length === 0 
   )
     throw "empty spaces for input object";
 
   const freelancerCollection = await freelancer();
-  const freelancerList = await freelancerCollection.find({}).toArray();
-  let resultarr = [];
 
-  if (filterObj.filterkey === "name") {
-    for (let i of freelancerList) {
-      if(i.fullName.length > filterObj.query.length) {
-        if (i.fullName.toLowerCase().includes(filterObj.query.toLowerCase())) {
-          resultarr.push(i);
-        }
-      }else{
-        if (filterObj.query.toLowerCase().includes(i.fullName.toLowerCase())) {
-          resultarr.push(i);
-        }
+  let result = [];
+
+  if(filterObj.filterkey === "name" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    const listForName = await freelancerCollection.find({fullName: { $regex: `${filterObj.query}`, $options: 'i'}}).toArray();
+    result = [...result,...listForName];
+  }
+  if(filterObj.filterkey === "location" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    const listForLocation = await freelancerCollection.find({location: { $regex: `${filterObj.query}`, $options: 'i'}}).toArray();
+    result = [...result,...listForLocation];
+  }
+  if(filterObj.filterkey === "skill" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    const listForSkills = await freelancerCollection.find({'skills.name': { $regex: `${filterObj.query}`, $options: 'i'}}).toArray();
+    result = [...result,...listForSkills];
+  }
+  let finalResult = []
+  result.forEach(el => {
+    if(finalResult.length > 0) {
+      const exist = finalResult.find(i => i._id.toString() === el._id.toString());
+      if(!exist) {
+        finalResult.push({
+          _id: el._id.toString(),
+          ...el
+        })
       }
+    }else{
+      finalResult.push({
+        _id: el._id.toString(),
+        ...el
+      })
     }
-    return resultarr;
-  } else if (filterObj.filterkey === "skill") {
-    for (let i of freelancerList) {
-      for(let j of i.skills){
-        if (j.name.toLowerCase().includes(filterObj.query.toLowerCase())) {
-          resultarr.push(i);
-        }
-      }
-    }
-    return resultarr;
-  } else throw "Unidentified object value";
+  });
+
+  return finalResult;
+
+  // let resultarr = [];
+
+  // if (filterObj.filterkey === "name") {
+  //   for (let i of freelancerList) {
+  //     if(i.fullName.length > filterObj.query.length) {
+  //       if (i.fullName.toLowerCase().includes(filterObj.query.toLowerCase())) {
+  //         resultarr.push(i);
+  //       }
+  //     }else{
+  //       if (filterObj.query.toLowerCase().includes(i.fullName.toLowerCase())) {
+  //         resultarr.push(i);
+  //       }
+  //     }
+  //   }
+  //   return resultarr;
+  // } else if (filterObj.filterkey === "skill") {
+  //   for (let i of freelancerList) {
+  //     for(let j of i.skills){
+  //       if (j.name.toLowerCase().includes(filterObj.query.toLowerCase())) {
+  //         resultarr.push(i);
+  //       }
+  //     }
+  //   }
+  //   return resultarr;
+  // } else throw "Unidentified object value";
 
   
 };

@@ -1,12 +1,21 @@
-import { Button, HStack, Input, InputGroup, InputRightElement, Select } from "@chakra-ui/react"
+import { Button, HStack, IconButton, Input, InputGroup, InputRightElement, Select,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    Text,
+    Heading,
+} from "@chakra-ui/react"
 import { useRouter } from "next/dist/client/router"
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { MdLogout, MdMenu, MdMenuOpen, MdPerson, MdSearch } from "react-icons/md";
+import { UserContext } from "../../contexts/userContext";
 
 export const Header = ({isFreelancer,userInfo}) => {
     const [search,setSearch] = useState(null);
     const [filter, setFilter] = useState(null);
     const router = useRouter();
-
+    const {user} = useContext(UserContext);
     // const isFr
     const handleChange = e => {
         setSearch(e.target.value);
@@ -14,26 +23,46 @@ export const Header = ({isFreelancer,userInfo}) => {
 
     const handleSearch = () => {
         //debugger;
-        //if(!search || search.trim().length === 0) return;
+        if(!search || search.trim().length === 0) return;
         router.push(`/employer/search?q=${search}&&t=${filter}`);
     }
 
     return(
-        <HStack w={'100%'} p ={'10px 0'} justifyContent={'space-between'}>
+        <HStack w={'100%'} p ={'10px 0'} justifyContent={'space-between'} top={0} width={'1000px'} position={'fixed'}>
             <HStack>
-                <Input w={'200px'} borderColor={"#BFC0C0"} value={search} onChange={handleChange} placeholder="Search" size="md"  />
-                <Select value={filter} borderColor={"#BFC0C0"}  onChange={e => setFilter(e.target.value)} variant={'outline'} placeholder='filter' size={'md'} w={'100px'}>
+                <Heading fontSize={'2xl'} mr='20px' display={'flex'} color={'brand.500'}>WF<Text color={'brand.900'}>U</Text></Heading>
+               {!isFreelancer && <Input w={'150px'} borderColor={"#BFC0C0"} value={search} onChange={handleChange} placeholder="Search" size="md"  />}
+               {!isFreelancer && <Select value={filter} borderColor={"#BFC0C0"}  onChange={e => setFilter(e.target.value)} variant={'outline'} placeholder='filter' size={'md'} w={'100px'}>
                     <option value="name">name</option>
                     <option value="skill">skill</option>
                     <option value='location'>location</option>
-                </Select> 
-                <Button onClick={handleSearch}>Search</Button>
+                </Select> }
+                {!isFreelancer && <IconButton icon={<MdSearch/>} onClick={handleSearch}></IconButton>}
             </HStack>
             <HStack>
+                {user && <Text fontStyle={'italic'} display={'flex'}>Welcome, <Text ml='4px' color={'teal'} fontWeight={'bold'}>{` ${user.fullName}`}</Text></Text>}
                 <Button  variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}`)}>Dashboard</Button>
                 <Button variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/projects`)}>Projects</Button>
-                <Button variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/${userInfo._id}`)}>Profile</Button>
-                <Button  variant='ghost' onClick={() => router.push(`/logout`)}>Logout</Button>
+                <Menu>
+                    <MenuButton
+                        as={IconButton}
+                        aria-label='Options'
+                        icon={<MdMenuOpen />}
+                        color={'black'} 
+                        variant="ghost"
+                        closeOnSelect
+                    />
+                    <MenuList>
+                        <MenuItem icon={<MdPerson />} onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/${userInfo._id}`)}>
+                            Profile
+                        </MenuItem>
+                        <MenuItem icon={<MdLogout />} onClick={() => router.push(`/logout`)}>
+                            Logout
+                        </MenuItem>
+                    </MenuList>
+                </Menu>  
+                {/* <Button variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/${userInfo._id}`)}>Profile</Button>
+                <Button  variant='ghost' onClick={() => router.push(`/logout`)}>Logout</Button> */}
             </HStack>
         </HStack>
     )

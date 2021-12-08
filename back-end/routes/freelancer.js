@@ -108,15 +108,15 @@ router.post("/searchFreelancer", async (req, res) => {
     // if(req.session.email) {
       const obj = req.body; //{query,filterkey}
       // const id = req.params.id;
-      if (!obj.query || !obj.filterkey) {
+      if (!obj.query ) {
         res.status(400).json({ error: "Please provide all the details" });
         return;
       }
-      if (typeof obj.query !== "string" || typeof obj.filterkey !== "string") {
+      if (typeof obj.query !== "string") {
         res.status(400).json({ error: "Invalid type of input object" });
         return;
       }
-      if (obj.query.trim().length === 0 || obj.filterkey.trim().length === 0) {
+      if (obj.query.trim().length === 0 ) {
         res.status(400).json({ error: "empty spaces for input object" });
         return;
       }
@@ -226,9 +226,9 @@ router.post("/blacklist", async (req, res) => {
 
 //---------------------------------------BlacklistDelete------------------------------------------------
 
-router.delete("/blacklist", async (req, res) => {
+router.delete("/blacklist/:freelancerID/:EmployerID", async (req, res) => {
   try {
-    const { freelancerID, EmployerID } = req.body;
+    const { freelancerID, EmployerID } = req.params;
 
     if (!freelancerID || !EmployerID) {
       res.status(400).json({ error: "Missing fields" });
@@ -265,6 +265,7 @@ router.get("/successRate/:freelancerId", async(req,res) => {
     }
 
     let result = await freelancer.getSuccessRate(freelancerId);
+    console.log(result);
     res.json(result);
   } catch (error) {
     console.log("from data: ", error);

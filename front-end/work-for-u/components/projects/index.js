@@ -8,6 +8,7 @@ import { UserContext } from "../contexts/userContext";
 import client from "../../utils/client";
 import { UpdateStatusModal } from "../freelancerDashboard/updateStatusModal";
 import { ProjectFilter } from "./projectFilter";
+import { EmptyAlert } from "../common/emptyAlert";
 
 export const Projects = () => {
 
@@ -219,14 +220,18 @@ export const Projects = () => {
             {!isFreelancer && <Button minW={'100px'} variant={'solid'} color={'brand.500'} bg={'brand.900'} mb='20px' onClick={() => {setSelectedProject(null); onOpen()}}>Add</Button>}
             {isFreelancer && <>
                 <Heading mb='10px' fontSize={'2xl'} borderBottom={'1px solid black'}>Requests</Heading>
-                <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+
+                {requests.length > 0 ? <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                     {
                         requests.map((i,idx) => <ProjectCard key={idx} id={i._id} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)} setUpdatedRequest={(data) => setUpdatedRequest(data)}/>)
                     }
-                </Grid>
+                </Grid>:
+                <EmptyAlert text="You have no requests for now. Hang tight!"/>
+                }
             </>}
+            <br/>
             <Heading mt='10px' mb='10px' fontSize={'2xl'} borderBottom={'1px solid black'}>Your projects</Heading>
-            <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+            {projects.length > 0 ? <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                 <GridItem colSpan={2}>
                     <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                         {
@@ -236,17 +241,19 @@ export const Projects = () => {
                                 name={i.name} 
                                 status={i.status} 
                                 assignedTo={i.assignedTo}
+                                assignedBy={i.createdBy}
                                 onDetailsClick={() => handleShowDetails(i)} 
                                 onEditClick={() => handleEditProject(i)} 
                                 onDeleteClick={() => handleDeleteProject(i._id)} 
                                 onUpdateClick={() => {setSelectedProject(i); onUpdateOpen();}}
-                                onRateClick={() => onRatingOpen()}
                         />)
                         }
                     </Grid>
                 </GridItem>
                 <ProjectFilter handleFilter={handleFilter} handleClearFilter={clearFilter}/>
-            </Grid>
+            </Grid> :
+            <EmptyAlert text={isFreelancer ? "You have no project for now." : "No projects created. Create some!"}/>
+            } 
             <AddProjectModal isOpen={isOpen} onClose={onClose} onSubmit={handleCreateProject} submitting={isSubmitting} isEdit={isEdit} selectedProject={selectedProject}/>
             <ProjectDetailsModal isOpen={isDetailsOpen} onClose={onDetailsClose} projectDetails={selectedProject}/>
             <UpdateStatusModal isOpen={isUpdateOpen} onClose={onUpdateClose} selectedProject={selectedProject} setUpdatedProject={setUpdatedProject}/>

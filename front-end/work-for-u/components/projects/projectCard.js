@@ -10,7 +10,7 @@ import {MdInfo,MdEdit,MdDelete, MdMenu,MdPerson} from "react-icons/md"
 import client from "../../utils/client";
 import { UserContext } from "../contexts/userContext";
 
-export const ProjectCard = ({id, name, status,assignedTo,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick,setUpdatedRequest,onRateClick}) => {
+export const ProjectCard = ({id, name, status,assignedTo,assignedBy,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick,setUpdatedRequest}) => {
 
     const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -107,8 +107,11 @@ export const ProjectCard = ({id, name, status,assignedTo,onDetailsClick,onEditCl
                                 <MenuItem icon={<MdInfo />} onClick={() => onDetailsClick()}>
                                     Project Info
                                 </MenuItem>
-                                {assignedTo && <MenuItem icon={<MdPerson />} onClick={() => router.push(`/freelancer/${assignedTo}`)}>
+                                {!isFreelancer && assignedTo && <MenuItem icon={<MdPerson />} onClick={() => router.push(`/freelancer/${assignedTo}`)}>
                                     Freelancer
+                                </MenuItem>}
+                                {isFreelancer && <MenuItem icon={<MdPerson />} onClick={() => router.push(`/employer/${assignedBy}`)}>
+                                    Employer
                                 </MenuItem>}
                             </MenuList>
                         </Menu>            
