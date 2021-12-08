@@ -40,7 +40,7 @@ const UserContextProvider = ({children}) => {
     },[]);
 
     const setCurrentUser = async() => {
-        const {data} = await client.get(`http://localhost:5000/reCreate`)
+        const {data} = await client.post(`http://localhost:5000/common/reCreate`)
         console.log(data);
         if(data) {
             setUser(data.user);

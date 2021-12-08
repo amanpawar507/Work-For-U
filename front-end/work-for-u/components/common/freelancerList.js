@@ -15,9 +15,10 @@ export const FreelancerList = ({list}) => {
             <SimpleGrid columns={[2, null, 3]} spacing='40px'>
                 {list.map(i => 
                     <FreelancerCard 
+                        id={i._id}
                         name={i.fullName} 
                         rating={i.overallRating} 
-                        skill={i.skills[Math.floor(Math.random() * i.skills.length - 1) + 1].name}
+                        location={i.location}
                         onRequest={() => handleRequestOpen(i)}    
                     />    
                 )}

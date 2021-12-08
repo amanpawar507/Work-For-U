@@ -43,7 +43,7 @@ const FreelanceProfilePage = () => {
     return(
         info && <Layout>
             <Container maxW={"container.md"} pt="20px" h={'600px'}>
-                <Profile isFreelancer={isFreelancer} isUser={isUser} userInfo={info} updateFreelancer={data => setInfo(data)}/>
+                <Profile isFreelancerProfile={true} isFreelancer={isFreelancer} isUser={isUser} userInfo={info} updateUserInfo={data => setInfo(data)}/>
             </Container>
         </Layout>
 
