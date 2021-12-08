@@ -69,8 +69,44 @@ export const RateModal = ({isOpen, onClose, freelancer, updateFreelancer}) => {
     }
 
     return(
-        <>
-        </>
+        <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Rate {freelancer ? freelancer.fullName : " the freelancer"}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleSubmit}>
+                <Rating rating={details.rating} name='rating' onChange={handleChange}/>
+                <br/>
+                <FormControl isRequired>
+                    <FormLabel htmlFor="name">Title</FormLabel>
+                    <Input 
+                        id="title" 
+                        value={details.title} 
+                        name="title" 
+                        onChange={handleChange} 
+                        placeholder="Title" 
+                    />
+                    <FormLabel htmlFor="review">Review</FormLabel>
+                    <Input 
+                        id="review" 
+                        value={details.review} 
+                        name="review" 
+                        onChange={handleChange} 
+                        placeholder="Review" 
+                    />
+                </FormControl>
+                <HStack w={'100%'} mt='10px' justifyContent={'flex-end'}>
+                    <Button isLoading={submitting} type="submit" colorScheme='teal'>
+                        Submit
+                    </Button>
+                </HStack> 
+            </form>
+          </ModalBody>
+        </ModalContent>
+    </Modal>
+
+        
     )
 }
 
