@@ -348,6 +348,8 @@ const Blacklistremove = async(freelancerID,employerID) =>{
 
 }
 
+//---------------------------------------SuccessRate------------------------------------------------
+
 const getSuccessRate = async freelancerId => {
   if(!freelancerId) throw "Pass a freelancer ID";
   if(typeof freelancerId !== "string") throw "Invalid type of ID";
@@ -380,6 +382,57 @@ const getSuccessRate = async freelancerId => {
     successRate
   }
 }
+//--------------------------------------EditProfile--------------------------------------------------
+
+const editProfile = async (data) => {
+  const { id,fullName, introduction, skills, location, expectedPay }  = data;
+  if (!id || !fullName   || !skills || !introduction || !location  || !expectedPay) {
+    throw "Missing Fields";
+  }
+  
+  if (
+    typeof id !== "string" ||
+    typeof fullName !== "string" ||
+    typeof introduction !== "string" ||
+    (typeof skills !== "object" && !skills.length) ||
+    typeof location !== "string" ||
+    typeof expectedPay !== "number"
+  ) {
+    throw "Invalid type of data";
+  }
+
+  let skillsArrayF = await getSkill(skills);
+
+  const newEntry = {
+    fullName : fullName,
+    introduction : introduction,
+    skills : skillsArrayF,
+    location : location,
+    expectedPay : expectedPay,
+    updatedAt: getCurrentTime()
+  };
+
+  const freelancerCollection = await freelancer();
+
+  let findID = await freelancerCollection.findOne({
+    _id: ObjectId(id.trim()),
+  });
+  if (findID === null){
+    throw "Freelancer does not exist for the given id ${employerID.trim()}";
+  }
+  else{
+    const updatedInfo = await freelancerCollection.updateOne(
+      { _id: ObjectId(id.trim()) },
+      { $set: newEntry }
+    );
+    if (updatedInfo.modifiedCount === 0) {
+      throw 'Could not update employer successfully';
+    }
+    const updatedprofile = await getFreelancer(id);
+    return updatedprofile;
+  }
+};
+
 
 module.exports = {
   createFreelancer,
@@ -392,5 +445,6 @@ module.exports = {
   getRecommended,
   Blacklist,
   Blacklistremove,
-  getSuccessRate
+  getSuccessRate,
+  editProfile
 };

@@ -138,10 +138,54 @@ const listemployer = async(employeridarr) => {
 
 };
 
+//--------------------------------------EditProfile--------------------------------------------------
+
+const editProfile = async (data) => {
+  const { id,fullName, companyName } = data;
+  if (!id || !fullName  || !companyName) {
+   throw "Missing Fields";
+  }
+  if (
+    typeof id !== "string" ||
+    typeof fullName !== "string" ||
+    typeof companyName !== "string"
+  ) {
+    throw "Invalid Type of Data"
+  }
+
+  const newEntry = {
+    fullName : fullName,
+    companyName : companyName,
+    updatedAt: getCurrentTime()
+  };
+
+  const employerCollection = await employer();
+
+  let findID = await employerCollection.findOne({
+    _id: ObjectId(id.trim()),
+  });
+  if (findID === null){
+    throw "Employer does not exist for the given id ${employerID.trim()}";
+  }
+  else{
+    const updatedInfo = await employerCollection.updateOne(
+      { _id: ObjectId(id.trim()) },
+      { $set: newEntry }
+    );
+    if (updatedInfo.modifiedCount === 0) {
+      throw 'Could not update employer successfully';
+    }
+    const updatedprofile = await getEmployer(id);
+    return updatedprofile;
+  }
+};
+
+
 module.exports = {
   createEmployer,
   getEmployer,
   checker,
   remove,
-  listemployer
+  listemployer,
+  editProfile
 };
