@@ -1,6 +1,6 @@
-const { project } = require("../config/mongoCollections");
+const { project, freelancer } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
-const { getFreelancer } = require('./freelancer');
+const { getFreelancer, getSuccessRate } = require('./freelancer');
 const { ObjectId } = require("mongodb");
 var addMonths = require('date-fns/addMonths')
 
@@ -208,6 +208,29 @@ const updateProjectStatus = async(projectId, status) => {
     { $set: {status: status} }
   );
   if (updateInfo.modifiedCount === 0) throw "Could not update the project";
+
+  if(status === 3 || status === 4) {
+    const getSuccessInfo = await getSuccessRate(projectExist.assignedTo);
+    console.log(getSuccessInfo);
+    if(!getSuccessInfo) throw "Cannot get successInfo for the freelancer"
+    const {
+      successRate,
+      closedProjects,
+      completeProjects,
+      projectBySkills
+    } = getSuccessInfo;
+    const freelancerCollection = await freelancer();
+    const updatedInfo = await freelancerCollection.updateOne(
+      {_id: ObjectId(projectExist.assignedTo)},
+      {$set: {
+          successRate,
+          closedProjects,
+          completeProjects,
+          projectBySkills
+      }}
+    );
+    if (updatedInfo.modifiedCount === 0) throw "Could not update the freelancer";
+  }
 
   let updatedProject = await getProject(projectId);
   updatedProject = { _id: updatedProject._id.toString(), ...updatedProject };

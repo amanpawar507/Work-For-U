@@ -27,7 +27,7 @@ const getAllFreelancerProjects = async freelancerID => {
   const pCollection = await project();
 
   const foundList = await pCollection.find({assignedTo: freelancerID}).toArray();
-  if(!foundList) "throw could not find projects for the freelancerID";
+  if(!foundList) throw "could not find projects for the freelancerID";
 
   return foundList;
 }
@@ -103,6 +103,9 @@ const createFreelancer = async (data) => {
     reviews: [],
     location,
     successRate: 0,
+    closedProjects: 0,
+    completeProjects: 0,
+    projectBySkills:{},
     expectedPay,
     createdAt: getCurrentTime(),
   };
