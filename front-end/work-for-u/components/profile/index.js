@@ -12,16 +12,19 @@ import { UserContext } from "../contexts/userContext";
 import { DataDisplay } from "./dataDisplay";
 import { RequestModal } from "../dashboard/requestModal";
 import { EmptyAlert } from "../common/emptyAlert";
+import { UpdateProfileModal } from "./updateProfileModal";
 
 export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,updateUserInfo}) => {
 
     const [chartInfo, setChartInfo] = useState();
     const [blackListing, setBlackListing] = useState();
+    const [avgPay, setAvgPay] = useState(0);
     
 
     const {user:currentUser, setUser} = useContext(UserContext);
     const {isOpen, onOpen, onClose} = useDisclosure();
     const {isOpen: isRatingOpen, onOpen: onRatingOpen, onClose: onRatingClose} = useDisclosure();
+    const {isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose} = useDisclosure();
 
     const toast = useToast();
 
@@ -41,9 +44,21 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
             console.log({labels,values, colors});
             setChartInfo({labels,values, colors, successRate : data.successRate});
         }
+
+        const getAveragePay = async() => {
+            const {data} = await client.get(`http://localhost:5000/project/all/employer/${userInfo._id}`);
+            const count = data.length;
+            let total = 0;
+            data.map(i => total += i.hourlyPay);
+            setAvgPay(total/count);
+        }
         console.log(currentUser);
         console.log("check ",currentUser.blacklist && currentUser.blacklist.includes(userInfo._id));
-        if(isFreelancerProfile) getSuccessRate()
+        if(isFreelancerProfile) {
+            getSuccessRate()
+        }else{
+            getAveragePay();
+        }
     },[isFreelancerProfile])
 
     const handleBlacklisting = async add => {
@@ -78,14 +93,16 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
             <HStack w='100%' mb="40px" spacing={'50px'}>
                 <Avatar size={"xl"} name={userInfo.fullName}/>
                 {isFreelancerProfile && <DataDisplay content={`${userInfo.overallRating}/5`} label={`Rating (${userInfo.reviews.length} reviews)`}/>}
-                {isFreelancerProfile && chartInfo && <DataDisplay content={`${chartInfo.successRate ?chartInfo.successRate : "0"}%`} label={"Success Rate"}/>}
-                {!isFreelancer && isFreelancerProfile && <Button colorScheme={'teal'} onClick={() => onOpen()}>Request</Button>}
-                {!isUser && isFreelancerProfile && <Button bg={"yellow.400"} leftIcon={<MdGrade/>} onClick={() => onRatingOpen()}>Rate</Button>}
+                {isFreelancerProfile && chartInfo && <DataDisplay content={`${chartInfo.successRate ? Math.round(chartInfo.successRate) : "0"}%`} label={"Success Rate"}/>}
+                {!isFreelancerProfile && <DataDisplay content={`$${Math.round(avgPay)}`} label={"Average pay/hour"}/>}
+                {!isFreelancer && isFreelancerProfile && <Button variant={'outline'} colorScheme={'teal'} onClick={() => onOpen()}>Request</Button>}
+                {isUser && <Button variant={'outline'} colorScheme={'teal'} onClick={() => onUpdateOpen()}>Edit Profile</Button>}
+                {!isUser && isFreelancerProfile && <Button color={'black'} bg={"yellow.400"} leftIcon={<MdGrade/>} onClick={() => onRatingOpen()}>Rate</Button>}
                 {isFreelancer && !isFreelancerProfile && <Button 
                 isLoading={blackListing} 
                 bg={'gray.500'} 
                 leftIcon={(currentUser.blacklist && currentUser.blacklist.includes(userInfo._id) ) ? <MdCheck/> : <MdBlock/>} 
-                onClick={() => handleBlacklisting(!currentUser.blacklist.includes(userInfo._id))}>
+                onClick={() => handleBlacklisting(!(currentUser.blacklist && currentUser.blacklist.includes(userInfo._id)))}>
                     {(currentUser.blacklist && currentUser.blacklist.includes(userInfo._id) ) ? "Blacklisted": "Blacklist"}
                 </Button>}
             </HStack>
@@ -105,10 +122,11 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
             </HStack>
             <Divider/>
             {isFreelancerProfile && <Box w={'100%'} pt='10px'>
-                {userInfo.reviews.length > 0 ? <ReviewList reviews={userInfo.reviews}/> : <Text>No Reviews yet !</Text>}
+                {userInfo.reviews.length > 0 ? <ReviewList reviews={userInfo.reviews}/> : <EmptyAlert text="No Reviews yet!"/>}
             </Box>}
             <RateModal freelancer={userInfo} isOpen={isRatingOpen} onClose={onRatingClose} updateFreelancer={(data) => updateUserInfo(data)}/>
             <RequestModal isOpen={isOpen} onClose={() => onClose()} selectedFreelancer={userInfo}/>
+            {isUser && <UpdateProfileModal isOpen={isUpdateOpen} onClose={onUpdateClose} details={userInfo} isFreelancer={isFreelancerProfile}/>}
         </Box>
     )
 }

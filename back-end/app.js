@@ -30,12 +30,9 @@ app.use((req,res,next) => {
 
 app.use("/common/reCreate",async(req,res,next) => {
   try {
-    console.log(req.headers);
-    console.log(req.headers.accesstoken);
     let user = verifyUser(req.headers.accesstoken);
     req.body.user = user;
     next();
-    console.log(req)
   } catch (error) {
     console.log(error);
     res.status(401).json({error: "Unauthorized access!"})

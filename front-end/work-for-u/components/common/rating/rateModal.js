@@ -79,7 +79,7 @@ export const RateModal = ({isOpen, onClose, freelancer, updateFreelancer}) => {
                 <Rating rating={details.rating} name='rating' onChange={handleChange}/>
                 <br/>
                 <FormControl isRequired>
-                    <FormLabel htmlFor="name">Title</FormLabel>
+                    <FormLabel htmlFor="title">Title</FormLabel>
                     <Input 
                         id="title" 
                         value={details.title} 
@@ -97,7 +97,7 @@ export const RateModal = ({isOpen, onClose, freelancer, updateFreelancer}) => {
                     />
                 </FormControl>
                 <HStack w={'100%'} mt='10px' justifyContent={'flex-end'}>
-                    <Button isLoading={submitting} type="submit" colorScheme='teal'>
+                    <Button variant={'outline'} isLoading={submitting} type="submit" colorScheme='teal'>
                         Submit
                     </Button>
                 </HStack> 

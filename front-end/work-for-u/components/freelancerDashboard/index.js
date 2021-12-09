@@ -76,13 +76,13 @@ export const FreelancerDashboard = () => {
 
     return(
             <Box>
-                <Text color="brand.500" fontSize={'2xl'} mb='10px' borderBottom='1px solid black'>Earnings till date</Text>
+                <Text color="black" fontSize={'2xl'} fontWeight={'bold'} mb='10px' borderBottom='1px solid black'>Earnings till date</Text>
                 <Stat>
                     <StatLabel>Approx. Earnings</StatLabel>
                     <StatNumber fontSize={'3xl'}>${earnings}</StatNumber>
                     <StatHelpText>Till now</StatHelpText>
                 </Stat>
-                <Text color="brand.500" fontSize={'2xl'} mb='10px' borderBottom='1px solid black'>Recent Projects</Text>
+                <Text color="black" fontSize={'2xl'} fontWeight={'bold'} mb='10px' borderBottom='1px solid black'>Recent Projects</Text>
                 {recentProjects.length > 0 ? <HStack flexWrap={'wrap'}>
                     {recentProjects.map((i,idx) => 
                         <ProjectCard 

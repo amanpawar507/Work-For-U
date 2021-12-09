@@ -134,8 +134,8 @@ import client from "../../utils/client";
                     <Input id="name" value={projectDetails.name} name="name" onChange={handleChange} placeholder="name" isInvalid={errorList.includes('name')} />
                     <FormLabel htmlFor="description">Description</FormLabel>
                     <Textarea  id="description" value={projectDetails.description} onChange={handleChange} placeholder="Description" name="description" isInvalid={errorList.includes('description')}/>
-                    <FormLabel htmlFor="tenure">Tenure</FormLabel>
-                    <Input  id="tenure" value={projectDetails.tenureMonths} onChange={handleChange} type="number" placeholder="Tenure" name="tenureMonths" isInvalid={errorList.includes('tenureMonths')}/>
+                    <FormLabel htmlFor="tenureMonths">Tenure</FormLabel>
+                    <Input  id="tenureMonths" value={projectDetails.tenureMonths} onChange={handleChange} type="number" placeholder="Tenure" name="tenureMonths" isInvalid={errorList.includes('tenureMonths')}/>
                     <FormLabel htmlFor="skillsRequired">Skillset</FormLabel>
                     <CheckboxGroup id="skillsRequired" value={projectDetails.skillsRequired} onChange={handleCheck} name="skillsRequired" colorScheme="green">
                         <HStack flexWrap={'wrap'}>
@@ -150,6 +150,7 @@ import client from "../../utils/client";
                         colorScheme="teal"
                         type="submit"
                         isLoading={submitting}
+                        variant={'outline'}
                     >
                         Submit
                     </Button>

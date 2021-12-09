@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, CheckboxGroup, Flex, FormLabel, HStack, Select, Textarea, useToast } from "@chakra-ui/react"
+import { Box, Button, Checkbox, CheckboxGroup, Flex, FormLabel, Heading, HStack, Select, Textarea, useToast } from "@chakra-ui/react"
 import axios from "axios";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react";
@@ -25,7 +25,7 @@ export const Register = ({isFreelancer}) => {
     const [skillList, setSkillList] = useState([]);
     const [skillSet,setSkillSet] = useState([]);
     const router = useRouter();
-    const {isFreelancer} = useContext(UserContext);
+    // const {isFreelancer} = useContext(UserContext);
     const toast = useToast();
 
     useEffect(() => {
@@ -119,6 +119,7 @@ export const Register = ({isFreelancer}) => {
     return(
         <Flex justifyContent={'center'}>
             <Box mt="5%" w={'40%'} padding={'20px'} background={'white'} borderRadius={'10px'} boxShadow={'md'}>
+                <Heading mb='10px' as="h1">Join Us</Heading>
                 <form onSubmit={handleSubmit}> 
                     <InputComp name="fullName" label="Full Name" value={details.fullName} onChange={handleChange} required={true}/>
                     <InputComp name="emailId" label="Email Id" value={details.emailId} onChange={handleChange} required={true}/>
@@ -138,10 +139,10 @@ export const Register = ({isFreelancer}) => {
                     </Select>}
                     <InputComp name="password" label="Password" type={'password'} value={details.password} onChange={handleChange} required={true}/>
                     <InputComp name="confirmPassword" label="Confirm Password" type={'password'} value={details.confirmPassword} onChange={handleChange} required={true}/>
-                    <Button colorScheme={'teal'} mt='10px' w="100%" type="submit" isLoading={submitting}>
+                    <Button variant={'outline'} colorScheme={'teal'} mt='10px' w="100%" type="submit" isLoading={submitting}>
                         Register
                     </Button>
-                    <Button colorScheme={'teal'} mt='10px' w="100%" isDisabled={submitting} onClick={() => router.push('/login')}>
+                    <Button variant={'outline'} colorScheme={'teal'} mt='10px' w="100%" isDisabled={submitting} onClick={() => router.push('/login')}>
                         Back to login
                     </Button>
                 </form>
