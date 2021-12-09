@@ -243,7 +243,7 @@ async function main() {
       skills:skills1,
       overallRating:5,
       reviews:"Abc",
-      location:"USA",
+      location:"New Jersey",
       successRate:3,
       expectedPay:34
     })
@@ -262,7 +262,7 @@ async function main() {
       skills:skills2,
       overallRating:4,
       reviews:"nbcjw",
-      location:"USA",
+      location:"New Jersey",
       successRate:4,
       expectedPay:30
     })
@@ -280,7 +280,7 @@ async function main() {
       skills:skills1,
       overallRating:4,
       reviews:"bncwbwd",
-      location:"USA",
+      location:"New Jersey",
       successRate:3,
       expectedPay:32
     })
