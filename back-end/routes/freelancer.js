@@ -273,6 +273,38 @@ router.get("/successRate/:freelancerId", async(req,res) => {
   }
 })
 
+
+//--------------------------------------EditProfile--------------------------------------------------
+
+router.post("/edit", async (req, res) => {
+  try {
+    const { id,fullName, introduction, skills, location, expectedPay } = req.body;
+    if (!id || !fullName   || !skills || !introduction || !location  || !expectedPay) {
+      res.status(400).json({ error: "Missing fields" });
+      return;
+    }
+    
+    if (
+      typeof id !== "string" ||
+      typeof fullName !== "string" ||
+      typeof introduction !== "string" ||
+      (typeof skills !== "object" && !skills.length) ||
+      typeof location !== "string" ||
+      typeof expectedPay !== "number"
+    ) {
+      res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+
+    let editedprofile = await freelancer.editProfile(req.body);
+    res.status(200).json(editedprofile);
+
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(400).json({ error: error.messsage ? error.message : error });
+  }
+});
+
 //-------------------------------------logout-----------------------------------------------
 router.get("/logout", async (req, res) => {
   req.session.destroy();

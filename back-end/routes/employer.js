@@ -126,6 +126,33 @@ router.post("/getList", async (req, res) => {
     res.status(400).json({ error: error.messsage ? error.message : error });
   }
 });
+
+//--------------------------------------EditProfile--------------------------------------------------
+
+router.post("/edit", async (req, res) => {
+  try {
+    const { id,fullName, companyName } = req.body;
+    if (!id || !fullName  || !companyName) {
+      res.status(400).json({ error: "Missing fields" });
+      return;
+    }
+    if (
+      typeof id !== "string" ||
+      typeof fullName !== "string" ||
+      typeof companyName !== "string"
+    ) {
+      res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+
+    let editedprofile = await employerData.editProfile(req.body);
+    res.status(200).json(editedprofile);
+
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(400).json({ error: error.messsage ? error.message : error });
+  }
+});
 //--------------------------------------Logout--------------------------------------------------
 
 router.get("/logout", async (req, res) => {
