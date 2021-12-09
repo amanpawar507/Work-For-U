@@ -8,7 +8,7 @@ import { Button, HStack, IconButton, Input, InputGroup, InputRightElement, Selec
 } from "@chakra-ui/react"
 import { useRouter } from "next/dist/client/router"
 import { useContext, useState } from "react";
-import { MdLogout, MdMenu, MdMenuOpen, MdPerson, MdSearch } from "react-icons/md";
+import { MdBlock, MdLogout, MdMenu, MdMenuOpen, MdPerson, MdSearch } from "react-icons/md";
 import { UserContext } from "../../contexts/userContext";
 
 export const Header = ({isFreelancer,userInfo}) => {
@@ -28,9 +28,9 @@ export const Header = ({isFreelancer,userInfo}) => {
     }
 
     return(
-        <HStack w={'100%'} p ={'10px 0'} justifyContent={'space-between'} top={0} width={'1000px'} position={'fixed'}>
+        <HStack bg={"rgb(245, 245, 245)"} w={'100%'} p ={'10px 0'} justifyContent={'space-between'} top={0} width={'1000px'} position={'fixed'} zIndex={2}>
             <HStack>
-                <Heading fontSize={'2xl'} mr='20px' display={'flex'} color={'brand.500'}>WF<Text color={'brand.900'}>U</Text></Heading>
+                <Heading as="h1" bg={'white'} fontSize={'2xl'} mr='20px' display={'flex'} color={'brand.500'}>WF<Text color={'brand.900'}>U</Text></Heading>
                {!isFreelancer && <Input w={'150px'} borderColor={"#BFC0C0"} value={search} onChange={handleChange} placeholder="Search" size="md"  />}
                {!isFreelancer && <Select value={filter} borderColor={"#BFC0C0"}  onChange={e => setFilter(e.target.value)} variant={'outline'} placeholder='filter' size={'md'} w={'100px'}>
                     <option value="name">name</option>
@@ -40,10 +40,10 @@ export const Header = ({isFreelancer,userInfo}) => {
                 {!isFreelancer && <IconButton icon={<MdSearch/>} onClick={handleSearch}></IconButton>}
             </HStack>
             <HStack>
-                {user && <Text fontStyle={'italic'} display={'flex'}>Welcome, <Text ml='4px' color={'teal'} fontWeight={'bold'}>{` ${user.fullName}`}</Text></Text>}
+                {user && <Text fontStyle={'italic'} display={'flex'}>Welcome, <Text ml='4px' color={'black'} fontWeight={'bold'}>{` ${user.fullName}`}</Text></Text>}
                 <Button  variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}`)}>Dashboard</Button>
                 <Button variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/projects`)}>Projects</Button>
-                <Menu>
+                <Menu zIndex="999">
                     <MenuButton
                         as={IconButton}
                         aria-label='Options'
@@ -52,10 +52,13 @@ export const Header = ({isFreelancer,userInfo}) => {
                         variant="ghost"
                         closeOnSelect
                     />
-                    <MenuList>
+                    <MenuList zIndex={"9999"}>
                         <MenuItem icon={<MdPerson />} onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/${userInfo._id}`)}>
                             Profile
                         </MenuItem>
+                        {isFreelancer && <MenuItem icon={<MdBlock />} onClick={() => router.push("/freelancer/blacklist")}>
+                            Blacklist
+                        </MenuItem>}
                         <MenuItem icon={<MdLogout />} onClick={() => router.push(`/logout`)}>
                             Logout
                         </MenuItem>

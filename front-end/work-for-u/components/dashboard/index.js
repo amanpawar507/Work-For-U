@@ -41,8 +41,8 @@ export const Dashboard = () => {
     return (
        user && <>
             <HStack mb="20px">
-                <Button onClick={() => setShowRecommended(true)} variant={!showRecommended && 'outline'} bg={showRecommended && 'brand.900'} color={!showRecommended && 'brand.500'} size={'sm'} borderRadius="full">Recommended</Button>
-                <Button onClick={() => setShowRecommended(false)} variant={showRecommended && 'outline'} bg={!showRecommended && 'brand.900'} color={showRecommended && 'brand.500'} minW={'50px'} size={'sm'} borderRadius="full">All</Button>
+                <Button onClick={() => setShowRecommended(true)} variant={!showRecommended && 'outline'} bg={showRecommended && 'brand.900'} color={!showRecommended && 'black'} size={'sm'} borderRadius="full">Recommended</Button>
+                <Button onClick={() => setShowRecommended(false)} variant={showRecommended && 'outline'} bg={!showRecommended && 'brand.900'} color={showRecommended && 'black'} minW={'50px'} size={'sm'} borderRadius="full">All</Button>
             </HStack>
             {listofFreelancers.length > 0 ? <FreelancerList list={listofFreelancers}/> : <EmptyAlert text="No freelancers avaialble. Come back later!"/>}
         </>

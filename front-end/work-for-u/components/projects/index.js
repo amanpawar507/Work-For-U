@@ -217,7 +217,7 @@ export const Projects = () => {
 
     return(
         <Box w={'100%'}>
-            {!isFreelancer && <Button minW={'100px'} variant={'solid'} color={'brand.500'} bg={'brand.900'} mb='20px' onClick={() => {setSelectedProject(null); onOpen()}}>Add</Button>}
+            {!isFreelancer && <Button minW={'100px'} variant={'solid'} color={'black'} bg={'brand.900'} mb='20px' onClick={() => {setSelectedProject(null); onOpen()}}>Add</Button>}
             {isFreelancer && <>
                 <Heading mb='10px' fontSize={'2xl'} borderBottom={'1px solid black'}>Requests</Heading>
 
