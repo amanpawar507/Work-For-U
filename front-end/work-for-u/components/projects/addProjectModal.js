@@ -41,15 +41,16 @@ import client from "../../utils/client";
             if(isOpen) {
                 setLoading(true);
                 getAllSkills();
-            }else{
-                setProjectDetails({
-                    name:null,
-                    description:null,
-                    tenureMonths:null,
-                    skillsRequired:[],
-                    hourlyPay:null
-                })
             }
+            // else{
+                // setProjectDetails({
+                //     name:null,
+                //     description:null,
+                //     tenureMonths:null,
+                //     skillsRequired:[],
+                //     hourlyPay:null
+                // })
+            // }
         } catch (error) {
             console.log(error);
         }
@@ -57,7 +58,16 @@ import client from "../../utils/client";
 
 
     useEffect(() => {
-        if(!isEdit || !selectedProject) return;
+        if(!isEdit || !selectedProject) {
+            setProjectDetails({
+                name:null,
+                description:null,
+                tenureMonths:null,
+                skillsRequired:[],
+                hourlyPay:null
+            })
+            return;
+        }
         let {_id,name,description,tenureMonths,hourlyPay,skillsRequired} = selectedProject;
         let current = {
             _id,
@@ -124,8 +134,8 @@ import client from "../../utils/client";
                     <Input id="name" value={projectDetails.name} name="name" onChange={handleChange} placeholder="name" isInvalid={errorList.includes('name')} />
                     <FormLabel htmlFor="description">Description</FormLabel>
                     <Textarea  id="description" value={projectDetails.description} onChange={handleChange} placeholder="Description" name="description" isInvalid={errorList.includes('description')}/>
-                    <FormLabel htmlFor="tenure">Tenure</FormLabel>
-                    <Input  id="tenure" value={projectDetails.tenureMonths} onChange={handleChange} type="number" placeholder="Tenure" name="tenureMonths" isInvalid={errorList.includes('tenureMonths')}/>
+                    <FormLabel htmlFor="tenureMonths">Tenure</FormLabel>
+                    <Input  id="tenureMonths" value={projectDetails.tenureMonths} onChange={handleChange} type="number" placeholder="Tenure" name="tenureMonths" isInvalid={errorList.includes('tenureMonths')}/>
                     <FormLabel htmlFor="skillsRequired">Skillset</FormLabel>
                     <CheckboxGroup id="skillsRequired" value={projectDetails.skillsRequired} onChange={handleCheck} name="skillsRequired" colorScheme="green">
                         <HStack flexWrap={'wrap'}>
@@ -140,6 +150,7 @@ import client from "../../utils/client";
                         colorScheme="teal"
                         type="submit"
                         isLoading={submitting}
+                        variant={'outline'}
                     >
                         Submit
                     </Button>

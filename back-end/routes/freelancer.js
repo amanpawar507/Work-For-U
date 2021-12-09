@@ -4,7 +4,7 @@ const router = express.Router();
 const { freelancer } = require("../data");
 const data = require("../data");
 const {generateToken} = require("../middlewares/JWT");
-const freelancerData = data.employer;
+const employerData = data.employer;
 
 //-----------------------------------------create---------------------------------------------------------
 
@@ -97,7 +97,7 @@ router.get("/:id", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.messsage });
+    res.status(500).json({ error: error.messsage ? error.message: error });
   }
 });
 
@@ -108,15 +108,15 @@ router.post("/searchFreelancer", async (req, res) => {
     // if(req.session.email) {
       const obj = req.body; //{query,filterkey}
       // const id = req.params.id;
-      if (!obj.query || !obj.filterkey) {
+      if (!obj.query ) {
         res.status(400).json({ error: "Please provide all the details" });
         return;
       }
-      if (typeof obj.query !== "string" || typeof obj.filterkey !== "string") {
+      if (typeof obj.query !== "string") {
         res.status(400).json({ error: "Invalid type of input object" });
         return;
       }
-      if (obj.query.trim().length === 0 || obj.filterkey.trim().length === 0) {
+      if (obj.query.trim().length === 0 ) {
         res.status(400).json({ error: "empty spaces for input object" });
         return;
       }
@@ -156,8 +156,8 @@ router.get("/recommended/:id", async(req,res) => {
     //   res.status(401).json({message: "unauthorized access!"});
     // }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error.messsage });
+    console.log(error.message);
+    res.status(500).json({ error: error.messsage ? error.message : error });
   }
 })
 
@@ -166,7 +166,7 @@ router.get("/recommended/:id", async(req,res) => {
 
 router.get("/delete/:id", async (req, res) => {
   try {
-    const freelancer = await freelancerData.remove(req.params.id);
+    const freelancer = await freelancer.remove(req.params.id);
     res.redirect("/login/");
   } catch (e) {
     console.log(e);
@@ -196,7 +196,114 @@ router.post("/login", async (req, res) => {
   }
 });
 
+//---------------------------------------Blacklisting------------------------------------------------
 
+router.post("/blacklist", async (req, res) => {
+  try {
+    const { freelancerID, EmployerID } = req.body;
+
+    if (!freelancerID || !EmployerID) {
+      res.status(400).json({ error: "Missing fields" });
+      return;
+    }
+    if (typeof freelancerID !== "string" || typeof EmployerID !== "string") {
+      res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+    if(freelancerID.trim().length === 0 || EmployerID.trim().length === 0) {
+      res.status(400).json({error: "Just empty spaces"});
+      return;
+    }
+
+    let result = await freelancer.Blacklist(freelancerID,EmployerID);
+    res.json(result);
+    
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(500).json({ error: error.messsage ? error.message : error});
+  }
+});
+
+//---------------------------------------BlacklistDelete------------------------------------------------
+
+router.delete("/blacklist/:freelancerID/:EmployerID", async (req, res) => {
+  try {
+    const { freelancerID, EmployerID } = req.params;
+
+    if (!freelancerID || !EmployerID) {
+      res.status(400).json({ error: "Missing fields" });
+      return;
+    }
+    if (typeof freelancerID !== "string" || typeof EmployerID !== "string") {
+      res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+    if(freelancerID.trim().length === 0 || EmployerID.trim().length === 0) {
+      res.status(400).json({error: "Just empty spaces"});
+      return;
+    }
+
+    let result = await freelancer.Blacklistremove(freelancerID,EmployerID);
+    res.json(result);
+    
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(500).json({ error: error.messsage ? error.message : error});
+  }
+});
+
+router.get("/successRate/:freelancerId", async(req,res) => {
+  try {
+    const freelancerId = req.params.freelancerId;
+    if(!freelancerId) {
+      res.status(400).json({error: "Pass a freelancerId"});
+      return;
+    }
+    if(typeof freelancerId !== "string") {
+      res.status(400).json({error: "Invalid type of freelancer Id"});
+      return;
+    }
+
+    let result = await freelancer.getSuccessRate(freelancerId);
+    console.log(result);
+    res.json(result);
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(500).json({ error: error.messsage ? error.message : error});
+  }
+})
+
+
+//--------------------------------------EditProfile--------------------------------------------------
+
+router.patch("/edit", async (req, res) => {
+  try {
+    const { id,fullName, introduction, skills, location, expectedPay } = req.body;
+    if (!id || !fullName   || !skills || !introduction || !location  || !expectedPay) {
+      res.status(400).json({ error: "Missing fields" });
+      return;
+    }
+    
+    if (
+      typeof id !== "string" ||
+      typeof fullName !== "string" ||
+      typeof introduction !== "string" ||
+      (typeof skills !== "object" && !skills.length) ||
+      typeof location !== "string" ||
+      typeof expectedPay !== "number"
+    ) {
+      res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+
+    let editedprofile = await freelancer.editProfile(req.body);
+    res.status(200).json(editedprofile);
+
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(400).json({ error: error.messsage ? error.message : error });
+  }
+});
 
 //-------------------------------------logout-----------------------------------------------
 router.get("/logout", async (req, res) => {

@@ -1,78 +1,79 @@
-import { useToast } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
-<<<<<<< HEAD
-import { HStack, toast, useDisclosure, useToast } from "@chakra-ui/react";
-import { FreelancerCard } from "./freelancerCard";
-import axios from "axios";
-import { RequestModal } from "./requestModal";
-import { Heading } from "@chakra-ui/react";
+import { Button, HStack, useToast } from "@chakra-ui/react";
+import { useState, useEffect, useContext } from "react";
+// import axios from 'axios';
+import client from "../../utils/client";
+import { EmptyAlert } from "../common/emptyAlert";
+import { FreelancerList } from "../common/freelancerList";
+import { UserContext } from "../contexts/userContext";
 
 export const Dashboard = () => {
   const [listofFreelancers, setListOfFreelancers] = useState([]);
-  const [selectedFreelancer, setSelectedFreelancer] = useState(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [showRecommended, setShowRecommended] = useState(true);
+
+  const { user } = useContext(UserContext);
 
   const toast = useToast();
 
   useEffect(() => {
-    const searchType = async () => {
-      const { data } = await axios.get("http://localhost:5000/freelancer/all");
-      setListOfFreelancers(data);
+    const getFreelancers = async () => {
+      try {
+        if (showRecommended) {
+          const { data } = await client.get(
+            `http://localhost:5000/freelancer/recommended/${user._id}`
+          );
+          setListOfFreelancers(data);
+        } else {
+          const { data } = await client.get(
+            "http://localhost:5000/freelancer/all"
+          );
+          setListOfFreelancers(data);
+        }
+      } catch (error) {
+        console.log(error.response);
+        toast({
+          title: error.response
+            ? error.response.statusText
+            : "Some error occured",
+          status: "error",
+          duration: 2000,
+        });
+      }
     };
-    searchType();
-  }, []);
-
-  const handleRequestOpen = (freelancer) => {
-    setSelectedFreelancer(freelancer);
-    onOpen();
-  };
+    getFreelancers();
+  }, [user, showRecommended]);
 
   return (
-    <>
-      <Heading>I'm a Heading</Heading>
-      <HStack spacing={"20px"}>
-        {listofFreelancers.map((i) => (
-          <FreelancerCard
-            name={i.fullName}
-            rating={i.overallRating}
-            skill={
-              i.skills[Math.floor(Math.random() * i.skills.length - 1) + 1].name
-            }
-            onRequest={() => handleRequestOpen(i)}
-          />
-        ))}
-      </HStack>
-      <RequestModal
-        isOpen={isOpen}
-        onClose={() => onClose()}
-        selectedFreelancer={selectedFreelancer}
-      />
-    </>
+    user && (
+      <>
+        <HStack mb="20px">
+          <Button
+            onClick={() => setShowRecommended(true)}
+            variant={!showRecommended && "outline"}
+            bg={showRecommended && "brand.900"}
+            color={!showRecommended && "black"}
+            size={"sm"}
+            borderRadius="full"
+          >
+            Recommended
+          </Button>
+          <Button
+            onClick={() => setShowRecommended(false)}
+            variant={showRecommended && "outline"}
+            bg={!showRecommended && "brand.900"}
+            color={showRecommended && "black"}
+            minW={"50px"}
+            size={"sm"}
+            borderRadius="full"
+          >
+            All
+          </Button>
+        </HStack>
+        {listofFreelancers.length > 0 ? (
+          <FreelancerList list={listofFreelancers} />
+        ) : (
+          <EmptyAlert text="No freelancers avaialble. Come back later!" />
+        )}
+      </>
+    )
   );
 };
-=======
-// import axios from 'axios';
-import client from "../../utils/client";
-import { FreelancerList } from "../common/freelancerList";
-
-export const Dashboard = () => {
-
-    const [listofFreelancers, setListOfFreelancers] = useState([]);
-
-
-    const toast = useToast();
-
-    useEffect(() => {
-        const getFreelancers = async() => {
-            const {data} = await client.get("http://localhost:5000/freelancer/all");
-            setListOfFreelancers(data);
-        }
-        getFreelancers();
-    },[])
-
-
-    return (
-       <FreelancerList list={listofFreelancers}/>
-    )
-} 
->>>>>>> 58cc1ef838d1bc927d59ec02c5976862624a6a4a

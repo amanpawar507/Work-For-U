@@ -6,7 +6,7 @@ import { Layout } from "../../components/core/layout";
 import { Profile } from "../../components/profile";
 import client from "../../utils/client";
 
-const EmployerProfilePage = () => {
+const FreelanceProfilePage = () => {
     const [isUser,setIsUser] = useState(false);
     const [info,setInfo] = useState(null);
 
@@ -20,7 +20,7 @@ const EmployerProfilePage = () => {
 
         const getInfo = async userId => {
             try {
-                const {data} = await client.get(`http://localhost:5000/employer/${userId}`);
+                const {data} = await client.get(`http://localhost:5000/freelancer/${userId}`);
                 setInfo(data);
             } catch (error) {
                 toast({
@@ -30,9 +30,8 @@ const EmployerProfilePage = () => {
                 });
             }
         }
-        console.log(user._id === id);
+        
         if(user._id === id) {
-           
             setIsUser(true);
             setInfo(user);
         }else{
@@ -44,7 +43,7 @@ const EmployerProfilePage = () => {
     return(
         info && <Layout>
             <Container maxW={"container.md"} pt="20px" h={'600px'}>
-                <Profile isFreelancerProfile={false} isFreelancer={isFreelancer} isUser={isUser} userInfo={info} updateUserInfo={data => setInfo(data)}/>
+                <Profile isFreelancerProfile={true} isFreelancer={isFreelancer} isUser={isUser} userInfo={info} updateUserInfo={data => setInfo(data)}/>
             </Container>
         </Layout>
 
@@ -52,5 +51,8 @@ const EmployerProfilePage = () => {
     )
 }
 
-export default EmployerProfilePage;
+export default FreelanceProfilePage;
+
+
+
 

@@ -14,16 +14,18 @@ const UserContextProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      let userExist = localStorage.getItem("user");
+      let userExist = localStorage.getItem("accessToken");
       let isFreelancer = localStorage.getItem("isFreelancer");
       console.log(userExist);
-      if (!userExist) {
+      if (isFreelancer === undefined || isFreelancer === null) {
         router.push("/");
       } else {
-        if (isFreelancer || isFreelancer === "true") {
-          getFreelancer();
+        if (isFreelancer === "true") {
+          setIsFreelancer(true);
+          if (userExist && userExist !== undefined) setCurrentUser();
         } else {
-          getEmployer();
+          setIsFreelancer(false);
+          if (userExist && userExist !== undefined) setCurrentUser();
         }
       }
     } catch (error) {
@@ -32,77 +34,37 @@ const UserContextProvider = ({ children }) => {
     }
   }, []);
 
-  const getEmployer = async () => {
-    setLoading(true);
-    const { data } = await axios.get(
-      "http://localhost:5000/employer/61a903a12924a7089139f0d8"
-    );
+  const setCurrentUser = async () => {
+    const { data } = await client.post(`http://localhost:5000/common/reCreate`);
     if (data) {
-      setUser(data);
-      setIsFreelancer(false);
-      localStorage.setItem("user", data._id);
-      localStorage.setItem("isFreelancer", false);
-      router.push("/employer");
-    const setCurrentUser = async(id) => {
-        const {data} = await client.get(`http://localhost:5000/reCreate`)
-        console.log(data);
-        if(data) {
-            setUser(data.user);
-        }
+      setUser(data.user);
     }
-    setLoading(false);
-  };
-
-  const getFreelancer = async () => {
-    setLoading(true);
-    const { data } = await axios.get(
-      "http://localhost:5000/freelancer/61a903af2924a7089139f0df"
-    );
-    if (data) {
-      setUser(data);
-      setIsFreelancer(true);
-      localStorage.setItem("user", data._id);
-      localStorage.setItem("isFreelancer", true);
-      router.push("/freelancer/register");
-    }
-    setLoading(false);
   };
 
   const handleTypeSelect = (type) => {
     if (type === 1) {
-      getEmployer();
+      localStorage.setItem("isFreelancer", false);
+      setIsFreelancer(false);
     } else {
-      getFreelancer();
-    // const setFreelancer = async(id) => {
-    //     const {data} = await client.get(`http://localhost:5000/freelancer/${id}`)
-    //     if(data) {
-    //         setUser(data.user);
-    //         // router.push('/freelancer');
-    //     }
-    // }
-
-    const handleTypeSelect = type => {
-        if(type === 1) {
-            localStorage.setItem("isFreelancer",false);
-            setIsFreelancer(false);
-        }else{
-            localStorage.setItem("isFreelancer",true);
-            setIsFreelancer(true);
-        }
-        router.push("/login");
+      localStorage.setItem("isFreelancer", true);
+      setIsFreelancer(true);
     }
-
-    const saveUser = user => {
-        if(!user) return;
-        setUser(user.user);
-        localStorage.setItem('accessToken',user.token);
-    }
+    router.push("/login");
   };
 
-    return (
-        <UserContext.Provider value={{user,handleTypeSelect,isFreelancer,setUser,saveUser}}>
-            {children}
-        </UserContext.Provider>
-    )
-}
+  const saveUser = (user) => {
+    if (!user) return;
+    setUser(user.user);
+    localStorage.setItem("accessToken", user.token);
+  };
+
+  return (
+    <UserContext.Provider
+      value={{ user, handleTypeSelect, isFreelancer, setUser, saveUser }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
+};
+
 export default UserContextProvider;

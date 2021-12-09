@@ -25,6 +25,8 @@ const getCurrentTime = () => {
 //   console.log(result);
 // }
 
+//--------------------------------------Create Employer--------------------------------------------------
+
 const createEmployer = async (data) => {
   const { fullName, emailId, password, companyName } = data;
   if (!fullName || !emailId || !password || !companyName)
@@ -62,6 +64,8 @@ const createEmployer = async (data) => {
   return newEntryInfo;
 };
 
+//--------------------------------------Get Employer--------------------------------------------------
+
 const getEmployer = async (employerID) => {
   if (!employerID) throw "You must provide an ID to search for";
   if (typeof employerID !== "string")
@@ -81,6 +85,8 @@ const getEmployer = async (employerID) => {
   return findID;
 };
 
+//--------------------------------------VerifyUser--------------------------------------------------
+
 async function checker(emailId, password) {
   if (!emailId || !password) throw "All fields to have valid values";
   if (typeof emailId !== "string" || typeof password !== "string")
@@ -99,7 +105,7 @@ async function checker(emailId, password) {
   let mat = await bCrypt.compare(password, user.password);
   if (!mat) throw "Either the emailId or password is invalid";
   return { _id:user._id.toString(),...user};
-}
+};
 
 //------------------------------------------delete employer------------------------------------------
 const remove = async (employerID) => {
@@ -112,9 +118,74 @@ const remove = async (employerID) => {
   return { Deleted: true };
 };
 
+//------------------------------------------GetListEmployer------------------------------------------
+
+const listemployer = async(employeridarr) => {
+  const employerCollection = await employer();
+  // const result =[];
+  const idArr = employeridarr.map(i => ObjectId(i));
+  let result = await employerCollection.find(
+    { _id: { $in:  idArr } }
+    ).toArray()
+
+  result = result.map(i => {return {_id: i._id.toString(),...i}})
+  if(result.length === 0){
+    throw "No employers found for the given Ids";
+  }
+  else{
+    return result;
+  }
+
+};
+
+//--------------------------------------EditProfile--------------------------------------------------
+
+const editProfile = async (data) => {
+  const { id,fullName, companyName } = data;
+  if (!id || !fullName  || !companyName) {
+   throw "Missing Fields";
+  }
+  if (
+    typeof id !== "string" ||
+    typeof fullName !== "string" ||
+    typeof companyName !== "string"
+  ) {
+    throw "Invalid Type of Data"
+  }
+
+  const newEntry = {
+    fullName : fullName,
+    companyName : companyName,
+    updatedAt: getCurrentTime()
+  };
+
+  const employerCollection = await employer();
+
+  let findID = await employerCollection.findOne({
+    _id: ObjectId(id.trim()),
+  });
+  if (findID === null){
+    throw "Employer does not exist for the given id ${employerID.trim()}";
+  }
+  else{
+    const updatedInfo = await employerCollection.updateOne(
+      { _id: ObjectId(id.trim()) },
+      { $set: newEntry }
+    );
+    if (updatedInfo.modifiedCount === 0) {
+      throw 'Could not update employer successfully';
+    }
+    const updatedprofile = await getEmployer(id);
+    return updatedprofile;
+  }
+};
+
+
 module.exports = {
   createEmployer,
   getEmployer,
   checker,
   remove,
+  listemployer,
+  editProfile
 };

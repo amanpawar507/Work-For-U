@@ -12,6 +12,7 @@ import {
   } from '@chakra-ui/react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import client from '../../utils/client';
 
   export const UpdateStatusModal = ({isOpen,onClose, selectedProject, setUpdatedProject}) => {
 
@@ -22,13 +23,13 @@ import { useEffect, useState } from 'react';
         const handleSubmit = async e => {
             try {
                 e.preventDefault();
+                //debugger;
                 if(status === selectedProject.status) {
                     onClose();
                     return;
                 }
                 setLoading(true);
-                const {data} = await client.patch("http://localhost:5000/project/requests/update",{
-                    freelancerId: selectedProject.assignedTo,
+                const {data} = await client.patch("http://localhost:5000/project/status/update",{
                     projectId: selectedProject._id,
                     status: status
                 });
@@ -55,6 +56,7 @@ import { useEffect, useState } from 'react';
                         <option value={1}>Accepted</option>
                         <option value={2}>In progress</option>
                         <option value={3}>Completed</option>
+                        <option value={4}>Incomplete</option>
                     </Select>
                     <Button isLoading={loading} variant='solid' colorScheme={'teal'} type="submit" ml="auto">Submit</Button>
                 </FormControl>

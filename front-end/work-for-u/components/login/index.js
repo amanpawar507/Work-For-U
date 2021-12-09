@@ -1,5 +1,6 @@
 import { Button } from "@chakra-ui/button";
 import { Flex, VStack } from "@chakra-ui/layout"
+import { Heading } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
 import { useRouter } from "next/dist/client/router";
@@ -43,31 +44,32 @@ export const Login = () => {
         <Flex justifyContent={'center'}>
             <form onSubmit={handleSubmit}>
             <VStack w={'300px'} mt="5%"  padding={'20px'} background={'white'} borderRadius={'10px'} boxShadow={'md'}>
-                    <InputComp name="emailId" label="Username" value={details.emailId} onChange={
-                        e => setDetails(prevValue => {
-                            return{
-                                ...prevValue,
-                                [e.target.name]: e.target.value
-                            }
-                        })
-                    }/>
-                    <InputComp type="password" name="password" label="Password" value={details.password} onChange={
-                        e => setDetails(prevValue => {
-                            return{
-                                ...prevValue,
-                                [e.target.name]: e.target.value
-                            }
-                        })
-                    }/>
-                    <Button colorScheme={'teal'} mt='10px' w="100%" type="submit" isLoading={checking}>
-                        Submit
-                    </Button>
-                    <Button disabled={checking} colorScheme={'teal'} mt='10px' w="100%" onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/register`)}>
-                        Haven't joined u, yet?
-                    </Button>
-                    <Button disabled={checking} colorScheme={'teal'} mt='10px' w="100%" onClick={() => router.push("/")}>
-                        {isFreelancer ? 'Not freelancer?' : 'Not employer?'}
-                    </Button>
+                <Heading mb='10px' as="h1">Login</Heading>
+                <InputComp name="emailId" label="Username" value={details.emailId} onChange={
+                    e => setDetails(prevValue => {
+                        return{
+                            ...prevValue,
+                            [e.target.name]: e.target.value
+                        }
+                    })
+                }/>
+                <InputComp type="password" name="password" label="Password" value={details.password} onChange={
+                    e => setDetails(prevValue => {
+                        return{
+                            ...prevValue,
+                            [e.target.name]: e.target.value
+                        }
+                    })
+                }/>
+                <Button variant={'outline'} colorScheme={'teal'} mt='10px' w="100%" type="submit" isLoading={checking}>
+                    Submit
+                </Button>
+                <Button variant={'outline'} disabled={checking} colorScheme={'teal'} mt='10px' w="100%" onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/register`)}>
+                    Haven't joined us, yet?
+                </Button>
+                <Button variant={'outline'} disabled={checking} colorScheme={'teal'} mt='10px' w="100%" onClick={() => router.push("/")}>
+                    {isFreelancer ? 'Not freelancer?' : 'Not employer?'}
+                </Button>
             </VStack>
                 </form>
             

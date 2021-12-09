@@ -1,11 +1,36 @@
-const { freelancer } = require("../config/mongoCollections");
+const { freelancer,project } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
 const {getEmployer} = require('./employer');
-const { getProject,getAllEmployerProjects } = require("./project");
+//const {getAllEmployerProjects} = require("./project");
 //const { getSkill } = require("./freelanceFunctions");
 const { ObjectId } = require("mongodb");
 const bCrypt = require("bcrypt");
+const e = require("express");
 const saltRounds = 16;
+
+async function getAllEmployerProjects  (employerID)  {
+  if (!employerID) throw "Pass a employerID to search";
+  if (typeof employerID !== "string") throw "Invalid employer ID";
+
+  const pCollection = await project();
+
+  const foundList = await pCollection.find({ createdBy: employerID }).toArray();
+  if (!foundList) "throw could not find projects for the employerID";
+
+  return foundList;
+};
+
+const getAllFreelancerProjects = async freelancerID => {
+  if(!freelancerID) throw "Pass a freelancerID to search";
+  if(typeof freelancerID !== 'string') throw "Invalid freeelancer ID";
+  
+  const pCollection = await project();
+
+  const foundList = await pCollection.find({assignedTo: freelancerID}).toArray();
+  if(!foundList) "throw could not find projects for the freelancerID";
+
+  return foundList;
+}
 
 const getCurrentTime = () => {
   var today = new Date();
@@ -135,46 +160,78 @@ const getFreelancer = async (freelancerID) => {
 //-----------------------------------------getonbasisofSkillAndName---------------------------------------------------------
 
 const searchType = async (filterObj) => {
-  if (!filterObj.query || !filterObj.filterkey)
+  if (!filterObj.query)
     throw "Please provide all the details";
   if (
-    typeof filterObj.query !== "string" ||
-    typeof filterObj.filterkey !== "string"
+    typeof filterObj.query !== "string" 
   )
     throw "Invalid type of input object";
   if (
-    filterObj.query.trim().length === 0 ||
-    filterObj.filterkey.trim().length === 0
+    filterObj.query.trim().length === 0 
   )
     throw "empty spaces for input object";
 
   const freelancerCollection = await freelancer();
-  const freelancerList = await freelancerCollection.find({}).toArray();
-  let resultarr = [];
 
-  if (filterObj.filterkey === "name") {
-    for (let i of freelancerList) {
-      if(i.fullName.length > filterObj.query.length) {
-        if (i.fullName.toLowerCase().includes(filterObj.query.toLowerCase())) {
-          resultarr.push(i);
-        }
-      }else{
-        if (filterObj.query.toLowerCase().includes(i.fullName.toLowerCase())) {
-          resultarr.push(i);
-        }
+  let result = [];
+
+  if(filterObj.filterkey === "name" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    const listForName = await freelancerCollection.find({fullName: { $regex: `${filterObj.query}`, $options: 'i'}}).toArray();
+    result = [...result,...listForName];
+  }
+  if(filterObj.filterkey === "location" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    const listForLocation = await freelancerCollection.find({location: { $regex: `${filterObj.query}`, $options: 'i'}}).toArray();
+    result = [...result,...listForLocation];
+  }
+  if(filterObj.filterkey === "skill" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    const listForSkills = await freelancerCollection.find({'skills.name': { $regex: `${filterObj.query}`, $options: 'i'}}).toArray();
+    result = [...result,...listForSkills];
+  }
+  let finalResult = []
+  result.forEach(el => {
+    if(finalResult.length > 0) {
+      const exist = finalResult.find(i => i._id.toString() === el._id.toString());
+      if(!exist) {
+        finalResult.push({
+          _id: el._id.toString(),
+          ...el
+        })
       }
+    }else{
+      finalResult.push({
+        _id: el._id.toString(),
+        ...el
+      })
     }
-    return resultarr;
-  } else if (filterObj.filterkey === "skill") {
-    for (let i of freelancerList) {
-      for(let j of i.skills){
-        if (j.name.toLowerCase().includes(filterObj.query.toLowerCase())) {
-          resultarr.push(i);
-        }
-      }
-    }
-    return resultarr;
-  } else throw "Unidentified object value";
+  });
+
+  return finalResult;
+
+  // let resultarr = [];
+
+  // if (filterObj.filterkey === "name") {
+  //   for (let i of freelancerList) {
+  //     if(i.fullName.length > filterObj.query.length) {
+  //       if (i.fullName.toLowerCase().includes(filterObj.query.toLowerCase())) {
+  //         resultarr.push(i);
+  //       }
+  //     }else{
+  //       if (filterObj.query.toLowerCase().includes(i.fullName.toLowerCase())) {
+  //         resultarr.push(i);
+  //       }
+  //     }
+  //   }
+  //   return resultarr;
+  // } else if (filterObj.filterkey === "skill") {
+  //   for (let i of freelancerList) {
+  //     for(let j of i.skills){
+  //       if (j.name.toLowerCase().includes(filterObj.query.toLowerCase())) {
+  //         resultarr.push(i);
+  //       }
+  //     }
+  //   }
+  //   return resultarr;
+  // } else throw "Unidentified object value";
 
   
 };
@@ -215,23 +272,166 @@ const getRecommended = async employerId => {
   if(typeof employerId !== "string") throw "Invalid type of employerID";
   if(employerId.trim().length === 0) throw "empty spaces found";
   ObjectId(employerId);
-  const employerFound = await getEmployer(employerId);
-  const allProjects = await getAllEmployerProjects(employerId);
-  let skillsRequired = [];
-  allProjects.map(i => {
-    skillsRequired = [...skillsRequired,...i.skillsRequired]
-  });
-  skillsRequired = skillsRequired.map(i=>i._id);
-  skillsRequired = Array.from(new Set(skillsRequired));
-  const freelancerCollection = await freelancer();
-  let matchedFreelancers = await freelancerCollection.find({'skills._id': {$in: skillsRequired}}).toArray();
-  if(!matchedFreelancers) throw "could not find recommendations";
-  for (let i of matchedFreelancers) {
-    i._id = i._id.toString();
-  }
-  return matchedFreelancers;
+  //const employerFound = await getEmployer(employerId);
+  // if(employerFound) {
+    const allProjects = await getAllEmployerProjects(employerId);
+    let skillsRequired = [];
+    allProjects.map(i => {
+      skillsRequired = [...skillsRequired,...i.skillsRequired]
+    });
+    skillsRequired = skillsRequired.map(i=>i._id);
+    skillsRequired = Array.from(new Set(skillsRequired));
+    const freelancerCollection = await freelancer();
+    let matchedFreelancers = await freelancerCollection.find({'skills._id': {$in: skillsRequired}}).toArray();
+    if(!matchedFreelancers) throw "could not find recommendations";
+    for (let i of matchedFreelancers) {
+      i._id = i._id.toString();
+    }
+    return matchedFreelancers;
+  // }else{
+  //   throw "could not find employer"
+  // }
+ 
 }
 
+//---------------------------------------------Blacklisting-----------------------------------------------
+
+const Blacklist = async(freelancerID,employerID) =>{
+
+  let verifyfreelancer        = await getFreelancer(freelancerID);
+  let verifyemployer          = await getEmployer(employerID);
+  const freelancerCollection  = await freelancer();
+
+  let parsedId = ObjectId(freelancerID); 
+  let freelanceraction = await freelancerCollection.findOne({ _id: parsedId });
+
+  if ('blacklist' in freelanceraction){
+    for(let i of freelanceraction.blacklist){
+      if(i == employerID){
+        throw "Employer already added to blacklist sequence"
+      }
+    }
+  }
+  const updatedInfo = await freelancerCollection.updateOne({ _id: parsedId },{ $push: { blacklist: employerID } });
+  let updatedfreelancer        = await getFreelancer(freelancerID);
+  return updatedfreelancer;
+}
+
+//---------------------------------------BlacklistDelete------------------------------------------------
+
+
+const Blacklistremove = async(freelancerID,employerID) =>{
+
+  let verifyfreelancer        = await getFreelancer(freelancerID);
+  let verifyemployer          = await getEmployer(employerID);
+  const freelancerCollection  = await freelancer();
+
+  let parsedId = ObjectId(freelancerID); 
+  let freelanceraction = await freelancerCollection.findOne({ _id: parsedId });
+  // let count = -1;
+  
+  if ('blacklist' in freelanceraction){
+    if((freelanceraction.blacklist).length===0){
+      throw "You have not blacklisted anyone yet"
+    }
+    let removedblackist = await freelancerCollection.updateOne({ _id: parsedId }, { $pull: { blacklist: employerID } });
+    if(removedblackist.modifiedCount === 1){
+      let updatedfreelancer        = await getFreelancer(freelancerID);
+      return updatedfreelancer; 
+    }
+    else{
+      throw "Could not delete the employer from blacklist"
+    }
+    
+  }
+  else throw "You have not blacklisted anyone yet"
+
+}
+
+//---------------------------------------SuccessRate------------------------------------------------
+
+const getSuccessRate = async freelancerId => {
+  if(!freelancerId) throw "Pass a freelancer ID";
+  if(typeof freelancerId !== "string") throw "Invalid type of ID";
+  ObjectId(freelancerId);
+
+  const allProjects = await getAllFreelancerProjects(freelancerId);
+  let closedProjects = 0;
+  let completeProjects = 0;
+  let projectBySkills = {};
+  allProjects.forEach(proj => {
+    if(proj.status === 3 || proj.status === 4) {
+      closedProjects += 1
+      if(proj.status === 3) {
+        completeProjects += 1
+        proj.skillsRequired.forEach(skill => {
+          if(projectBySkills[skill.name]) {
+            projectBySkills[skill.name] += 1;
+          }else{
+            projectBySkills[skill.name] = 1
+          }
+        });
+      }
+    }
+  });
+  const successRate = (completeProjects / closedProjects) * 100;
+  return {
+    closedProjects,
+    completeProjects,
+    projectBySkills,
+    successRate
+  }
+}
+//--------------------------------------EditProfile--------------------------------------------------
+
+const editProfile = async (data) => {
+  const { id,fullName, introduction, skills, location, expectedPay }  = data;
+  if (!id || !fullName   || !skills || !introduction || !location  || !expectedPay) {
+    throw "Missing Fields";
+  }
+  
+  if (
+    typeof id !== "string" ||
+    typeof fullName !== "string" ||
+    typeof introduction !== "string" ||
+    (typeof skills !== "object" && !skills.length) ||
+    typeof location !== "string" ||
+    typeof expectedPay !== "number"
+  ) {
+    throw "Invalid type of data";
+  }
+
+  let skillsArrayF = await getSkill(skills);
+
+  const newEntry = {
+    fullName : fullName,
+    introduction : introduction,
+    skills : skillsArrayF,
+    location : location,
+    expectedPay : expectedPay,
+    updatedAt: getCurrentTime()
+  };
+
+  const freelancerCollection = await freelancer();
+
+  let findID = await freelancerCollection.findOne({
+    _id: ObjectId(id.trim()),
+  });
+  if (findID === null){
+    throw "Freelancer does not exist for the given id ${employerID.trim()}";
+  }
+  else{
+    const updatedInfo = await freelancerCollection.updateOne(
+      { _id: ObjectId(id.trim()) },
+      { $set: newEntry }
+    );
+    if (updatedInfo.modifiedCount === 0) {
+      throw 'Could not update employer successfully';
+    }
+    const updatedprofile = await getFreelancer(id);
+    return updatedprofile;
+  }
+};
 
 
 module.exports = {
@@ -242,5 +442,9 @@ module.exports = {
   checker,
   remove,
   createIndices,
-  getRecommended
+  getRecommended,
+  Blacklist,
+  Blacklistremove,
+  getSuccessRate,
+  editProfile
 };
