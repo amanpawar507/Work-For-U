@@ -69,6 +69,8 @@ export const Projects = () => {
             setIsSubmitting(true);
             let tenure = parseFloat(details.tenureMonths);
             let pay = parseFloat(details.hourlyPay);
+            let hours = parseInt(details.hrsPerDay);
+            let days = parseInt(details.daysPerWeek);
             if(tenure === 0 || pay === 0) {
                 toast({title: "Tenure and Hourly pay should be greater than 0",
                     status: "warning",
@@ -84,7 +86,9 @@ export const Projects = () => {
                     {
                         ...details, 
                         tenureMonths: tenure,
-                        hourlyPay: pay
+                        hourlyPay: pay,
+                        hrsPerDay: hours,
+                        daysPerWeek: days
                     }   
                 );
                 console.log(data);
@@ -95,12 +99,14 @@ export const Projects = () => {
                 onClose();
             }else{
                 const {data} = await client.post("http://localhost:5000/project/",
-                    {
-                        ...details, 
-                        tenureMonths: tenure,
-                        hourlyPay: pay,
-                        createdBy: user._id
-                    }   
+                {
+                    ...details, 
+                    tenureMonths: tenure,
+                    hourlyPay: pay,
+                    hrsPerDay: hours,
+                    daysPerWeek: days,
+                    createdBy: user._id
+                }   
                 );
                 console.log(data);
                 setProjects(prevValue => [...prevValue,data]);
@@ -110,7 +116,7 @@ export const Projects = () => {
 
         } catch (error) {
             console.log(error.response.data);
-            toast({title: error.error? error.error : error,
+            toast({title: error.response? error.response.data.error : error,
                 status: "error",
                 duration: 2000
             });

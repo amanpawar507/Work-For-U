@@ -8,6 +8,7 @@ import { useRouter } from "next/dist/client/router";
 import { useContext, useState } from "react"
 import {MdInfo,MdEdit,MdDelete, MdMenu,MdPerson} from "react-icons/md"
 import client from "../../utils/client";
+import { getColorScheme, getStatus } from "../../utils/helper";
 import { UserContext } from "../contexts/userContext";
 
 export const ProjectCard = ({id, name, status,assignedTo,assignedBy,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick,setUpdatedRequest}) => {
@@ -22,40 +23,7 @@ export const ProjectCard = ({id, name, status,assignedTo,assignedBy,onDetailsCli
     const toast = useToast();
     const router = useRouter();
 
-    const getStatus = status => {
-        switch (status) {
-            case 0:
-                return "open"
-            case 1:
-                return "assigned"
-            case 2:
-                return "ongoing"
-            case 3: 
-                return "completed"
-            case 4: 
-                return "incomplete"
-            default:
-                break;
-        }
-    }
 
-    const getColorScheme = status => {
-
-        switch (status) {
-            case 0:
-                return "gray"
-            case 1:
-                return "orange"
-            case 2:
-                return "yellow"
-            case 3:
-                return "green"
-            case 4:
-                return "red"
-            default:
-                break;
-        }
-    }
 
     const handleAcceptReject = async status => {
         try {

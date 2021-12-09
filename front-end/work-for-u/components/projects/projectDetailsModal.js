@@ -13,6 +13,7 @@ import {
   } from "@chakra-ui/react"
 import { useContext, useEffect, useState } from "react"
 import client from "../../utils/client";
+import { getStatus } from "../../utils/helper";
 import { UserContext } from "../contexts/userContext";
 
   export const ProjectDetailsModal = ({isOpen,onClose,projectDetails}) => {
@@ -71,10 +72,9 @@ import { UserContext } from "../contexts/userContext";
                     <Text mb='5px'><strong>Tenure:</strong> {projectDetails.tenureMonths} months</Text>
                     <Text mb='5px'><strong>Skills Required:</strong> {projectDetails.skillsRequired.map((i,idx) => idx !== projectDetails.skillsRequired.length - 1 ?`${i.name}, `: i.name)}</Text>
                     <Text mb='5px'><strong>Pay /hour:</strong> ${projectDetails.hourlyPay}</Text>
-                    <Text mb='5px'><strong>Status:</strong> {projectDetails.status === 0 ? "Created" :
-                        projectDetails.status === 1 ? "In progress" :
-                        "Completed"
-                    }</Text>
+                    <Text mb='5px'><strong>Hours /day:</strong> {projectDetails.hrsPerDay} hours</Text>
+                    <Text mb='5px'><strong>Days /week:</strong> {projectDetails.daysPerWeek} days</Text>
+                    <Text mb='5px'><strong>Status:</strong> {getStatus(projectDetails.status)}</Text>
                     <Text mb='5px'><strong>createdBy:</strong> {createdBy}</Text>
                     {projectDetails.status !== 0 && <Text><strong>Assigned to:</strong> {assignedTo}</Text>}
                     <Text mb='5px'><strong>Created on:</strong> {projectDetails.createdAt}</Text>

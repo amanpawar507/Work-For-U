@@ -65,6 +65,8 @@ router.post("/", async (req, res) => {
       skillsRequired,
       hourlyPay,
       createdBy,
+      hrsPerDay,
+      daysPerWeek,
     });
     res.json(result);
   } catch (error) {

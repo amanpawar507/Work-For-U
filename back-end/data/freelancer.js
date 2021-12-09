@@ -67,7 +67,6 @@ const createFreelancer = async (data) => {
     !fullName ||
     !emailId ||
     !password ||
-    !introduction ||
     !skills ||
     !location ||
     !expectedPay
@@ -84,6 +83,17 @@ const createFreelancer = async (data) => {
     typeof expectedPay !== "number"
   )
     throw "Invalid type of data";
+
+    if(
+      fullName.trim().length === 0 ||
+      emailId.trim().length === 0 ||
+      password.trim().length === 0 ||
+      location.trim().length === 0 
+    ) {
+      throw "Empty spaces as input";
+    }
+
+    if(password.trim().length < 6) throw "Password should be atleast 6 characters!";
 
   var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   if (!emailPattern.test(emailId)) throw "Email ID not valid";
