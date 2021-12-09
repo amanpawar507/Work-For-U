@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HStack, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, HStack, Text } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router"
 import { useContext, useEffect } from "react"
 import { UserContext } from "../components/contexts/userContext";
@@ -18,7 +18,10 @@ export default function Home() {
   return (
     <Layout>
       <Box w={'100%'} h={'90vh'} display={'flex'} flexDirection={'column'} justifyContent={'center'}>
-        <Heading fontSize={'5xl'} textAlign={'center'} as="h1">Work For U</Heading>
+        {/* <Heading fontSize={'5xl'} textAlign={'center'} as="h1">Work For U</Heading> */}
+       <Flex justifyContent={'center'} mb='10px'>
+          <img src="/WorkForU.png" width='300' alt="logo"/>
+       </Flex>
         <Heading fontStyle={'italic'} fontSize={'2xl'} textAlign={'center'} as="h2">Choose who you work for</Heading>
         <br/>
         <br/>

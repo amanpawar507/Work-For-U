@@ -129,7 +129,7 @@ router.post("/getList", async (req, res) => {
 
 //--------------------------------------EditProfile--------------------------------------------------
 
-router.post("/edit", async (req, res) => {
+router.patch("/edit", async (req, res) => {
   try {
     const { id,fullName, companyName } = req.body;
     if (!id || !fullName  || !companyName) {
