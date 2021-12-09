@@ -39,8 +39,23 @@ const createEmployer = async (data) => {
     typeof companyName !== "string"
   )
     throw "Invalid type of data";
+
+
+    if(
+      fullName.trim().length === 0 ||
+      emailId.trim().length === 0 ||
+      password.trim().length === 0 ||
+      companyName.trim().length === 0 
+    ) {
+      throw "Empty spaces as input";
+    }
+
+    if(password.trim().length < 6) throw "Password should be atleast 6 characters!";
+
   if (!emailId.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
     throw "The username has to be in the mentioned format";
+
+    
   //let = await getSkill(skillsRequired);
   const hash = await bCrypt.hash(password, saltRounds);
   const employerCollection = await employer();

@@ -33,10 +33,8 @@ const FreelanceProfilePage = () => {
         
         if(user._id === id) {
             setIsUser(true);
-            setInfo(user);
-        }else{
-            getInfo(id);
         }
+        getInfo(id);
 
     },[query,user])
     

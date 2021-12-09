@@ -27,7 +27,7 @@ const getAllFreelancerProjects = async freelancerID => {
   const pCollection = await project();
 
   const foundList = await pCollection.find({assignedTo: freelancerID}).toArray();
-  if(!foundList) "throw could not find projects for the freelancerID";
+  if(!foundList) throw "could not find projects for the freelancerID";
 
   return foundList;
 }
@@ -67,7 +67,6 @@ const createFreelancer = async (data) => {
     !fullName ||
     !emailId ||
     !password ||
-    !introduction ||
     !skills ||
     !location ||
     !expectedPay
@@ -84,6 +83,17 @@ const createFreelancer = async (data) => {
     typeof expectedPay !== "number"
   )
     throw "Invalid type of data";
+
+    if(
+      fullName.trim().length === 0 ||
+      emailId.trim().length === 0 ||
+      password.trim().length === 0 ||
+      location.trim().length === 0 
+    ) {
+      throw "Empty spaces as input";
+    }
+
+    if(password.trim().length < 6) throw "Password should be atleast 6 characters!";
 
   var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   if (!emailPattern.test(emailId)) throw "Email ID not valid";
@@ -103,6 +113,9 @@ const createFreelancer = async (data) => {
     reviews: [],
     location,
     successRate: 0,
+    closedProjects: 0,
+    completeProjects: 0,
+    projectBySkills:{},
     expectedPay,
     createdAt: getCurrentTime(),
   };

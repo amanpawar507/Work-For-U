@@ -13,7 +13,8 @@ import {
     FormControl,
     FormLabel,
     Box,
-    Progress
+    Progress,
+    useToast
   } from "@chakra-ui/react"
   import { Checkbox, CheckboxGroup } from "@chakra-ui/react"
 import client from "../../utils/client";
@@ -21,15 +22,19 @@ import client from "../../utils/client";
   export const AddProjectModal = ({isOpen,onClose,onSubmit,submitting,isEdit,selectedProject}) => {
 
     const [projectDetails, setProjectDetails] = useState({
-        name:null,
-        description:null,
-        tenureMonths:null,
+        name:"",
+        description:"",
+        tenureMonths:"",
         skillsRequired:[],
-        hourlyPay:null
+        hourlyPay:0,
+        hrsPerDay: 0,
+        daysPerWeek: 0
     });
     const [skillList, setSkillList] = useState([]);
     const [errorList, setErrorList] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const toast = useToast();
 
     useEffect(() => {
         try {
@@ -104,7 +109,41 @@ import client from "../../utils/client";
         let keys = Object.keys(projectDetails);
         let errors = [];
         keys.forEach(k => {
-            if(!projectDetails[k] || projectDetails[k].length === 0) errors.push(k);
+            if(!projectDetails[k]) {
+                errors.push(k);
+                throw "missing fields"
+            } 
+            switch (k) {
+                case "hourlyPay":
+                    if(projectDetails[k] === 0) {
+                        errors.push(k);
+                        throw "Hourly pay should be greater than 0"
+                    }
+                    break;
+                case "hrsPerDay":
+                    if(projectDetails[k] === 0 || projectDetails[k] > 8) {
+                        errors.push(k);
+                        throw "Hours per day should be greater than 0 and less than 9"
+                    }
+                case "daysPerWeek":
+                    if(projectDetails[k] === 0 || projectDetails[k] > 6) {
+                        errors.push(k);
+                        throw "Days per week should be greater than 0 and less than 7"
+                    }
+                    break;
+                case "skillsRequired":
+                    if(projectDetails[k].length === 0) {
+                        errors.push(k);
+                        throw "Select atleast one skill"
+                    }
+                    break;
+                default:
+                    if(projectDetails[k].trim().length === 0) {
+                        errors.push(k);
+                        throw "Empty spaces"
+                    }
+                    break;
+            } 
         });
         console.log(errors);
         setErrorList(errors);
@@ -112,8 +151,17 @@ import client from "../../utils/client";
 
     const handleSubmit = e => {
         e.preventDefault();
-        validation();
-        if(errorList.length === 0)  onSubmit(projectDetails);
+        try {
+            validation();
+            console.log(projectDetails);
+            if(errorList.length === 0)  onSubmit(projectDetails);
+        } catch (error) {
+            toast({
+                title: error,
+                status: "warning",
+                duration: 2000
+            })
+        }
     }
 
 
@@ -133,9 +181,9 @@ import client from "../../utils/client";
                     <FormLabel htmlFor="name">Name</FormLabel>
                     <Input id="name" value={projectDetails.name} name="name" onChange={handleChange} placeholder="name" isInvalid={errorList.includes('name')} />
                     <FormLabel htmlFor="description">Description</FormLabel>
-                    <Textarea  id="description" value={projectDetails.description} onChange={handleChange} placeholder="Description" name="description" isInvalid={errorList.includes('description')}/>
+                    <Textarea  id="description" value={projectDetails.description} onChange={handleChange} placeholder="Describe your project" name="description" isInvalid={errorList.includes('description')}/>
                     <FormLabel htmlFor="tenureMonths">Tenure</FormLabel>
-                    <Input  id="tenureMonths" value={projectDetails.tenureMonths} onChange={handleChange} type="number" placeholder="Tenure" name="tenureMonths" isInvalid={errorList.includes('tenureMonths')}/>
+                    <Input  id="tenureMonths" value={projectDetails.tenureMonths} onChange={handleChange} type="number" placeholder="Tenure in months" name="tenureMonths" isInvalid={errorList.includes('tenureMonths')}/>
                     <FormLabel htmlFor="skillsRequired">Skillset</FormLabel>
                     <CheckboxGroup id="skillsRequired" value={projectDetails.skillsRequired} onChange={handleCheck} name="skillsRequired" colorScheme="green">
                         <HStack flexWrap={'wrap'}>
@@ -143,7 +191,11 @@ import client from "../../utils/client";
                         </HStack>
                     </CheckboxGroup>
                     <FormLabel htmlFor="hourlyPay">Pay /hour</FormLabel>
-                    <Input id="hourlyPay" value={projectDetails.hourlyPay} onChange={handleChange} type="number" placeholder="Pay /hour" name="hourlyPay" isInvalid={errorList.includes('hourlyPay')}/>
+                    <Input id="hourlyPay" value={projectDetails.hourlyPay} onChange={handleChange} type="number" placeholder="Pay /hour in $" name="hourlyPay" isInvalid={errorList.includes('hourlyPay')}/>
+                    <FormLabel htmlFor="hrsPerDay">Hours /day</FormLabel>
+                    <Input id="hrsPerDay" value={projectDetails.hrsPerDay} onChange={handleChange} type="number" placeholder="maximum 8 hours" name="hrsPerDay" isInvalid={errorList.includes('hrsPerDay')}/>
+                    <FormLabel htmlFor="daysPerWeek">Days /week</FormLabel>
+                    <Input id="daysPerWeek" value={projectDetails.daysPerWeek} onChange={handleChange} type="number" placeholder="maximum 6 days" name="daysPerWeek" isInvalid={errorList.includes('daysPerWeek')}/>
                     <Button
                         mt={4}
                         ml="80%"
