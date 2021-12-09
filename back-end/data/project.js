@@ -1,9 +1,8 @@
 const { project } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
-const { getFreelancer } = require('./freelancer');
+const { getFreelancer } = require("./freelancer");
 const { ObjectId } = require("mongodb");
-var addMonths = require('date-fns/addMonths')
-
+var addMonths = require("date-fns/addMonths");
 
 const getCurrentTime = () => {
   var today = new Date();
@@ -43,6 +42,8 @@ const createProject = async (data) => {
     skillsRequired,
     hourlyPay,
     createdBy,
+    hrsPerDay,
+    daysPerWeek,
   } = data;
   if (
     !name ||
@@ -50,7 +51,9 @@ const createProject = async (data) => {
     !tenureMonths ||
     !skillsRequired ||
     !hourlyPay ||
-    !createdBy
+    !createdBy ||
+    !hrsPerDay ||
+    !daysPerWeek
   )
     throw "Missing fields";
   if (
@@ -59,9 +62,15 @@ const createProject = async (data) => {
     typeof tenureMonths !== "number" ||
     (typeof skillsRequired !== "object" && !skillsRequired.length) ||
     typeof hourlyPay !== "number" ||
-    typeof createdBy !== "string"
+    typeof createdBy !== "string" ||
+    typeof hrsPerDay !== "number" ||
+    typeof daysPerWeek !== "number"
   )
     throw "Invalid type of data";
+  if (hrsPerDay < 0 || hrsPerDay > 8)
+    throw "Hours per day should be less than 8 and greater than zero";
+  if (daysPerWeek < 0 || daysPerWeek > 6)
+    throw "Days per week should be greater than zero and less than 6";
 
   let skillsArray = await getSkill(skillsRequired);
 
@@ -78,6 +87,8 @@ const createProject = async (data) => {
     createdBy,
     assignedTo: null,
     createdAt: getCurrentTime(),
+    hrsPerDay,
+    daysPerWeek,
   };
 
   let addedEntry = await projectCollection.insertOne(newEntry);
@@ -111,7 +122,7 @@ const getAll = async () => {
   return projectList;
 };
 
-async function getAllEmployerProjects  (employerID)  {
+async function getAllEmployerProjects(employerID) {
   if (!employerID) throw "Pass a employerID to search";
   if (typeof employerID !== "string") throw "Invalid employer ID";
 
@@ -121,28 +132,32 @@ async function getAllEmployerProjects  (employerID)  {
   if (!foundList) "throw could not find projects for the employerID";
 
   return foundList;
-};
-
-const getAllFreelancerProjects = async freelancerID => {
-  if(!freelancerID) throw "Pass a freelancerID to search";
-  if(typeof freelancerID !== 'string') throw "Invalid freeelancer ID";
-  
-  const pCollection = await project();
-
-  const foundList = await pCollection.find({assignedTo: freelancerID}).toArray();
-  if(!foundList) "throw could not find projects for the freelancerID";
-
-  return foundList;
 }
 
-const updateProject = async data => {
+const getAllFreelancerProjects = async (freelancerID) => {
+  if (!freelancerID) throw "Pass a freelancerID to search";
+  if (typeof freelancerID !== "string") throw "Invalid freeelancer ID";
+
+  const pCollection = await project();
+
+  const foundList = await pCollection
+    .find({ assignedTo: freelancerID })
+    .toArray();
+  if (!foundList) "throw could not find projects for the freelancerID";
+
+  return foundList;
+};
+
+const updateProject = async (data) => {
   const {
     id,
     name,
     description,
     tenureMonths,
     skillsRequired,
-    hourlyPay
+    hourlyPay,
+    hrsPerDay,
+    daysPerWeek,
   } = data;
 
   if (
@@ -151,7 +166,9 @@ const updateProject = async data => {
     !description ||
     !tenureMonths ||
     !skillsRequired ||
-    !hourlyPay
+    !hourlyPay ||
+    !hrsPerDay ||
+    !daysPerWeek
   )
     throw "missing fields";
 
@@ -161,9 +178,16 @@ const updateProject = async data => {
     typeof description !== "string" ||
     typeof tenureMonths !== "number" ||
     (typeof skillsRequired !== "object" && !skillsRequired.length) ||
-    typeof hourlyPay !== "number"
+    typeof hourlyPay !== "number" ||
+    typeof hrsPerDay !== "number" ||
+    typeof daysPerWeek !== "number"
   )
     throw "Invalid fields";
+
+  if (hrsPerDay < 0 || hrsPerDay > 8)
+    throw "Hours per day should be less than 8 and greater than zero";
+  if (daysPerWeek < 0 || daysPerWeek > 6)
+    throw "Days per week should be greater than zero and less than 6";
 
   const projectExist = await getProject(id);
   if (!projectExist) throw "No project exist for the given ID";
@@ -176,6 +200,8 @@ const updateProject = async data => {
     tenureMonths,
     skillsRequired: skillsArray,
     hourlyPay,
+    hrsPerDay,
+    daysPerWeek,
   };
   const projectCollection = await project();
   let objectId = ObjectId(id);
@@ -192,27 +218,29 @@ const updateProject = async data => {
 
 //----------------------------------------updateProjectStatus----------------------------------------------------------------
 
-const updateProjectStatus = async(projectId, status) => {
-  if(!projectId || !status) throw ("Please pass all the fields");
-  if(typeof projectId !== 'string'  || typeof status !== "number") throw "invalid type of fields";
+const updateProjectStatus = async (projectId, status) => {
+  if (!projectId || !status) throw "Please pass all the fields";
+  if (typeof projectId !== "string" || typeof status !== "number")
+    throw "invalid type of fields";
 
   const projectExist = await getProject(projectId);
   if (!projectExist) throw "No project exist for the given ID";
 
-  if(projectExist.status !== 0 && status === 0) throw "Cannot change status of accepted project back to created"
+  if (projectExist.status !== 0 && status === 0)
+    throw "Cannot change status of accepted project back to created";
 
   const projectCollection = await project();
   let objectId = ObjectId(projectId);
   const updateInfo = await projectCollection.updateOne(
     { _id: objectId },
-    { $set: {status: status} }
+    { $set: { status: status } }
   );
   if (updateInfo.modifiedCount === 0) throw "Could not update the project";
 
   let updatedProject = await getProject(projectId);
   updatedProject = { _id: updatedProject._id.toString(), ...updatedProject };
   return updatedProject;
-}
+};
 
 //-----------------------------------------addingRequestToFreelancer---------------------------------------------------------
 
@@ -261,10 +289,9 @@ const getFreelancerRequests = async (freelancerId) => {
 
   const projectCollection = await project();
   const found = await projectCollection
-    .find({ requested: { $in: [freelancerId] }, status:{$eq: 0} })
+    .find({ requested: { $in: [freelancerId] }, status: { $eq: 0 } })
     .toArray();
-  if (!found)
-    throw "No request found for the given freelancer";
+  if (!found) throw "No request found for the given freelancer";
 
   return found;
 };
@@ -289,9 +316,10 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
     throw "Invalid status";
 
   let foundProject = await getProject(projectId);
-  if(!foundProject) throw "Could not find the project";
-  
-  if(foundProject.assignedTo) throw "This project has already been assigned to a freelancer";
+  if (!foundProject) throw "Could not find the project";
+
+  if (foundProject.assignedTo)
+    throw "This project has already been assigned to a freelancer";
 
   await getFreelancer(freelancerId);
 
@@ -304,7 +332,14 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
   if (status.trim().toLowerCase() === "accept") {
     updateInfo = await projectCollection.updateOne(
       { _id: objProjectId },
-      { $set: { assignedTo: freelancerId, status: 1, assignedOn: getCurrentTime(), dueBy:  addMonths(new Date(), foundProject.tenureMonths).toString()} }
+      {
+        $set: {
+          assignedTo: freelancerId,
+          status: 1,
+          assignedOn: getCurrentTime(),
+          dueBy: addMonths(new Date(), foundProject.tenureMonths).toString(),
+        },
+      }
     );
   } else {
     updateInfo = await projectCollection.updateOne(
@@ -349,5 +384,5 @@ module.exports = {
   getFreelancerRequests,
   updateFreelancerRequest,
   deleteProject,
-  updateProjectStatus
+  updateProjectStatus,
 };
