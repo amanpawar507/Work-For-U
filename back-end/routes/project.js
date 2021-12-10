@@ -44,14 +44,14 @@ router.post("/", async (req, res) => {
       return;
     }
 
-    if (hrsPerDay < 0 || hrsPerDay > 8) {
+    if (hrsPerDay < 1 || hrsPerDay > 8) {
       res.status(400).json({
         error: "Hours per day should be less than 8 and greater than zero",
       });
       return;
     }
 
-    if (daysPerWeek < 0 || daysPerWeek > 6) {
+    if (daysPerWeek < 1 || daysPerWeek > 6) {
       res.status(400).json({
         error: "Days per week should be greater than zero and less than 6",
       });
@@ -127,15 +127,24 @@ router.patch("/:projectId", async (req, res) => {
   try {
     // if(req.session.email) {
     const id = req.params.projectId;
-    const { name, description, tenureMonths, skillsRequired, hourlyPay } =
-      req.body;
+    const {
+      name,
+      description,
+      tenureMonths,
+      skillsRequired,
+      hourlyPay,
+      hrsPerDay,
+      daysPerWeek,
+    } = req.body;
 
     if (
       !name ||
       !description ||
       !tenureMonths ||
       !skillsRequired ||
-      !hourlyPay
+      !hourlyPay ||
+      !hrsPerDay ||
+      !daysPerWeek
     ) {
       res.status(400).json({ error: "Missing fields" });
       return;
@@ -146,9 +155,25 @@ router.patch("/:projectId", async (req, res) => {
       typeof description !== "string" ||
       typeof tenureMonths !== "number" ||
       (typeof skillsRequired !== "object" && !skillsRequired.length) ||
-      typeof hourlyPay !== "number"
+      typeof hourlyPay !== "number" ||
+      typeof hrsPerDay !== "number" ||
+      typeof daysPerWeek !== "number"
     ) {
       res.status(400).json({ error: "Invalid type of fields" });
+      return;
+    }
+
+    if (hrsPerDay < 1 || hrsPerDay > 8) {
+      res.status(400).json({
+        error: "Hours per day should be less than 8 and greater than zero",
+      });
+      return;
+    }
+
+    if (daysPerWeek < 1 || daysPerWeek > 6) {
+      res.status(400).json({
+        error: "Days per week should be greater than zero and less than 6",
+      });
       return;
     }
 

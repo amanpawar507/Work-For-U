@@ -1,6 +1,6 @@
 const { project, freelancer } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
-const { getFreelancer, getSuccessRate } = require('./freelancer');
+const { getFreelancer, getSuccessRate } = require("./freelancer");
 const { ObjectId } = require("mongodb");
 var addMonths = require("date-fns/addMonths");
 
@@ -67,6 +67,7 @@ const createProject = async (data) => {
     typeof daysPerWeek !== "number"
   )
     throw "Invalid type of data";
+
   if (hrsPerDay < 1 || hrsPerDay > 8)
     throw "Hours per day should be less than 8 and greater than zero";
   if (daysPerWeek < 1 || daysPerWeek > 6)
@@ -237,27 +238,26 @@ const updateProjectStatus = async (projectId, status) => {
   );
   if (updateInfo.modifiedCount === 0) throw "Could not update the project";
 
-  if(status === 3 || status === 4) {
+  if (status === 3 || status === 4) {
     const getSuccessInfo = await getSuccessRate(projectExist.assignedTo);
     console.log(getSuccessInfo);
-    if(!getSuccessInfo) throw "Cannot get successInfo for the freelancer"
-    const {
-      successRate,
-      closedProjects,
-      completeProjects,
-      projectBySkills
-    } = getSuccessInfo;
+    if (!getSuccessInfo) throw "Cannot get successInfo for the freelancer";
+    const { successRate, closedProjects, completeProjects, projectBySkills } =
+      getSuccessInfo;
     const freelancerCollection = await freelancer();
     const updatedInfo = await freelancerCollection.updateOne(
-      {_id: ObjectId(projectExist.assignedTo)},
-      {$set: {
+      { _id: ObjectId(projectExist.assignedTo) },
+      {
+        $set: {
           successRate,
           closedProjects,
           completeProjects,
-          projectBySkills
-      }}
+          projectBySkills,
+        },
+      }
     );
-    if (updatedInfo.modifiedCount === 0) throw "Could not update the freelancer";
+    if (updatedInfo.modifiedCount === 0)
+      throw "Could not update the freelancer";
   }
 
   let updatedProject = await getProject(projectId);
