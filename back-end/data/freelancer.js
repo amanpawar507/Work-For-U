@@ -219,35 +219,9 @@ const searchType = async (filterObj) => {
   });
 
   return finalResult;
-
-  // let resultarr = [];
-
-  // if (filterObj.filterkey === "name") {
-  //   for (let i of freelancerList) {
-  //     if(i.fullName.length > filterObj.query.length) {
-  //       if (i.fullName.toLowerCase().includes(filterObj.query.toLowerCase())) {
-  //         resultarr.push(i);
-  //       }
-  //     }else{
-  //       if (filterObj.query.toLowerCase().includes(i.fullName.toLowerCase())) {
-  //         resultarr.push(i);
-  //       }
-  //     }
-  //   }
-  //   return resultarr;
-  // } else if (filterObj.filterkey === "skill") {
-  //   for (let i of freelancerList) {
-  //     for(let j of i.skills){
-  //       if (j.name.toLowerCase().includes(filterObj.query.toLowerCase())) {
-  //         resultarr.push(i);
-  //       }
-  //     }
-  //   }
-  //   return resultarr;
-  // } else throw "Unidentified object value";
-
   
 };
+
 /////-----------------------------------------checkFreelancer-----------------------------------------------------
 async function checker(emailId, password) {
   if (!emailId || !password) throw "All fields to have valid values";

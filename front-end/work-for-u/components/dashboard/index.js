@@ -15,6 +15,7 @@ export const Dashboard = () => {
   const toast = useToast();
 
   useEffect(() => {
+    if(!user) return;
     const getFreelancers = async () => {
       try {
         if (showRecommended) {
@@ -29,7 +30,7 @@ export const Dashboard = () => {
           setListOfFreelancers(data);
         }
       } catch (error) {
-        console.log(error.response);
+        console.log(error);
         toast({
           title: error.response
             ? error.response.statusText
