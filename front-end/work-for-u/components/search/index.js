@@ -1,4 +1,5 @@
 import { Heading, Text } from "@chakra-ui/react";
+import { EmptyAlert } from "../common/emptyAlert";
 import { FreelancerList } from "../common/freelancerList";
 
 export const Search = ({ query, results }) => {
@@ -9,7 +10,7 @@ export const Search = ({ query, results }) => {
         <Heading fontSize="2xl" ml="5px">{`  "${query}"`}</Heading>
       </Text>
       <br />
-      <FreelancerList list={results} />
+      {results.length > 0 ? <FreelancerList list={results} /> : <EmptyAlert text={"No results found!"}/>} 
     </>
   );
 };

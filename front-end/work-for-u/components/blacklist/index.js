@@ -10,6 +10,7 @@ import { Box,
     Avatar,
     Button,
 } from "@chakra-ui/react"
+import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react"
 import client from "../../utils/client";
 import { EmptyAlert } from "../common/emptyAlert";
@@ -23,6 +24,8 @@ export const Blacklist = () => {
     const {user,setUser} = useContext(UserContext);
 
     const toast = useToast();
+
+    const router = useRouter();
 
     useEffect(() => {
         if(!user || !user.blacklist || user.blacklist.length === 0) {
@@ -62,6 +65,29 @@ export const Blacklist = () => {
     }
 
     return(
-       <></>
+        <Box>
+            {details.length > 0 ? <Table variant='simple' size={'md'}>
+                <Thead>
+                    <Tr>
+                    <Th></Th>
+                    <Th>Employer</Th>
+                    <Th textAlign={'left'}>Action</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {
+                        details.map((i,idx) => 
+                        <Tr key={idx}> 
+                            <Td><Avatar cursor={'pointer'} onClick={() => router.push(`/employer/${i._id}`)} name={i.fullName}/></Td>
+                            <Td>{i.fullName}</Td>
+                            <Td><Button colorScheme={'teal'} isLoading={loading} onClick={() => unBlock(i)}>Remove</Button></Td>
+                        </Tr>
+                        )
+                    }
+                </Tbody>
+            </Table> :
+            <EmptyAlert text="You haven't blacklisted anyone yet"/>
+            }
+        </Box>
     )
 }

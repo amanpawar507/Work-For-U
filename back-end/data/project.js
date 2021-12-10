@@ -1,6 +1,6 @@
-const { project } = require("../config/mongoCollections");
+const { project, freelancer } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
-const { getFreelancer } = require("./freelancer");
+const { getFreelancer, getSuccessRate } = require('./freelancer');
 const { ObjectId } = require("mongodb");
 var addMonths = require("date-fns/addMonths");
 
@@ -67,9 +67,9 @@ const createProject = async (data) => {
     typeof daysPerWeek !== "number"
   )
     throw "Invalid type of data";
-  if (hrsPerDay < 0 || hrsPerDay > 8)
+  if (hrsPerDay < 1 || hrsPerDay > 8)
     throw "Hours per day should be less than 8 and greater than zero";
-  if (daysPerWeek < 0 || daysPerWeek > 6)
+  if (daysPerWeek < 1 || daysPerWeek > 6)
     throw "Days per week should be greater than zero and less than 6";
 
   let skillsArray = await getSkill(skillsRequired);
@@ -237,6 +237,29 @@ const updateProjectStatus = async (projectId, status) => {
   );
   if (updateInfo.modifiedCount === 0) throw "Could not update the project";
 
+  if(status === 3 || status === 4) {
+    const getSuccessInfo = await getSuccessRate(projectExist.assignedTo);
+    console.log(getSuccessInfo);
+    if(!getSuccessInfo) throw "Cannot get successInfo for the freelancer"
+    const {
+      successRate,
+      closedProjects,
+      completeProjects,
+      projectBySkills
+    } = getSuccessInfo;
+    const freelancerCollection = await freelancer();
+    const updatedInfo = await freelancerCollection.updateOne(
+      {_id: ObjectId(projectExist.assignedTo)},
+      {$set: {
+          successRate,
+          closedProjects,
+          completeProjects,
+          projectBySkills
+      }}
+    );
+    if (updatedInfo.modifiedCount === 0) throw "Could not update the freelancer";
+  }
+
   let updatedProject = await getProject(projectId);
   updatedProject = { _id: updatedProject._id.toString(), ...updatedProject };
   return updatedProject;
@@ -373,6 +396,66 @@ const deleteProject = async (projectId) => {
   return { deleted: true };
 };
 
+//-----------------------------------------searchProject----------------------------------------------------------------
+const filterProject = async (filterObj) => {
+  if (!filterObj.query || !filterObj.userType || !filterObj.userId)
+    throw "Please provide all the details";
+  if (
+    typeof filterObj.query !== "string" || typeof filterObj.userType !== "string" || typeof filterObj.userId !== "string"
+  )
+    throw "Invalid type of input object";
+  if (
+    filterObj.query.trim().length === 0 || filterObj.userType.trim().length === 0 || filterObj.userId.trim().length === 0
+  )
+    throw "empty spaces for input object";
+
+  const projectCollection = await project();
+
+  let result = [];
+  if(filterObj.filterkey === "name" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    let listForName;
+    if(filterObj.userType === 'freelancer') {
+       listForName = await projectCollection.find({name: { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0}, 
+      assignedTo: {$eq: filterObj.userId}}).toArray();
+    }else{
+      listForName = await projectCollection.find({name: { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0}, 
+      createdBy: {$eq: filterObj.userId}}).toArray();
+    }
+    result = [...result,...listForName];
+  }
+  if(filterObj.filterkey === "skill" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    let listForSkills;
+    if(filterObj.userType === 'freelancer') {
+      listForSkills = await projectCollection.find({'skillsRequired.name': { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0},
+      assignedTo: {$eq: filterObj.userId}}).toArray();
+    }else{
+      listForSkills = await projectCollection.find({'skillsRequired.name': { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0},
+      createdBy: {$eq: filterObj.userId}}).toArray();
+    }
+    result = [...result,...listForSkills];
+  }
+  let finalResult = []
+  result.forEach(el => {
+    if(finalResult.length > 0) {
+      const exist = finalResult.find(i => i._id.toString() === el._id.toString());
+      if(!exist) {
+        finalResult.push({
+          _id: el._id.toString(),
+          ...el
+        })
+      }
+    }else{
+      finalResult.push({
+        _id: el._id.toString(),
+        ...el
+      })
+    }
+  });
+
+  return finalResult;
+  
+};
+
 module.exports = {
   createProject,
   getProject,
@@ -385,4 +468,5 @@ module.exports = {
   updateFreelancerRequest,
   deleteProject,
   updateProjectStatus,
+  filterProject
 };

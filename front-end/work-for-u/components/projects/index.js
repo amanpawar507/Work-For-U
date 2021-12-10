@@ -69,6 +69,8 @@ export const Projects = () => {
             setIsSubmitting(true);
             let tenure = parseFloat(details.tenureMonths);
             let pay = parseFloat(details.hourlyPay);
+            let hours = parseInt(details.hrsPerDay);
+            let days = parseInt(details.daysPerWeek);
             if(tenure === 0 || pay === 0) {
                 toast({title: "Tenure and Hourly pay should be greater than 0",
                     status: "warning",
@@ -84,7 +86,9 @@ export const Projects = () => {
                     {
                         ...details, 
                         tenureMonths: tenure,
-                        hourlyPay: pay
+                        hourlyPay: pay,
+                        hrsPerDay: hours,
+                        daysPerWeek: days
                     }   
                 );
                 console.log(data);
@@ -95,12 +99,14 @@ export const Projects = () => {
                 onClose();
             }else{
                 const {data} = await client.post("http://localhost:5000/project/",
-                    {
-                        ...details, 
-                        tenureMonths: tenure,
-                        hourlyPay: pay,
-                        createdBy: user._id
-                    }   
+                {
+                    ...details, 
+                    tenureMonths: tenure,
+                    hourlyPay: pay,
+                    hrsPerDay: hours,
+                    daysPerWeek: days,
+                    createdBy: user._id
+                }   
                 );
                 console.log(data);
                 setProjects(prevValue => [...prevValue,data]);
@@ -110,7 +116,7 @@ export const Projects = () => {
 
         } catch (error) {
             console.log(error.response.data);
-            toast({title: error.error? error.error : error,
+            toast({title: error.response? error.response.data.error : error,
                 status: "error",
                 duration: 2000
             });
@@ -164,44 +170,18 @@ export const Projects = () => {
     }
 
     const handleFilter = async filterData => {
-        const {type,query} = filterData;
-        let filteredData = [];
-        let currentData;
-        if(!isFreelancer){
-            const {data} = await client.get(`http://localhost:5000/project/all/employer/${user._id}`);
-            currentData = data;
-        }
-        else{
-            const {data} = await client.get(`http://localhost:5000/project/all/freelancer/${user._id}`);
-            currentData = data;
-        }
-        if(currentData) {
-            if(!type || type === "name") {
-                currentData.map(i => (i.name.toLowerCase().includes(query.toLowerCase()) || query.toLowerCase().includes(i.name.toLowerCase())) ? filteredData.push(i) : i);
-                if(type) {
-                    setProjects(filteredData);
-                    return;
-                }
-            }
-    
-            if(!type || type === "skill") {
-                currentData.forEach(el => {
-                    const projectExist = filteredData.find(i => i._id === el._id);
-                    if(!projectExist) {
-                        const skillExist = el.skillsRequired.find(i => i.name.toLowerCase().includes(query.toLowerCase()) || query.toLowerCase().includes(i.name.toLowerCase()));
-                        if(skillExist) {
-                            filteredData.push(el);
-                        }
-                    }
-                })
-                if(type) {
-                    setProjects(filteredData);
-                    return;
-                }
-            }
-    
-            setProjects(filteredData);
-        }
+        try {
+            const {type,query} = filterData;
+            let userType = isFreelancer ? 'freelancer' : 'employer'
+            const {data} = await client.get(`http://localhost:5000/project/filter/${userType}/${user._id}/${query}/${type}`,{query,type});
+        
+            setProjects(data);
+        } catch (error) {
+            toast({title: error.response? error.response.data.error : error,
+                status: "error",
+                duration: 2000
+            });
+        } 
     }
 
     const clearFilter = async () => {
