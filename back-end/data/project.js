@@ -396,6 +396,66 @@ const deleteProject = async (projectId) => {
   return { deleted: true };
 };
 
+//-----------------------------------------searchProject----------------------------------------------------------------
+const filterProject = async (filterObj) => {
+  if (!filterObj.query || !filterObj.userType || !filterObj.userId)
+    throw "Please provide all the details";
+  if (
+    typeof filterObj.query !== "string" || typeof filterObj.userType !== "string" || typeof filterObj.userId !== "string"
+  )
+    throw "Invalid type of input object";
+  if (
+    filterObj.query.trim().length === 0 || filterObj.userType.trim().length === 0 || filterObj.userId.trim().length === 0
+  )
+    throw "empty spaces for input object";
+
+  const projectCollection = await project();
+
+  let result = [];
+  if(filterObj.filterkey === "name" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    let listForName;
+    if(filterObj.userType === 'freelancer') {
+       listForName = await projectCollection.find({name: { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0}, 
+      assignedTo: {$eq: filterObj.userId}}).toArray();
+    }else{
+      listForName = await projectCollection.find({name: { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0}, 
+      createdBy: {$eq: filterObj.userId}}).toArray();
+    }
+    result = [...result,...listForName];
+  }
+  if(filterObj.filterkey === "skill" || !filterObj.filterkey || filterObj.filterkey === "null") {
+    let listForSkills;
+    if(filterObj.userType === 'freelancer') {
+      listForSkills = await projectCollection.find({'skillsRequired.name': { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0},
+      assignedTo: {$eq: filterObj.userId}}).toArray();
+    }else{
+      listForSkills = await projectCollection.find({'skillsRequired.name': { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0},
+      createdBy: {$eq: filterObj.userId}}).toArray();
+    }
+    result = [...result,...listForSkills];
+  }
+  let finalResult = []
+  result.forEach(el => {
+    if(finalResult.length > 0) {
+      const exist = finalResult.find(i => i._id.toString() === el._id.toString());
+      if(!exist) {
+        finalResult.push({
+          _id: el._id.toString(),
+          ...el
+        })
+      }
+    }else{
+      finalResult.push({
+        _id: el._id.toString(),
+        ...el
+      })
+    }
+  });
+
+  return finalResult;
+  
+};
+
 module.exports = {
   createProject,
   getProject,
@@ -408,4 +468,5 @@ module.exports = {
   updateFreelancerRequest,
   deleteProject,
   updateProjectStatus,
+  filterProject
 };

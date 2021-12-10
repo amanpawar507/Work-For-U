@@ -38,8 +38,9 @@ export const FreelancerList = ({list}) => {
      return(
         <>
             <SimpleGrid mt='10px' columns={[2, null, 3]} spacing='40px'>
-                {resultList.map(i => 
+                {resultList.map((i,idx) => 
                     <FreelancerCard 
+                        key={idx}
                         id={i._id}
                         name={i.fullName} 
                         rating={i.overallRating} 
