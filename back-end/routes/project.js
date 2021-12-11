@@ -127,7 +127,7 @@ router.patch("/:projectId", async (req, res) => {
   try {
     // if(req.session.email) {
     const id = req.params.projectId;
-    const { name, description, tenureMonths, skillsRequired, hourlyPay } =
+    const { name, description, tenureMonths, skillsRequired, hourlyPay, hrsPerDay, daysPerWeek} =
       req.body;
 
     if (
@@ -135,7 +135,9 @@ router.patch("/:projectId", async (req, res) => {
       !description ||
       !tenureMonths ||
       !skillsRequired ||
-      !hourlyPay
+      !hourlyPay ||
+      !hrsPerDay ||
+      !daysPerWeek
     ) {
       res.status(400).json({ error: "Missing fields" });
       return;
@@ -146,7 +148,9 @@ router.patch("/:projectId", async (req, res) => {
       typeof description !== "string" ||
       typeof tenureMonths !== "number" ||
       (typeof skillsRequired !== "object" && !skillsRequired.length) ||
-      typeof hourlyPay !== "number"
+      typeof hourlyPay !== "number" ||
+      typeof hrsPerDay !== "number" ||
+      typeof daysPerWeek !== "number"
     ) {
       res.status(400).json({ error: "Invalid type of fields" });
       return;
@@ -159,6 +163,8 @@ router.patch("/:projectId", async (req, res) => {
       tenureMonths,
       skillsRequired,
       hourlyPay,
+      hrsPerDay,
+      daysPerWeek
     });
 
     if (result) {
