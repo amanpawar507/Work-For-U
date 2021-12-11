@@ -87,6 +87,7 @@ const createProject = async (data) => {
     createdBy,
     assignedTo: null,
     createdAt: getCurrentTime(),
+    reviewed:false,
     hrsPerDay,
     daysPerWeek,
   };
