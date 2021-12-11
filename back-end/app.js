@@ -11,8 +11,6 @@ var options = {
 app.use(cors(options));
 
 const configRoutes = require('./routes');
-const { getFreelancer } = require('./data/freelancer');
-const { getEmployer } = require('./data/employer');
 
 app.use(express.json());
 

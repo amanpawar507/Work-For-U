@@ -6,12 +6,12 @@ import { Badge, Box, Button, Heading, HStack, IconButton, Text, useToast, VStack
 } from "@chakra-ui/react"
 import { useRouter } from "next/dist/client/router";
 import { useContext, useState } from "react"
-import {MdInfo,MdEdit,MdDelete, MdMenu,MdPerson} from "react-icons/md"
+import {MdInfo,MdEdit,MdDelete, MdMenu,MdPerson,MdGrade} from "react-icons/md"
 import client from "../../utils/client";
 import { getColorScheme, getStatus } from "../../utils/helper";
 import { UserContext } from "../contexts/userContext";
 
-export const ProjectCard = ({id, name, status,assignedTo,assignedBy,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick,setUpdatedRequest}) => {
+export const ProjectCard = ({id, name, status,assignedTo,assignedBy,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick,onRateClick,setUpdatedRequest}) => {
 
     const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -59,8 +59,9 @@ export const ProjectCard = ({id, name, status,assignedTo,assignedBy,onDetailsCli
                     {<Badge colorScheme={getColorScheme(status)} borderRadius={'2px'}>{getStatus(status)}</Badge>}
                     <HStack ml={'auto'}>
                         {status !== 0 && isFreelancer && <Button colorScheme={"gray"} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>}
-                        {!isFreelancer &&  status !== 3 && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
-                        {!isFreelancer &&  status !== 3 && <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>}
+                        {!isFreelancer &&  status !== 3 &&  status !== 4 && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
+                        {!isFreelancer &&  status !== 3 &&  status !== 4 && <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>}
+                        {!isFreelancer &&  (status === 3 ||  status === 4) && <Button color={'black'} bg={"yellow.400"} leftIcon={<MdGrade/>} onClick={() => onRateClick()}>Rate</Button> }
                         {isFreelancer && status === 0 && <Button isLoading={accepting} isDisabled={rejecting} size={'sm'} variant={"solid"} colorScheme={'green'} onClick={() => handleAcceptReject("accept")}>Accept</Button>}
                         {isFreelancer && status === 0 && <Button isLoading={rejecting} isDisabled={accepting}  size={'sm'} variant={"solid"} colorScheme={'red'}  onClick={() => handleAcceptReject("reject")}>Reject</Button>}
                         <Menu>
@@ -107,6 +108,7 @@ export const ProjectCard = ({id, name, status,assignedTo,assignedBy,onDetailsCli
                     <Button size={"sm"} colorScheme="red" onClick={() =>{ onDeleteClick(); setDeleteOpen(false);}}>delete</Button>
                 </HStack>     
             </Box>}
+
         </Box>
     )
 }

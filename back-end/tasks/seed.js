@@ -1,7 +1,18 @@
 const dbConnection = require("../config/mongoConnection");
 const { skill, project, freelancer, employer } = require("../data");
 
+
+
+
 async function main() {
+  var twirlTimer = (function() {
+    var P = ["\\", "|", "/", "-"];
+    var x = 0;
+    return setInterval(function() {
+      process.stdout.write("\r" + P[x++]);
+      x &= 3;
+    }, 250);
+  })();
   const db = await dbConnection();
   await db.dropDatabase();
 
@@ -135,6 +146,30 @@ async function main() {
     return;
   }
 
+  try {
+    let result = await skill.createSkill("CSS");
+    if (!result) {
+      console.log("could not create");
+      throw "some error";
+    }
+    skills2.push(result._id);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  try {
+    let result = await skill.createSkill("Networking");
+    if (!result) {
+      console.log("could not create");
+      throw "some error";
+    }
+    skills2.push(result._id);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
   let employer1;
   let employer2;
 
@@ -142,10 +177,9 @@ async function main() {
     let result = await employer.createEmployer({
       fullName: "Aman Pawar",
       emailId: "aman@gmail.com",
-      password: "dcdvjcbd",
+      password: "aman1234",
       companyName: "someCompany1",
     });
-    console.log(result);
     employer1 = result;
   } catch (error) {
     console.log("from route: ", error);
@@ -156,10 +190,9 @@ async function main() {
     let result = await employer.createEmployer({
       fullName: "Ameya Yadav",
       emailId: "ameya@gmail.com",
-      password: "nkvbnkj",
+      password: "ameya1234",
       companyName: "someCompany2",
     });
-    console.log(result);
     employer2 = result;
   } catch (error) {
     console.log("from route: ", error);
@@ -249,15 +282,12 @@ async function main() {
 
   try {
     await freelancer.createFreelancer({
-      fullName: "Aman Pawar",
-      emailId: "aman@gmail.com",
-      password: "qwerty",
-      introduction: "My name is Aman",
+      fullName: "Joe Ray",
+      emailId: "joe@gmail.com",
+      password: "joe1234",
+      introduction: "My name is Joe",
       skills: skills1,
-      overallRating: 5,
-      reviews: "Abc",
-      location: "USA",
-      successRate: 3,
+      location: "Alabama",
       expectedPay: 34,
     });
   } catch (error) {
@@ -269,13 +299,10 @@ async function main() {
     await freelancer.createFreelancer({
       fullName: "Rohan Naik",
       emailId: "rohan@gmail.com",
-      password: "rohanQwerty",
+      password: "joe1234",
       introduction: "My name is Rohan",
       skills: skills2,
-      overallRating: 4,
-      reviews: "nbcjw",
-      location: "USA",
-      successRate: 4,
+      location: "New York",
       expectedPay: 30,
     });
   } catch (error) {
@@ -287,13 +314,25 @@ async function main() {
     await freelancer.createFreelancer({
       fullName: "Vidhi Roy",
       emailId: "vidhi@gmail.com",
-      password: "vidhiQwerty",
+      password: "vidhi1234",
       introduction: "My name is Vidhi",
       skills: skills1,
-      overallRating: 4,
-      reviews: "bncwbwd",
-      location: "USA",
-      successRate: 3,
+      location: "Ohio",
+      expectedPay: 32,
+    });
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  try {
+    await freelancer.createFreelancer({
+      fullName: "Emma Sul",
+      emailId: "emma@gmail.com",
+      password: "emma1234",
+      introduction: "My name is Emma",
+      skills: skills1,
+      location: "Virginia",
       expectedPay: 32,
     });
   } catch (error) {
@@ -304,6 +343,8 @@ async function main() {
   console.log("Done seeding database");
 
   await db.s.client.close();
+
+  clearInterval(twirlTimer);
 }
 
 try {

@@ -1,4 +1,4 @@
-import { Box, HStack, VStack } from "@chakra-ui/react"
+import { Box, Grid, HStack, VStack } from "@chakra-ui/react"
 import { useEffect, useState } from "react";
 import client from "../../../utils/client";
 import { ReviewItem } from "./reviewItem";
@@ -35,9 +35,9 @@ export const ReviewList = ({reviews}) => {
 
     return(
         <Box w={'100%'} maxHeight={'700px'} overflow={'auto'} p={'10px'}>
-            <HStack spacing={'20px'} wrap={'wrap'}>
+            <Grid templateColumns='repeat(2, 1fr)' gap={6}>
                 {allReviews.map((i,idx) => <ReviewItem key={idx} review={i.review} reviewer={i.reviewer} rating={i.rating} title={i.title}/>)}
-            </HStack>
+            </Grid>
         </Box>
     )
 }
