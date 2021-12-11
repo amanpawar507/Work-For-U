@@ -248,21 +248,6 @@ async function main() {
   }
 
   try {
-<<<<<<< HEAD
-     await freelancer.createFreelancer({
-      fullName:"Aman Pawar",
-      emailId:"aman@gmail.com",
-      password:"qwerty",
-      introduction:"My name is Aman",
-      skills:skills1,
-      overallRating:5,
-      reviews:"Abc",
-      location:"New Jersey",
-      successRate:3,
-      expectedPay:34
-    })
-
-=======
     await freelancer.createFreelancer({
       fullName: "Aman Pawar",
       emailId: "aman@gmail.com",
@@ -275,7 +260,6 @@ async function main() {
       successRate: 3,
       expectedPay: 34,
     });
->>>>>>> edf13bc3c790a2b8f8a169a9efebc39c0f012041
   } catch (error) {
     console.log(error);
     return;
@@ -283,19 +267,6 @@ async function main() {
 
   try {
     await freelancer.createFreelancer({
-<<<<<<< HEAD
-      fullName:"Rohan Naik",
-      emailId:"rohan@gmail.com",
-      password:"rohanQwerty",
-      introduction:"My name is Rohan",
-      skills:skills2,
-      overallRating:4,
-      reviews:"nbcjw",
-      location:"New Jersey",
-      successRate:4,
-      expectedPay:30
-    })
-=======
       fullName: "Rohan Naik",
       emailId: "rohan@gmail.com",
       password: "rohanQwerty",
@@ -307,7 +278,6 @@ async function main() {
       successRate: 4,
       expectedPay: 30,
     });
->>>>>>> edf13bc3c790a2b8f8a169a9efebc39c0f012041
   } catch (error) {
     console.log(error);
     return;
@@ -315,20 +285,6 @@ async function main() {
 
   try {
     await freelancer.createFreelancer({
-<<<<<<< HEAD
-      fullName:"Vidhi Roy",
-      emailId:"vidhi@gmail.com",
-      password:"vidhiQwerty",
-      introduction:"My name is Vidhi",
-      skills:skills1,
-      overallRating:4,
-      reviews:"bncwbwd",
-      location:"New Jersey",
-      successRate:3,
-      expectedPay:32
-    })
-
-=======
       fullName: "Vidhi Roy",
       emailId: "vidhi@gmail.com",
       password: "vidhiQwerty",
@@ -340,7 +296,6 @@ async function main() {
       successRate: 3,
       expectedPay: 32,
     });
->>>>>>> edf13bc3c790a2b8f8a169a9efebc39c0f012041
   } catch (error) {
     console.log(error);
     return;
