@@ -73,14 +73,16 @@ import client from "../../utils/client";
             })
             return;
         }
-        let {_id,name,description,tenureMonths,hourlyPay,skillsRequired} = selectedProject;
+        let {_id,name,description,tenureMonths,hourlyPay,skillsRequired,hrsPerDay,daysPerWeek} = selectedProject;
         let current = {
             _id,
             name,
             description,
             tenureMonths,
             hourlyPay,
-            skillsRequired: skillsRequired.map(i => {return i._id.toString()})
+            skillsRequired: skillsRequired.map(i => {return i._id.toString()}),
+            hrsPerDay,
+            daysPerWeek
         }
         setProjectDetails(current);
     },[isEdit, selectedProject])
@@ -113,6 +115,7 @@ import client from "../../utils/client";
                 errors.push(k);
                 throw "missing fields"
             } 
+           // debugger;
             switch (k) {
                 case "hourlyPay":
                     if(projectDetails[k] === 0) {
@@ -135,6 +138,12 @@ import client from "../../utils/client";
                     if(projectDetails[k].length === 0) {
                         errors.push(k);
                         throw "Select atleast one skill"
+                    }
+                    break;
+                case "tenureMonths":
+                    if(projectDetails[k] === 0) {
+                        errors.push(k);
+                        throw "Tenure months should be greater than 0"
                     }
                     break;
                 default:
