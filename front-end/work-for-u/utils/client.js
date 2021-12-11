@@ -14,7 +14,7 @@ client.interceptors.request.use(
     (config) => {
         // Do something before request is sent
         if (window !== undefined) {
-            const bhyveToken = localStorage.getItem('accessToken')
+            const bhyveToken = sessionStorage.getItem('accessToken')
             config.headers['accessToken'] = bhyveToken
         }
         return config

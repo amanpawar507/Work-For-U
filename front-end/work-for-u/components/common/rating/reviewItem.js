@@ -3,7 +3,7 @@ import { Rating } from "./rateModal"
 
 export const ReviewItem = ({reviewer, date, title, review, rating}) => {
     return(
-        <Box boxShadow={'md'} p="10px" w={'48%'} borderRadius={'10px'}>
+        <Box boxShadow={'md'} p="10px" w={'100%'} borderRadius={'10px'}>
             <HStack spacing={'20px'}>
                 <Avatar size={'md'} name={reviewer.fullName}/>
                 <Box>

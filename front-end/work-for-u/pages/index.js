@@ -9,11 +9,19 @@ export default function Home() {
 
   const router = useRouter();
 
-  const {user ,handleTypeSelect} = useContext(UserContext);
+  const {user ,isFreelancer, handleTypeSelect} = useContext(UserContext);
 
-  // useEffect(() => {
-  //   router.push('/employer');
-  // },[])
+  useEffect(() => {
+    if(!user) return;
+    if(user.reviews) {
+      router.push("/freelancer");
+      sessionStorage.setItem("isFreelancer", true);
+    }else{
+      router.push("/employer");
+      sessionStorage.setItem("isFreelancer", false);
+    }
+  },[user])
+  
 
   return (
     <Layout>
