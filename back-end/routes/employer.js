@@ -29,11 +29,10 @@ router.post("/", async (req, res) => {
       return;
     }
 
-       // if (emailId !== null) {
-    //   res.status(400).json({ error: "There is already a user with this mailID" });
-    //   return;
-    // }
-
+    if(password.trim().length < 6) {
+      res.status(400).json({error: "Password should be atleast 6 characters!"});
+      return
+    }
 
     let resultE = await employer.createEmployer(req.body);
     res.json(resultE);

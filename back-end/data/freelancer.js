@@ -105,7 +105,7 @@ const createFreelancer = async (data) => {
 
   const newEntry = {
     fullName,
-    emailId,
+    emailId: emailId.toLowerCase(),
     password: hash,
     introduction,
     skills: skillsArrayF,

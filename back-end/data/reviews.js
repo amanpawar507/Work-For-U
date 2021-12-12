@@ -1,8 +1,10 @@
 const mongoCollections = require("../config/mongoCollections");
 const freelancer = mongoCollections.freelancer;
+const project = mongoCollections.project;
 const { ObjectId } = require("mongodb");
 const data = require("../data");
 const freelancerData = require("../data/freelancer");
+const projectData = require("../data/project");
 const { reviews } = require("../data");
 
 const getCurrentTime = () => {
@@ -31,43 +33,42 @@ function AverageRating(reviews) {
 }
 
 module.exports = {
-  async create(freelancerId, title, reviewer, rating, review) {
+  async create(freelancerId, projectId, title, reviewer, rating, review) {
     if (!freelancerId || !title || !reviewer || !rating || !review)
       throw "All fields need to have valid values";
     if (
       typeof freelancerId != "string" ||
       typeof title != "string" ||
       typeof reviewer != "string" ||
-      typeof review != "string"
+      typeof review != "string" ||
+      typeof projectId != "string"
     )
       throw "Input not in string format";
     if (
       freelancerId.trim().length < 1 ||
       title.trim().length < 1 ||
       reviewer.trim().length < 1 ||
-      review.trim().length < 1
+      review.trim().length < 1  ||
+      projectId.trim().length < 1 
     )
       throw "Input cannot be empty string";
-    const check = freelancerData.getFreelancer(freelancerId);
-    if (check == null) throw "Freelancer does not exist";
+    const check = await freelancerData.getFreelancer(freelancerId);
+    if (check === null) throw "Freelancer does not exist";
+    const projCheck = await projectData.getProject(projectId);
+    if (projCheck === null) throw "Project does not exist";
+    if(projCheck.reviewed) throw "Project is already reviewed";
     if (isNaN(rating)) throw "Rating not valid";
     if (rating < 1 || rating > 5) throw "Rating should be between 1-5";
-    //let today = new Date();
-    // let dateParameter = new Date(dateOfReview);
-    // if (dateParameter == "Invalid Date") throw "Date is not valid";
-    // if (
-    //   dateParameter.getDate() != today.getDate() ||
-    //   dateParameter.getMonth() != today.getMonth() ||
-    //   dateParameter.getFullYear() != today.getFullYear()
-    // )
-    // throw "Date should be valid and today's date";
+ 
     let myId;
     try {
       myId = ObjectId(freelancerId);
+      projId = ObjectId(projectId);
     } catch (e) {
       throw "ID not valid";
     }
     const reviewsCollection = await freelancer();
+    const projectCollection = await project();
     let newReview = {
       _id: ObjectId(),
       title: title,
@@ -76,21 +77,19 @@ module.exports = {
       dateOfReview: getCurrentTime(),
       review: review,
     };
-
+    const newRating = AverageRating([...check.reviews,newReview]);
     const rev = await reviewsCollection.updateOne(
       { _id: myId },
-      { $push: { reviews: newReview } }
+      { $push: { reviews: newReview } }, { $set: { overallRating: newRating } }
     );
     if (rev.modifiedCount === 0)
       throw "Could not add review for freelancer successfully";
-    const check1 = await freelancerData.getFreelancer(freelancerId);
-    const newRating = AverageRating(check1.reviews);
-    await reviewsCollection.updateOne(
-      { _id: myId },
-      { $set: { overallRating: newRating } }
-    );
+    
+    const updateProj = await projectCollection.updateOne({_id: projId},{$set:{reviewed: true}});
+    console.log(updateProj);
+    if (updateProj.modifiedCount === 0) throw "Could not update project successfully";
 
-    return await freelancerData.getFreelancer(freelancerId);
+    return await projectData.getProject(projectId);
   },
 
   async getAll(freelancerId) {
