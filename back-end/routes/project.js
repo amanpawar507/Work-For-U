@@ -402,8 +402,7 @@ router.patch("/requests/update", async (req, res) => {
 
     if(
       freelancerId.trim().length === 0 ||
-      projectId.trim().length === 0 ||
-      status.trim().length === 0 
+      projectId.trim().length === 0 
     ) {
       res.status(400).json({ error: "Empty spaces as input" });
       return;
@@ -438,7 +437,8 @@ router.patch("/status/update", async (req, res) => {
       res.status(400).json({ error: "Invalid type of fields" });
       return;
     }
-    if ((projectId.trim().length === 0)||(status.trim().length === 0)) {
+    if ((projectId.trim().length === 0)
+    ) {
       res.status(400).json({ error: "empty spaces for input" });
       return;
     }

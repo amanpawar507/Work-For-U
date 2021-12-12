@@ -363,8 +363,7 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
 
   if (
     freelancerId.trim().length === 0 ||
-    projectId.trim().length === 0 ||
-    status.trim().length === 0
+    projectId.trim().length === 0 
   ) {
     throw "Empty spaces as input";
   }
