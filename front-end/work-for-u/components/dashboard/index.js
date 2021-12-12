@@ -13,6 +13,17 @@ export const Dashboard = () => {
   const { user } = useContext(UserContext);
 
   const toast = useToast();
+  const errorAlert = error => {
+    toast({
+        title: error.response? 
+                error.response.data.error : 
+                error.message ? 
+                error.message : 
+                error,
+        status: "error",
+        duration: 2000
+    });
+}
 
   useEffect(() => {
     if(!user) return;
@@ -31,13 +42,7 @@ export const Dashboard = () => {
         }
       } catch (error) {
         console.log(error);
-        toast({
-          title: error.response
-            ? error.response.statusText
-            : "Some error occured",
-          status: "error",
-          duration: 2000,
-        });
+        errorAlert(error);
       }
     };
     getFreelancers();

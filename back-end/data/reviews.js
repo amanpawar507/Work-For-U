@@ -76,11 +76,12 @@ module.exports = {
       rating: rating,
       dateOfReview: getCurrentTime(),
       review: review,
+      reviewedFor: projectId
     };
     const newRating = AverageRating([...check.reviews,newReview]);
     const rev = await reviewsCollection.updateOne(
       { _id: myId },
-      { $push: { reviews: newReview } }, { $set: { overallRating: newRating } }
+      { $push: { reviews: newReview }, $set: { overallRating: newRating } }
     );
     if (rev.modifiedCount === 0)
       throw "Could not add review for freelancer successfully";
@@ -131,35 +132,42 @@ module.exports = {
     //return check3;
   },
 
-  async remove(reviewId) {
-    if (!reviewId) throw "Review Id must be provided";
-    if (typeof reviewId != "string") throw "Input not in string format";
-    if (reviewId.trim().length < 1) throw "Input cannot be empty string";
+  async remove(reviewId, projectId) {
+    if (!reviewId || !projectId) throw "Missing fields";
+    if (typeof reviewId != "string" || typeof projectId != "string") throw "Input not in string format";
+    if (reviewId.trim().length < 1 || projectId.trim().length < 1) throw "Input cannot be empty string";
     const check = this.get(reviewId);
     if (check == null) throw "Review does not exist";
     let revID;
     try {
       revID = ObjectId(reviewId);
+      projId = ObjectId(projectId);
     } catch (e) {
       throw "ID not valid";
     }
 
     const freelancerCollection = await freelancer();
+    const projectCollection = await project();
     const check3 = await freelancerCollection.findOne({
       "reviews._id": revID,
     });
+    if(!check3) throw "could not find the review";
+    const checkProj = await projectCollection.findOne({
+      _id: projId
+    });
+    if(!checkProj) throw "could not find the project";
+    const newArray = check3.reviews.filter(i => i._id.toString() !== reviewId);
+    const newRating = AverageRating(newArray);
     const deletionInfo1 = await freelancerCollection.updateOne(
       { "reviews._id": revID },
-      { $pull: { reviews: { _id: revID } } }
+      { $pull: { reviews: { _id: revID } }, $set: { overallRating: newRating }}
     );
     if (deletionInfo1.modifiedCount === 0)
       throw `Could not delete review with id of ${reviewId}`;
-    const newCheck3 = await freelancerCollection.findOne({ _id: check3._id });
-    const newRating = AverageRating(newCheck3.reviews);
-    await freelancerCollection.updateOne(
-      { _id: check3._id },
-      { $set: { overallRating: newRating } }
-    );
+    
+      const updateProj = await projectCollection.updateOne({_id: projId},{$set:{reviewed: false}});
+      console.log(updateProj);
+      if (updateProj.modifiedCount === 0) throw "Could not update project successfully";
 
     return { reviewId: reviewId, deleted: true };
   },

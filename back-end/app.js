@@ -48,7 +48,8 @@ app.use((req,res,next) => {
     req.originalUrl !== "/reCreate" &&
     req.originalUrl !== "/skills/" 
     ) {
-      verifyUser(req.headers.accesstoken)
+      let user = verifyUser(req.headers.accesstoken)
+      req.headers.user = user;
     }
     next();
   } catch (error) {

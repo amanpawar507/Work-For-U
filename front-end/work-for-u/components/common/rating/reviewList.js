@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import client from "../../../utils/client";
 import { ReviewItem } from "./reviewItem";
 
-export const ReviewList = ({reviews}) => {
+export const ReviewList = ({reviews, user, owner, handleDelete}) => {
 
     const [allReviews, setAllReviews] = useState([]);
 
@@ -33,10 +33,26 @@ export const ReviewList = ({reviews}) => {
         getReviewerInfo(reviewers)
     },[reviews])
 
+    // useEffect(() => {
+    //     console.log(user);
+    //     console.log(reviews);
+    //     console.log(user._id === allReviews[0].reviewer)
+    // },[user, reviews]);
+
     return(
         <Box w={'100%'} maxHeight={'700px'} overflow={'auto'} p={'10px'}>
             <Grid templateColumns='repeat(2, 1fr)' gap={6}>
-                {allReviews.map((i,idx) => <ReviewItem key={idx} review={i.review} reviewer={i.reviewer} rating={i.rating} title={i.title}/>)}
+                {allReviews.map((i,idx) => 
+                    <ReviewItem 
+                        key={idx} 
+                        review={i.review} 
+                        reviewer={i.reviewer} 
+                        date={i.dateOfReview} 
+                        rating={i.rating} 
+                        title={i.title}
+                        canDelete={owner || user._id === i.reviewer._id}
+                        handleDelete={() => handleDelete(i._id,i.reviewedFor)}
+                    />)}
             </Grid>
         </Box>
     )

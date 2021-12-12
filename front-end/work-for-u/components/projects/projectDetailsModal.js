@@ -9,7 +9,8 @@ import {
     VStack,
     Text,
     Progress,
-    Box
+    Box,
+    useToast
   } from "@chakra-ui/react"
 import { useContext, useEffect, useState } from "react"
 import client from "../../utils/client";
@@ -23,6 +24,20 @@ import { UserContext } from "../contexts/userContext";
     const [createdBy, setCreatedBy] = useState("");
     const [assignedTo, setAssignedTo] = useState("");
     const [loading,setLoading] = useState(true);
+
+    const toast = useToast();
+
+    const errorAlert = error => {
+        toast({
+            title: error.response? 
+                    error.response.data.error : 
+                    error.message ? 
+                    error.message : 
+                    error,
+            status: "error",
+            duration: 2000
+        });
+    }
 
     useEffect(() => {
         if(!isOpen) return;
@@ -40,6 +55,7 @@ import { UserContext } from "../contexts/userContext";
                 setCreatedBy(data.fullName); 
             } catch (error) {
                 console.log(error);
+                errorAlert(error);
             }
         }
         const getFreelancer = async() => {
@@ -48,6 +64,7 @@ import { UserContext } from "../contexts/userContext";
                  setAssignedTo(data.fullName); 
             } catch (error) {
                 console.log(error);
+                errorAlert(error);
             }
         }
         if(projectDetails.assignedTo) {

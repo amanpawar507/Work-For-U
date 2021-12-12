@@ -38,6 +38,20 @@ import { UserContext } from "../contexts/userContext";
 
     const {setUser} = useContext(UserContext);
 
+    const toast = useToast();
+
+    const errorAlert = error => {
+        toast({
+            title: error.response? 
+                    error.response.data.error : 
+                    error.message ? 
+                    error.message : 
+                    error,
+            status: error.response ? "error" : "warning",
+            duration: 2000
+        });
+    }
+
     useEffect(() => {
         try {
             const getAllSkills = async () => {
@@ -51,6 +65,7 @@ import { UserContext } from "../contexts/userContext";
             }
         } catch (error) {
             console.log(error);
+            errorAlert(error);
         }
     },[isOpen,isFreelancer]);
 
@@ -143,11 +158,7 @@ import { UserContext } from "../contexts/userContext";
             onClose();
         } catch (error) {
             console.log(error);
-            toast({
-                title: error.response ? error.response.data.error : error,
-                status: error.response ? "error" : "warning",
-                duration: 2000
-            });
+            errorAlert(error);
             setSubmitting(false);
         }
         // if(errorList.length === 0)  onSubmit(projectDetails);

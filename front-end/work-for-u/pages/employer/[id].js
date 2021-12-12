@@ -14,6 +14,18 @@ const EmployerProfilePage = () => {
     const {user,isFreelancer} = useContext(UserContext);
     const toast = useToast();
 
+    const errorAlert = error => {
+        toast({
+            title: error.response? 
+                    error.response.data.error : 
+                    error.message ? 
+                    error.message : 
+                    error,
+            status: "error",
+            duration: 2000
+        });
+    }
+
     useEffect(() => {
         if(!query || !user) return;
         const {id} = query;
@@ -25,12 +37,8 @@ const EmployerProfilePage = () => {
                 setInfo(data);
                 setLoading(false);
             } catch (error) {
-                toast({
-                    title: error.response ?error.response.data.error : error,
-                    status: "error",
-                    duration: 2000
-                });
                 setLoading(false);
+                errorAlert(error);
             }
         }
         console.log(user._id === id);
