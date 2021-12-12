@@ -38,7 +38,10 @@ router.post("/", async (req, res) => {
       return;
     }
 
-    if(password.trim().length < 6) res.status(400).json({error: "Password should be atleast 6 characters!"});
+    if(password.trim().length < 6) {
+      res.status(400).json({error: "Password should be atleast 6 characters!"});
+      return
+    }
 
     let resultE = await employer.createEmployer(req.body);
     res.json(resultE);
