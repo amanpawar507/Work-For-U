@@ -14,39 +14,46 @@ const UserContextProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      let userExist = localStorage.getItem("accessToken");
-      let isFreelancer = localStorage.getItem("isFreelancer");
-      console.log(userExist);
-      if (isFreelancer === undefined || isFreelancer === null) {
-        router.push("/");
+      let userExist = sessionStorage.getItem("accessToken");
+      // let isFreelancer = sessionStorage.getItem("isFreelancer");
+      //debugger;
+      if (userExist) {
+        setCurrentUser();
       } else {
-        if (isFreelancer === "true") {
-          setIsFreelancer(true);
-          if (userExist && userExist !== undefined) setCurrentUser();
-        } else {
-          setIsFreelancer(false);
-          if (userExist && userExist !== undefined) setCurrentUser();
-        }
+        router.push("/logout");
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
     }
   }, []);
 
   const setCurrentUser = async () => {
+    
     const { data } = await client.post(`http://localhost:5000/common/reCreate`);
     if (data) {
+      if (data.user.reviews) {
+        sessionStorage.setItem("isFreelancer", true);
+        setIsFreelancer(true);
+        // if(router.pathname.split("/")[1] === "employer") {
+        //   router.push("/freelancer");
+        // }
+      } else {
+        sessionStorage.setItem("isFreelancer", false);
+        setIsFreelancer(false);
+        // if(router.pathname.split("/")[1] === "freelancer") {
+        //   router.push("/employer");
+        // }
+      }
       setUser(data.user);
     }
   };
 
   const handleTypeSelect = (type) => {
     if (type === 1) {
-      localStorage.setItem("isFreelancer", false);
+      sessionStorage.setItem("isFreelancer", false);
       setIsFreelancer(false);
     } else {
-      localStorage.setItem("isFreelancer", true);
+      sessionStorage.setItem("isFreelancer", true);
       setIsFreelancer(true);
     }
     router.push("/login");
@@ -55,7 +62,7 @@ const UserContextProvider = ({ children }) => {
   const saveUser = (user) => {
     if (!user) return;
     setUser(user.user);
-    localStorage.setItem("accessToken", user.token);
+    sessionStorage.setItem("accessToken", user.token);
   };
 
   return (

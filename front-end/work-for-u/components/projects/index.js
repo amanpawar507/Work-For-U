@@ -9,6 +9,7 @@ import client from "../../utils/client";
 import { UpdateStatusModal } from "../freelancerDashboard/updateStatusModal";
 import { ProjectFilter } from "./projectFilter";
 import { EmptyAlert } from "../common/emptyAlert";
+import { RateModal } from "../common/rating/rateModal";
 
 export const Projects = () => {
 
@@ -24,6 +25,8 @@ export const Projects = () => {
     const {isOpen,onOpen,onClose} = useDisclosure();
     const {isOpen: isDetailsOpen, onOpen: onDetailsOpen, onClose: onDetailsClose} = useDisclosure();
     const {isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose} = useDisclosure();
+    const {isOpen: isRatingOpen, onOpen: onRatingOpen, onClose: onRatingClose} = useDisclosure();
+
 
     const toast = useToast();
 
@@ -32,9 +35,7 @@ export const Projects = () => {
             const getAllSkills = async () => {
                 const {data} = await client.get("http://localhost:5000/skills/");
                 setSkillList(data);
-                setLoading(false);
             } 
-            setLoading(true);
             getAllSkills();
         } catch (error) {
             console.log(error);
@@ -51,6 +52,7 @@ export const Projects = () => {
         const getAllProjects = async () => {
             if(!isFreelancer){
                 const {data} = await client.get(`http://localhost:5000/project/all/employer/${user._id}`);
+                console.log(data);
                 setProjects(data);
             }
             else{
@@ -93,9 +95,13 @@ export const Projects = () => {
                 );
                 console.log(data);
                 setProjects(prevValue => {
-                    return prevValue.map( i => i._id === id ? data : i);
+                    return prevValue.map( i => i._id === data._id ? data : i);
                 });
                 setIsSubmitting(false);
+                toast({title: "Project updated successfully",
+                    status: "success",
+                    duration: 2000
+                });
                 onClose();
             }else{
                 const {data} = await client.post("http://localhost:5000/project/",
@@ -111,6 +117,10 @@ export const Projects = () => {
                 console.log(data);
                 setProjects(prevValue => [...prevValue,data]);
                 setIsSubmitting(false);
+                toast({title: "Project added successfully",
+                status: "success",
+                duration: 2000
+            });
                 onClose();
             }
 
@@ -203,10 +213,19 @@ export const Projects = () => {
 
                 {requests.length > 0 ? <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                     {
-                        requests.map((i,idx) => <ProjectCard key={idx} id={i._id} name={i.name} status={i.status} onDetailsClick={() => handleShowDetails(i)} onEditClick={() => handleEditProject(i)} onDeleteClick={() => handleDeleteProject(i._id)} setUpdatedRequest={(data) => setUpdatedRequest(data)}/>)
+                        requests.map((i,idx) => 
+                            <ProjectCard 
+                                key={idx} 
+                                id={i._id} 
+                                name={i.name} 
+                                status={i.status} 
+                                assignedBy={i.createdBy}
+                                onDetailsClick={() => handleShowDetails(i)} 
+                                setUpdatedRequest={(data) => setUpdatedRequest(data)}
+                            />)
                     }
                 </Grid>:
-                <EmptyAlert text="You have no requests for now. Hang tight!"/>
+                <EmptyAlert text="You have no new requests. Hang tight!"/>
                 }
             </>}
             <br/>
@@ -226,6 +245,7 @@ export const Projects = () => {
                                 onEditClick={() => handleEditProject(i)} 
                                 onDeleteClick={() => handleDeleteProject(i._id)} 
                                 onUpdateClick={() => {setSelectedProject(i); onUpdateOpen();}}
+                                onRateClick={() => {setSelectedProject(i); onRatingOpen();}}
                         />)
                         }
                     </Grid>
@@ -237,6 +257,7 @@ export const Projects = () => {
             <AddProjectModal isOpen={isOpen} onClose={onClose} onSubmit={handleCreateProject} submitting={isSubmitting} isEdit={isEdit} selectedProject={selectedProject}/>
             <ProjectDetailsModal isOpen={isDetailsOpen} onClose={onDetailsClose} projectDetails={selectedProject}/>
             <UpdateStatusModal isOpen={isUpdateOpen} onClose={onUpdateClose} selectedProject={selectedProject} setUpdatedProject={setUpdatedProject}/>
+            <RateModal project={selectedProject} isOpen={isRatingOpen} onClose={() => {setSelectedProject(); onRatingClose();}} updateFreelancer={(data) => updateUserInfo(data)}/>
         </Box>
     )
 }

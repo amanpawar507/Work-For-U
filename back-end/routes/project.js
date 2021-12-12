@@ -184,6 +184,8 @@ router.patch("/:projectId", async (req, res) => {
       tenureMonths,
       skillsRequired,
       hourlyPay,
+      hrsPerDay,
+      daysPerWeek,
     });
 
     if (result) {
@@ -393,29 +395,37 @@ router.delete("/:id", async (req, res) => {
 router.get("/filter/:userType/:userId/:query/:type", async (req, res) => {
   try {
     // if(req.session.email) {
-      const obj = req.params; //{query,filterkey}
-      // const id = req.params.id;
-      if (!obj.query || !obj.userType || !obj.userId) {
-        res.status(400).json({ error: "Please provide all the details" });
-        return;
-      }
-      if (typeof obj.query !== "string" || typeof obj.userType !== "string" || typeof obj.userId !== "string") {
-        res.status(400).json({ error: "Invalid type of input object" });
-        return;
-      }
-      if (obj.query.trim().length === 0 || obj.userType.trim().length === 0 || obj.userId.trim().length === 0 ) {
-        res.status(400).json({ error: "empty spaces for input object" });
-        return;
-      }
-  
-      let result = await project.filterProject(obj);
-      res.json(result);
+    const obj = req.params; //{query,filterkey}
+    // const id = req.params.id;
+    if (!obj.query || !obj.userType || !obj.userId) {
+      res.status(400).json({ error: "Please provide all the details" });
+      return;
+    }
+    if (
+      typeof obj.query !== "string" ||
+      typeof obj.userType !== "string" ||
+      typeof obj.userId !== "string"
+    ) {
+      res.status(400).json({ error: "Invalid type of input object" });
+      return;
+    }
+    if (
+      obj.query.trim().length === 0 ||
+      obj.userType.trim().length === 0 ||
+      obj.userId.trim().length === 0
+    ) {
+      res.status(400).json({ error: "empty spaces for input object" });
+      return;
+    }
+
+    let result = await project.filterProject(obj);
+    res.json(result);
     // }else{
     //   res.status(401).json({message: "unauthorized access!"});
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.messsage? error.message: error });
+    res.status(500).json({ error: error.messsage ? error.message : error });
   }
 });
 

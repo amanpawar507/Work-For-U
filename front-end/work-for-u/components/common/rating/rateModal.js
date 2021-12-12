@@ -17,7 +17,7 @@ import { useContext, useEffect, useState } from "react"
 import client from "../../../utils/client";
 import { UserContext } from "../../contexts/userContext";
 
-export const RateModal = ({isOpen, onClose, freelancer, updateFreelancer}) => {
+export const RateModal = ({isOpen, onClose, project}) => {
 
     const [details,setDetails] = useState({
         title: "",
@@ -28,6 +28,14 @@ export const RateModal = ({isOpen, onClose, freelancer, updateFreelancer}) => {
 
     const {user} = useContext(UserContext);
     const toast = useToast();
+
+    useEffect(() => {
+        setDetails({
+            title: "",
+            rating: 0,
+            review: ""
+        })
+    },[isOpen])
 
     const handleChange = e => {
         const {name,value} = e.target;
@@ -44,11 +52,10 @@ export const RateModal = ({isOpen, onClose, freelancer, updateFreelancer}) => {
         setSubmitting(true);
         console.log(details);
         try {
-            const {data} = await client.post(`http://localhost:5000/reviews/${freelancer._id}`,{
+            const {data} = await client.post(`http://localhost:5000/reviews/${project.assignedTo}`,{
                 ...details,
                 reviewer: user._id
             });
-            updateFreelancer(data);
             setSubmitting(false);
             onClose();
             toast({
@@ -72,7 +79,7 @@ export const RateModal = ({isOpen, onClose, freelancer, updateFreelancer}) => {
         <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Rate {freelancer ? freelancer.fullName : " the freelancer"}</ModalHeader>
+          <ModalHeader>Rate the freelancer for {project && project.name}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleSubmit}>
