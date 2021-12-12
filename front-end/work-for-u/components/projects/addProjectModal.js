@@ -14,7 +14,8 @@ import {
     FormLabel,
     Box,
     Progress,
-    useToast
+    useToast,
+    FormHelperText
   } from "@chakra-ui/react"
   import { Checkbox, CheckboxGroup } from "@chakra-ui/react"
 import client from "../../utils/client";
@@ -204,8 +205,10 @@ import client from "../../utils/client";
                     <Input id="hourlyPay" value={projectDetails.hourlyPay} onChange={handleChange} type="number" placeholder="Pay /hour in $" name="hourlyPay" isInvalid={errorList.includes('hourlyPay')}/>
                     <FormLabel htmlFor="hrsPerDay">Hours /day</FormLabel>
                     <Input id="hrsPerDay" value={projectDetails.hrsPerDay} onChange={handleChange} type="number" placeholder="maximum 8 hours" name="hrsPerDay" isInvalid={errorList.includes('hrsPerDay')}/>
+                    <FormHelperText color={'black'}>{`Should be > 0 and < 9 `}</FormHelperText>
                     <FormLabel htmlFor="daysPerWeek">Days /week</FormLabel>
                     <Input id="daysPerWeek" value={projectDetails.daysPerWeek} onChange={handleChange} type="number" placeholder="maximum 6 days" name="daysPerWeek" isInvalid={errorList.includes('daysPerWeek')}/>
+                    <FormHelperText color={'black'}>{`Should be > 0 and < 7 `}</FormHelperText>
                     <Button
                         mt={4}
                         ml="80%"

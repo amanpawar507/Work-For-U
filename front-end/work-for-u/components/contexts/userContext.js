@@ -8,7 +8,7 @@ export const UserContext = createContext();
 const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isFreelancer, setIsFreelancer] = useState(false);
+  const [isFreelancer, setIsFreelancer] = useState(null);
 
   const router = useRouter();
 

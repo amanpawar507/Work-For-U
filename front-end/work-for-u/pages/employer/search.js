@@ -1,20 +1,23 @@
 import { useToast } from "@chakra-ui/react";
-import axios from "axios";
 import { useRouter } from "next/dist/client/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Layout } from "../../components";
+import { UserContext } from "../../components/contexts/userContext";
 import { Search } from "../../components/search";
+import client from "../../utils/client";
 
 const SearchPage = () => {
-  const { query } = useRouter();
+  const { query,push } = useRouter();
   const toast = useToast();
   const [results, setResults] = useState([]);
+
+  const {isFreelancer} = useContext(UserContext);
 
   useEffect(() => {
     if (!query) return;
     const searching = async (req) => {
       try {
-        const { data } = await axios.post(
+        const { data } = await client.post(
           "http://localhost:5000/freelancer/searchFreelancer",
           req
         );
@@ -38,8 +41,17 @@ const SearchPage = () => {
       query: q,
       filterkey: t,
     };
-    searching(req);
-  }, [query]);
+
+    if(isFreelancer !== undefined && isFreelancer !== null) {
+      debugger;
+      if(isFreelancer) {
+        push("/freelancer");
+      }else{
+        searching(req);
+      }
+    }
+
+  }, [query,isFreelancer]);
   return (
     <Layout>
       <Search query={query && query.q} results={results} />

@@ -24,6 +24,7 @@ router.post("/", async (req, res) => {
       !fullName ||
       !emailId ||
       !password ||
+      !introduction ||
       !skills ||
       !location ||
       !expectedPay
@@ -42,6 +43,11 @@ router.post("/", async (req, res) => {
       typeof expectedPay !== "number"
     ) {
       res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+
+    if(skills.length === 0) {
+      res.status(400).json({ error: "Select atleast one skill" });
       return;
     }
 

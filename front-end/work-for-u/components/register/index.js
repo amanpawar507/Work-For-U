@@ -3,6 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react";
 import client from "../../utils/client";
+import { emailValidation } from "../../utils/helper";
 import { InputComp } from "../common/Input"
 import { UserContext } from "../contexts/userContext";
 
@@ -10,13 +11,13 @@ import { UserContext } from "../contexts/userContext";
 export const Register = ({isFreelancer}) => {
 
     const [details, setDetails] = useState({
-        fullName: null,
-        emailId: null,
-        password: null,
-        companyName: null,
-        confirmPassword:null,
+        fullName: "",
+        emailId: "",
+        password: "",
+        companyName: "",
+        confirmPassword:"",
         location: null,
-        introduction:null,
+        introduction:"",
         expectedPay:null,
         skills:null
     });
@@ -58,16 +59,52 @@ export const Register = ({isFreelancer}) => {
         });
     }
 
+    const warn = text => {
+        toast({
+            title: text,
+            status: "warning",
+            duration: 2000
+        });
+    }
+
     const handleSubmit = async e => {
         try {
             e.preventDefault();
-            if(details.password !== details.confirmPassword) {
-                toast({
-                    title: "password and confirm password should match!",
-                    status: "warning",
-                    duration: 2000
-                });
+            const {fullName,companyName, emailId, password, confirmPassword, location, skills, introduction, expectedPay} = details;
+            if(fullName.trim().length === 0 || emailId.trim().length === 0 || password.trim().length === 0 || confirmPassword.trim().length === 0) {
+                warn("Please fill all the fields");
                 return;
+            }
+            if(!emailValidation(emailId)) {
+                warn("Please pass a valid emailId");
+                return;
+            }
+            if(password.length < 6) {
+                warn("Password should be atleast 6 characters long");
+                return;
+            }
+            if(password !== confirmPassword) {
+                warn("password and confirm password should match!");
+                return;
+            }
+            if(isFreelancer) {
+                if(!expectedPay || expectedPay < 0) {
+                    warn("Please pass a valid expectedPay");
+                    return;
+                }
+                if(location.trim().length === 0 || !location) {
+                    warn("Please select a location");
+                    return;
+                }
+                if(!skills || (skills.length && skills.length === 0)) {
+                    warn("Please select atleast one skill")
+                    return;
+                }
+            }else{
+                if(companyName.trim().length === 0) {
+                    warn("Please pass your company name");
+                    return;
+                }
             }
             setSubmitting(true);
             let request = details;
@@ -98,13 +135,13 @@ export const Register = ({isFreelancer}) => {
             router.push('/login');
             setSubmitting(false);
         } catch (error) {
+            setSubmitting(false);
             console.log(error)
             toast({
                 title: error.response? error.response.data.error : error,
                 status: "error",
                 duration: 2000
             });
-            setSubmitting(false);
         }
     }
 
@@ -128,7 +165,7 @@ export const Register = ({isFreelancer}) => {
                     {!isFreelancer && <InputComp name="companyName" label="Company Name" value={details.companyName} onChange={handleChange} required={true}/>}
                     {isFreelancer && <InputComp name="expectedPay" label="Minimum pay expected /hr" value={details.expectedPay} onChange={handleChange} required={true}/>}
                     {isFreelancer &&  <FormLabel htmlFor="introduction">Introduction</FormLabel>}
-                    {isFreelancer && <Textarea  id="introduction" value={details.introduction} onChange={handleChange} placeholder="Introduction" name="introduction"/>}
+                    {isFreelancer && <Textarea  id="introduction" value={details.introduction} onChange={handleChange} placeholder="Introduction (optional)" name="introduction"/>}
                     {isFreelancer && <FormLabel htmlFor="skillset">Skillset</FormLabel>}
                     {isFreelancer && <CheckboxGroup id="skillset" onChange={handleCheck} name="skills" colorScheme="green">
                         <HStack flexWrap={'wrap'} maxH={'80px'} overflow={'auto'}>
@@ -140,8 +177,8 @@ export const Register = ({isFreelancer}) => {
                         <option value={null}>Select location</option>
                         {allStates && allStates.map((i,idx) => <option key={idx} value={i.name}>{i.name}</option>)}
                     </Select>}
-                    <InputComp name="password" label="Password" type={'password'} value={details.password} onChange={handleChange} required={true}/>
-                    <InputComp name="confirmPassword" label="Confirm Password" type={'password'} value={details.confirmPassword} onChange={handleChange} required={true}/>
+                    <InputComp name="password" label="Password" type={'password'} value={details.password} onChange={handleChange} helper="atleast 6 characters long" required={true}/>
+                    <InputComp name="confirmPassword" label="Confirm Password" type={'password'} value={details.confirmPassword} helper="atleast 6 characters long" onChange={handleChange} required={true}/>
                     <Button variant={'outline'} colorScheme={'teal'} mt='10px' w="100%" type="submit" isLoading={submitting}>
                         Register
                     </Button>

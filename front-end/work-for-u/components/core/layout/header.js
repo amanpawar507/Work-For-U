@@ -20,6 +20,7 @@ export const Header = ({isFreelancer,userInfo}) => {
     const [search,setSearch] = useState("");
     const [filter, setFilter] = useState("");
     const router = useRouter();
+    const {pathname} = router;
     const {user} = useContext(UserContext);
     // const isFr
     const handleChange = e => {
@@ -31,6 +32,8 @@ export const Header = ({isFreelancer,userInfo}) => {
         if(!search || search.trim().length === 0) return;
         router.push(`/employer/search?q=${search}&&t=${filter}`);
     }
+
+    console.log(pathname.split("/"));
 
     return(
         <HStack bg={"rgb(245, 245, 245)"} w={'100%'} p ={'10px 0'} justifyContent={'space-between'} top={0} width={'1000px'} position={'fixed'} zIndex={2}>
@@ -56,12 +59,12 @@ export const Header = ({isFreelancer,userInfo}) => {
             </HStack>
             <HStack>
                 {user && 
-                <Flex>
+                <Flex mr={'10px'}>
                     <Text fontStyle={'italic'} display={'flex'}>Welcome, </Text>
                     <Text fontStyle={'italic'} ml='4px' color={'black'} fontWeight={'bold'} as="h1">{` ${user.fullName}`}</Text>
                 </Flex>}
-                <Button  variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}`)}>Dashboard</Button>
-                <Button variant='ghost' onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/projects`)}>Projects</Button>
+                <Button background={!pathname.split("/")[2] && 'black'} variant={!pathname.split("/")[2] ? 'solid' : 'ghost'} color={pathname.split("/")[2] ? 'black' : 'white'} onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}`)}>Dashboard</Button>
+                <Button background={pathname.split("/")[2] === "projects" && 'black'} variant={pathname.split("/")[2] === "projects" ? 'solid' : 'ghost'} color={pathname.split("/")[2] !== "projects" ? 'black' : 'white'}  onClick={() => router.push(`/${isFreelancer?"freelancer":"employer"}/projects`)}>Projects</Button>
                 <Menu zIndex="999">
                     <MenuButton
                         as={IconButton}
