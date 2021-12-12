@@ -62,9 +62,20 @@ import { UserContext } from "../contexts/userContext";
         getUserProjects();
     },[user,selectedFreelancer,isOpen])
 
+    const warn = text => {
+        toast({
+            title: text,
+            status: "warning",
+            duration: 2000
+        });
+    }
 
     const handleAddRequest = async projectId => {
         try {
+            if(!selectedProject || selectedProject.trim().length === 0) {
+                warn("Please select a project");
+                return;
+            }
             setSending(true);
             const {data} = await client.post("http://localhost:5000/project/requests/add",{freelancerId: selectedFreelancer._id, projectId: projectId});
             if(data.addedRequest) toast({

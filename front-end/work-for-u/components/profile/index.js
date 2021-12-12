@@ -1,16 +1,17 @@
-import { Avatar, Box, Button, Divider, Flex, HStack, Spacer, Text, useDisclosure, useToast, VStack } from "@chakra-ui/react"
+import { Box, Button, Divider, Flex, HStack, Spacer, Text, useDisclosure, useToast, VStack } from "@chakra-ui/react"
 import { useContext, useEffect, useState } from "react";
 import { MdBlock, MdCheck } from 'react-icons/md'
 import client from "../../utils/client";
 import { InfoText } from "../common/infoText"
 import { ReviewList } from "../common/rating/reviewList";
-import { SuccessChart } from "./successChart";
+import { ProjectChart, SuccessChart } from "./successChart";
 import randomcolor from "randomcolor"
 import { UserContext } from "../contexts/userContext";
 import { DataDisplay } from "./dataDisplay";
 import { RequestModal } from "../dashboard/requestModal";
 import { EmptyAlert } from "../common/emptyAlert";
 import { UpdateProfileModal } from "./updateProfileModal";
+import { Avatar, CustomAvatar } from "../common/Avatar";
 
 export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,updateUserInfo}) => {
 
@@ -28,33 +29,79 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
     useEffect(() => {
         if(!userInfo) return;
         const getSuccessRate = async () => {
-            const {data} = await client.get(`http://localhost:5000/freelancer/successRate/${userInfo._id}`);
-            console.log(data);
-            let labels = [];
-            let values = [];
-            let colors = [];
-            for(let key in data.projectBySkills) {
-                labels.push(key);
-                values.push(data.projectBySkills[key]);
-                colors.push(randomcolor());
+            try {
+                const {data} = await client.get(`http://localhost:5000/freelancer/successRate/${userInfo._id}`);
+                console.log(data);
+                let labels = [];
+                let values = [];
+                let colors = [];
+                for(let key in data.projectBySkills) {
+                    labels.push(key);
+                    values.push(data.projectBySkills[key]);
+                    colors.push(randomcolor());
+                }
+                console.log({labels,values, colors});
+                setChartInfo({labels,values, colors, successRate : data.successRate});
+            } catch (error) {
+                console.log(error);
+                toast({
+                    title: error.response ? error.response.data.error : error,
+                    status: "error",
+                    duration: 2000
+                });
             }
-            console.log({labels,values, colors});
-            setChartInfo({labels,values, colors, successRate : data.successRate});
         }
 
         const getAveragePay = async() => {
-            const {data} = await client.get(`http://localhost:5000/project/all/employer/${userInfo._id}`);
-            const count = data.length;
-            let total = 0;
-            data.map(i => total += i.hourlyPay);
-            setAvgPay(total/count);
+            try {
+                const {data} = await client.get(`http://localhost:5000/project/all/employer/${userInfo._id}`);
+                const count = data.length;
+                let total = 0;
+                data.map(i => total += i.hourlyPay);
+                setAvgPay(total/count);
+            } catch (error) {
+                console.log(error);
+                toast({
+                    title: error.response ? error.response.data.error : error,
+                    status: "error",
+                    duration: 2000
+                });
+            }
         }
-        console.log(currentUser);
-        console.log("check ",currentUser.blacklist && currentUser.blacklist.includes(userInfo._id));
+
+        const getProjectsBySkills = async() => {
+            try {
+                const {data} = await client.get(`http://localhost:5000/employer/project/skills/${userInfo._id}`);
+                console.log("projects by skills: " , data)
+                console.log(Object.keys(data).length);
+                if(Object.keys(data).length > 0) {
+                    let labels = [];
+                    let values = [];
+                    let colors = [];
+                    for(let key in data) {
+                        labels.push(key);
+                        values.push(data[key]);
+                        colors.push(randomcolor());
+                    }
+                    setChartInfo({labels,values, colors});
+                }else{
+                    setChartInfo(null);
+                }
+
+            } catch (error) {
+                console.log(error);
+                toast({
+                    title: error.response ? error.response.data.error : error.message,
+                    status: "error",
+                    duration: 2000
+                });
+            }
+        }
         if(isFreelancerProfile) {
             getSuccessRate()
         }else{
             getAveragePay();
+            getProjectsBySkills();
         }
     },[isFreelancerProfile])
 
@@ -88,10 +135,10 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
     return(
         <Box w="100%" h={'100%'}>
             <HStack w='100%' mb="40px" spacing={'50px'}>
-                <Avatar size={"xl"} name={userInfo.fullName}/>
+                <CustomAvatar size={"xl"} name={userInfo.fullName} id={userInfo._id} isFreelancer={isFreelancerProfile}/>
                 {isFreelancerProfile && <DataDisplay content={`${userInfo.overallRating}/5`} label={`Rating (${userInfo.reviews.length} reviews)`}/>}
                 {isFreelancerProfile && chartInfo && <DataDisplay content={`${chartInfo.successRate ? Math.round(chartInfo.successRate) : "0"}%`} label={"Success Rate"}/>}
-                {!isFreelancerProfile && <DataDisplay content={`$${Math.round(avgPay)}`} label={"Average pay/hour"}/>}
+                {!isFreelancerProfile && <DataDisplay content={`$${avgPay ? Math.round(avgPay) : 0}`} label={"Average pay/hour"}/>}
                 {!isFreelancer && isFreelancerProfile && <Button variant={'outline'} colorScheme={'teal'} onClick={() => onOpen()}>Request</Button>}
                 {isUser && <Button variant={'outline'} colorScheme={'teal'} onClick={() => onUpdateOpen()}>Edit Profile</Button>}
                 {isFreelancer && !isFreelancerProfile && <Button 
@@ -114,6 +161,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 </Box>
                 {/* <Flex minW={'200px'} justifyContent={"center"} direction={'column'} gap="10px"> */}
                     {isFreelancerProfile && (chartInfo && chartInfo.successRate ? <SuccessChart chartInfo={chartInfo}/> : <EmptyAlert text="No projects completed yet."/>)}
+                    {!isFreelancerProfile && (chartInfo ? <ProjectChart chartInfo={chartInfo}/> : <EmptyAlert text="No projects created yet."/>)}
                 {/* </Flex> */}
             </HStack>
             <Divider/>

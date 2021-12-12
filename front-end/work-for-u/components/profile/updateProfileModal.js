@@ -168,7 +168,7 @@ import { UserContext } from "../contexts/userContext";
             {!loading && <form onSubmit={handleSubmit}>
                 {details.fullName && <InputComp name="fullName" label="Full Name" onChange={handleChange} value={userDetails.fullName} required/>}
                 {details.companyName && <InputComp name="companyName" label="Company Name" onChange={handleChange} value={userDetails.companyName} required/>}
-                {details.introduction && <InputComp name="introduction" label="Introduction" onChange={handleChange} value={userDetails.introduction} required/>}
+                {details.introduction && <InputComp name="introduction" label="Introduction" onChange={handleChange} value={userDetails.introduction} helper={'optional'}/>}
                 {details.skills && <FormControl isRequired>
                     <FormLabel htmlFor="skillsRequired">Skillset</FormLabel>
                     <CheckboxGroup id="skillsRequired" value={userDetails.skills} onChange={handleCheck} name="skills" colorScheme="green">

@@ -158,6 +158,27 @@ router.patch("/edit", async (req, res) => {
     res.status(400).json({ error: error.messsage ? error.message : error });
   }
 });
+
+//--------------------------------------GetProjectsBySkills--------------------------------------------------
+
+router.get("/project/skills/:id", async (req,res) => {
+  try {
+    const {id} = req.params;
+
+    if(!id || id.trim().length === 0) {
+      res.status(400).send({error: "Please pass an ID"});
+      return;
+    }
+
+    const result = await employerData.getProjectsBySkills(id);
+    res.json(result);
+
+  } catch (error) {
+    console.log("from data: ", error);
+    res.status(400).json({ error: error.messsage ? error.message : error });
+  }
+})
+
 //--------------------------------------Logout--------------------------------------------------
 
 router.get("/logout", async (req, res) => {

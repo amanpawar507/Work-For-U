@@ -47,8 +47,24 @@ export const RateModal = ({isOpen, onClose, project, updateProject}) => {
         });
     }
 
+    const warn = text => {
+        toast({
+            title: text,
+            status: "warning",
+            duration: 2000
+        });
+    }
+
     const handleSubmit = async e => {
         e.preventDefault();
+
+        const {title,review} = details;
+
+        if(title.trim().length === 0 || review.trim().length === 0) {
+            warn("Please pass title and review");
+            return;
+        }
+
         setSubmitting(true);
         console.log(details);
         try {

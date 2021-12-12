@@ -5,23 +5,42 @@ import { useToast } from "@chakra-ui/toast";
 import axios from "axios";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useState } from "react";
+import { emailValidation } from "../../utils/helper";
 import {InputComp} from "../common/Input";
 import { UserContext } from "../contexts/userContext";
 
 export const Login = () => {
     const [details, setDetails] = useState({
-        emailId:null,
-        password:null
+        emailId:"",
+        password:""
     })
     const {isFreelancer,saveUser} = useContext(UserContext);
     const [checking,setChecking] = useState(false);
     const toast = useToast();
     const router = useRouter();
 
+    const warn = text => {
+        toast({
+            title: text,
+            status: "warning",
+            duration: 2000
+        });
+    }
+
     const handleSubmit = async e => {
         try {
-            setChecking(true);
             e.preventDefault();
+            const {emailId,password} = details;
+            if(emailId.trim().length  === 0 || password.trim().length === 0) {
+                warn("Please pass both the fields");
+                return;
+            }
+            if (!emailValidation(emailId)) {
+                warn("Please pass valid emailID")
+                return;
+            }
+
+            setChecking(true);
             const {data} = await axios.post(`http://localhost:5000/${isFreelancer?"freelancer":"employer"}/login`,details)
             console.log(data);
             saveUser(data);

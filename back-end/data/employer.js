@@ -1,8 +1,9 @@
-const { employer } = require("../config/mongoCollections");
-const { getProject } = require("./project");
+const { employer,project } = require("../config/mongoCollections");
+// const project = require("./project");
 //const { getSkill } = require("./freelanceFunctions");
 const { ObjectId } = require("mongodb");
 const bCrypt = require("bcrypt");
+const e = require("express");
 const saltRounds = 16;
 
 const getCurrentTime = () => {
@@ -15,6 +16,18 @@ const getCurrentTime = () => {
   return dateTime;
 };
 
+
+async function getAllEmployerProjects(employerID) {
+  if (!employerID) throw "Pass a employerID to search";
+  if (typeof employerID !== "string") throw "Invalid employer ID";
+
+  const pCollection = await project();
+
+  const foundList = await pCollection.find({ createdBy: employerID }).toArray();
+  if (!foundList) "throw could not find projects for the employerID";
+
+  return foundList;
+}
 // const createIndices = async() => {
 //   const employerCollection = await employer();
 //   const result = await employerCollection.createIndex({
@@ -200,6 +213,27 @@ const editProfile = async (data) => {
   }
 };
 
+//--------------------------------------GetProjectsBySkills--------------------------------------------------
+
+const getProjectsBySkills = async employerId => {
+  ObjectId(employerId);
+
+  const allProjects = await getAllEmployerProjects(employerId);
+  if(!allProjects) throw "Could not find projects";
+  let projectBySkills = {};
+  allProjects.forEach((proj) => {
+        proj.skillsRequired.forEach((skill) => {
+          if (projectBySkills[skill.name]) {
+            projectBySkills[skill.name] += 1;
+          } else {
+            projectBySkills[skill.name] = 1;
+          }
+        });
+  });
+
+  return projectBySkills;
+}
+
 module.exports = {
   createEmployer,
   getEmployer,
@@ -207,4 +241,5 @@ module.exports = {
   remove,
   listemployer,
   editProfile,
+  getProjectsBySkills
 };
