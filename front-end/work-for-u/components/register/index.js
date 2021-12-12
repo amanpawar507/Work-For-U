@@ -71,7 +71,7 @@ export const Register = ({isFreelancer}) => {
         try {
             e.preventDefault();
             const {fullName,companyName, emailId, password, confirmPassword, location, skills, introduction, expectedPay} = details;
-            if(fullName.trim().length === 0 || emailId.trim().length === 0 || password.trim().length === 0 || confirmPassword.trim().length === 0) {
+            if(fullName.trim().length === 0 || emailId.trim().length === 0 || password.length === 0 || confirmPassword.length === 0) {
                 warn("Please fill all the fields");
                 return;
             }
