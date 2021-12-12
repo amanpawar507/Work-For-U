@@ -1,10 +1,8 @@
 import { Avatar, Box, Button, Divider, Flex, HStack, Spacer, Text, useDisclosure, useToast, VStack } from "@chakra-ui/react"
-import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { MdBlock, MdGrade, MdCheck } from 'react-icons/md'
+import { MdBlock, MdCheck } from 'react-icons/md'
 import client from "../../utils/client";
 import { InfoText } from "../common/infoText"
-import { RateModal } from "../common/rating/rateModal";
 import { ReviewList } from "../common/rating/reviewList";
 import { SuccessChart } from "./successChart";
 import randomcolor from "randomcolor"
@@ -23,7 +21,6 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
 
     const {user:currentUser, setUser} = useContext(UserContext);
     const {isOpen, onOpen, onClose} = useDisclosure();
-    const {isOpen: isRatingOpen, onOpen: onRatingOpen, onClose: onRatingClose} = useDisclosure();
     const {isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose} = useDisclosure();
 
     const toast = useToast();
@@ -97,7 +94,6 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 {!isFreelancerProfile && <DataDisplay content={`$${Math.round(avgPay)}`} label={"Average pay/hour"}/>}
                 {!isFreelancer && isFreelancerProfile && <Button variant={'outline'} colorScheme={'teal'} onClick={() => onOpen()}>Request</Button>}
                 {isUser && <Button variant={'outline'} colorScheme={'teal'} onClick={() => onUpdateOpen()}>Edit Profile</Button>}
-                {!isUser && isFreelancerProfile && <Button color={'black'} bg={"yellow.400"} leftIcon={<MdGrade/>} onClick={() => onRatingOpen()}>Rate</Button>}
                 {isFreelancer && !isFreelancerProfile && <Button 
                 isLoading={blackListing} 
                 bg={'gray.500'} 
@@ -124,7 +120,6 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
             {isFreelancerProfile && <Box w={'100%'} pt='10px'>
                 {userInfo.reviews.length > 0 ? <ReviewList reviews={userInfo.reviews}/> : <EmptyAlert text="No Reviews yet!"/>}
             </Box>}
-            <RateModal freelancer={userInfo} isOpen={isRatingOpen} onClose={onRatingClose} updateFreelancer={(data) => updateUserInfo(data)}/>
             <RequestModal isOpen={isOpen} onClose={() => onClose()} selectedFreelancer={userInfo}/>
             {isUser && <UpdateProfileModal isOpen={isUpdateOpen} onClose={onUpdateClose} details={userInfo} isFreelancer={isFreelancerProfile}/>}
         </Box>

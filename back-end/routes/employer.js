@@ -28,17 +28,11 @@ router.post("/", async (req, res) => {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
-    if(
-      fullName.trim().length === 0 ||
-      emailId.trim().length === 0 ||
-      password.trim().length === 0 ||
-      companyName.trim().length === 0 
-    ) {
-      res.status(400).json({ error: "Empty spaces as input" });
-      return;
-    }
 
-    if(password.trim().length < 6) res.status(400).json({error: "Password should be atleast 6 characters!"});
+    if(password.trim().length < 6) {
+      res.status(400).json({error: "Password should be atleast 6 characters!"});
+      return
+    }
 
     let resultE = await employer.createEmployer(req.body);
     res.json(resultE);

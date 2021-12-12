@@ -4,8 +4,9 @@ const data = require("../data");
 const reData = data.reviews;
 
 const freelancerData = data.freelancer;
+const projectData = data.project;
 
-router.post("/:freelancerId", async (req, res) => {
+router.post("/:freelancerId/:projectId", async (req, res) => {
   const reviewData = req.body;
 
   try {
@@ -13,11 +14,12 @@ router.post("/:freelancerId", async (req, res) => {
       !reviewData.title ||
       !reviewData.reviewer ||
       !reviewData.rating ||
-      !reviewData.review
+      !reviewData.review 
     )
       throw "All fields need to have valid values";
     if (
       typeof req.params.freelancerId != "string" ||
+      typeof req.params.projectId != "string" ||
       typeof reviewData.title != "string" ||
       typeof reviewData.reviewer != "string" ||
       typeof reviewData.review != "string"
@@ -25,13 +27,12 @@ router.post("/:freelancerId", async (req, res) => {
       throw "Input not in string format";
     if (
       req.params.freelancerId.trim().length < 1 ||
+      req.params.projectId.trim().length < 1 ||
       reviewData.title.trim().length < 1 ||
       reviewData.reviewer.trim().length < 1 ||
       reviewData.review.trim().length < 1
     )
       throw "Input cannot be empty string";
-    const check = freelancerData.getFreelancer(req.params.freelancerId);
-    if (check == null) throw "Restaurant does not exist";
     if (isNaN(reviewData.rating)) throw "Rating not valid";
     if (reviewData.rating < 1 || reviewData.rating > 5)
       throw "Rating should be between 1-5";
@@ -53,6 +54,7 @@ router.post("/:freelancerId", async (req, res) => {
     const { title, reviewer, rating, review } = reviewData;
     const newPost = await reData.create(
       req.params.freelancerId,
+      req.params.projectId,
       title,
       reviewer,
       rating,
@@ -60,7 +62,8 @@ router.post("/:freelancerId", async (req, res) => {
     );
     res.status(200).json(newPost);
   } catch (e) {
-    res.status(400).json({ error: e });
+    console.log(e);
+    res.status(404).json({ error: e });
   }
 });
 
@@ -82,7 +85,7 @@ router.get("/:freelancerId", async (req, res) => {
     const reviewl = await reData.getAll(req.params.freelancerId);
     res.status(200).json(reviewl);
   } catch (e) {
-    res.status(404).json({ Error: "e" });
+    res.status(404).json({ error: "e" });
   }
 });
 

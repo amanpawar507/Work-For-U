@@ -115,7 +115,7 @@ import client from "../../utils/client";
                 errors.push(k);
                 throw "missing fields"
             } 
-           // debugger;
+           debugger;
             switch (k) {
                 case "hourlyPay":
                     if(projectDetails[k] === 0) {
@@ -128,6 +128,7 @@ import client from "../../utils/client";
                         errors.push(k);
                         throw "Hours per day should be greater than 0 and less than 9"
                     }
+                    break;
                 case "daysPerWeek":
                     if(projectDetails[k] === 0 || projectDetails[k] > 6) {
                         errors.push(k);
