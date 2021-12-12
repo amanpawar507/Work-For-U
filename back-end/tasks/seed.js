@@ -16,14 +16,35 @@ async function main() {
   const db = await dbConnection();
   await db.dropDatabase();
 
-  const skills = [
-    "ReactJS",
-    "MongoDB",
-    "Marketing Strategy",
-    "System Management",
-    "SQL",
-    "Html",
-  ];
+  // const skills = [
+  //   "ReactJS",
+  //   "MongoDB",
+  //   "Marketing Strategy",
+  //   "System Management",
+  //   "SQL",
+  //   "HTML",
+  //   "Bootstrap",
+  //   "NextJS",
+  //   "Javascript",
+  //   "Java",
+  //   "Python",
+  //   "Business Intelligence",
+  //   "Data Warehousing",
+  //   "Algorithms",
+  //   "Deep Learning",
+  //   "Data Visualization",
+  //   "Data Analysis",
+  //   "ETL (Extract, Transform, Load)",
+  //   "PL/SQL",
+  //   "R Programming",
+  //   "SQL Server Reporting Services(SSRS)",
+  //   "SQL Server Integration Services(SSIS)",
+  //   "Oracle SQL",
+  //   "C++",
+  //   "C",
+  //   "Linux"
+  // ];
+
   const projects = [
     {
       name: "WorkForU",
@@ -135,7 +156,7 @@ async function main() {
   }
 
   try {
-    let result = await skill.createSkill("Html");
+    let result = await skill.createSkill("HTML");
     if (!result) {
       console.log("could not create");
       throw "some error";
@@ -169,6 +190,253 @@ async function main() {
     console.log(error);
     return;
   }
+
+
+
+
+try {
+  let result = await skill.createSkill("Bootstrap");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills1.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("NextJS");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills1.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("Javascript");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("Java");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("Python");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills1.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("Business Intelligence");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("Data Warehousing");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("Algorithms");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+
+try {
+  let result = await skill.createSkill("Deep Learning");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills1.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("Data Visualization");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills1.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("Data Analysis");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("ETL (Extract, Transform, Load)");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("PL/SQL");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills1.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("R Programming");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("SQL Server Reporting Services(SSRS)");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+try {
+  let result = await skill.createSkill("SQL Server Integration Services(SSIS)");
+  if (!result) {
+    console.log("could not create");
+    throw "some error";
+  }
+  skills2.push(result._id);
+} catch (error) {
+  console.log(error);
+  return;
+}
+
+
+try {
+let result = await skill.createSkill("Oracle SQL");
+if (!result) {
+  console.log("could not create");
+  throw "some error";
+}
+skills1.push(result._id);
+} catch (error) {
+console.log(error);
+return;
+}
+
+try {
+let result = await skill.createSkill("C++");
+if (!result) {
+  console.log("could not create");
+  throw "some error";
+}
+skills1.push(result._id);
+} catch (error) {
+console.log(error);
+return;
+}
+
+try {
+let result = await skill.createSkill("C");
+if (!result) {
+  console.log("could not create");
+  throw "some error";
+}
+skills2.push(result._id);
+} catch (error) {
+console.log(error);
+return;
+}
+
+try {
+let result = await skill.createSkill("Linux");
+if (!result) {
+  console.log("could not create");
+  throw "some error";
+}
+skills2.push(result._id);
+} catch (error) {
+console.log(error);
+return;
+}
+
+
 
   let employer1;
   let employer2;
