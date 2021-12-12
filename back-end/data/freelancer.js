@@ -98,8 +98,22 @@ const createFreelancer = async (data) => {
   if (password.trim().length < 6)
     throw "Password should be atleast 6 characters!";
 
+  if (expectedPay < 0) throw "Expected pay should be atleast greater than 0!";
+
   var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   if (!emailPattern.test(emailId)) throw "Email ID not valid";
+
+  const freelancerrCollection = await freelancer();
+  const emailExists = await freelancerrCollection.findOne({
+    emailId: emailId.toLowerCase(),
+  });
+  // if (!emailExists) {
+  const emailLower = emailId.toLowerCase();
+  // }
+  // const newEntry = {
+  //   username: usernameLower,
+  //   password: storeHash,
+  // };
 
   let skillsArrayF = await getSkill(skills);
   //console.log(skillsArrayF);
@@ -108,7 +122,7 @@ const createFreelancer = async (data) => {
 
   const newEntry = {
     fullName,
-    emailId,
+    emailId: emailLower,
     password: hash,
     introduction,
     skills: skillsArrayF,

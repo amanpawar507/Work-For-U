@@ -40,22 +40,21 @@ const createEmployer = async (data) => {
   )
     throw "Invalid type of data";
 
+  if (
+    fullName.trim().length === 0 ||
+    emailId.trim().length === 0 ||
+    password.trim().length === 0 ||
+    companyName.trim().length === 0
+  ) {
+    throw "Empty spaces as input";
+  }
 
-    if(
-      fullName.trim().length === 0 ||
-      emailId.trim().length === 0 ||
-      password.trim().length === 0 ||
-      companyName.trim().length === 0 
-    ) {
-      throw "Empty spaces as input";
-    }
-
-    if(password.trim().length < 6) throw "Password should be atleast 6 characters!";
+  if (password.trim().length < 6)
+    throw "Password should be atleast 6 characters!";
 
   if (!emailId.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
-    throw "The username has to be in the mentioned format";
+    throw "The email has to be in the mentioned format";
 
-    
   //let = await getSkill(skillsRequired);
   const hash = await bCrypt.hash(password, saltRounds);
   const employerCollection = await employer();
@@ -119,8 +118,8 @@ async function checker(emailId, password) {
   if (!user || !user._id) throw "Either the emailId or password is invalid";
   let mat = await bCrypt.compare(password, user.password);
   if (!mat) throw "Either the emailId or password is invalid";
-  return { _id:user._id.toString(),...user};
-};
+  return { _id: user._id.toString(), ...user };
+}
 
 //------------------------------------------delete employer------------------------------------------
 const remove = async (employerID) => {
@@ -135,43 +134,41 @@ const remove = async (employerID) => {
 
 //------------------------------------------GetListEmployer------------------------------------------
 
-const listemployer = async(employeridarr) => {
+const listemployer = async (employeridarr) => {
   const employerCollection = await employer();
   // const result =[];
-  const idArr = employeridarr.map(i => ObjectId(i));
-  let result = await employerCollection.find(
-    { _id: { $in:  idArr } }
-    ).toArray()
+  const idArr = employeridarr.map((i) => ObjectId(i));
+  let result = await employerCollection.find({ _id: { $in: idArr } }).toArray();
 
-  result = result.map(i => {return {_id: i._id.toString(),...i}})
-  if(result.length === 0){
+  result = result.map((i) => {
+    return { _id: i._id.toString(), ...i };
+  });
+  if (result.length === 0) {
     throw "No employers found for the given Ids";
-  }
-  else{
+  } else {
     return result;
   }
-
 };
 
 //--------------------------------------EditProfile--------------------------------------------------
 
 const editProfile = async (data) => {
-  const { id,fullName, companyName } = data;
-  if (!id || !fullName  || !companyName) {
-   throw "Missing Fields";
+  const { id, fullName, companyName } = data;
+  if (!id || !fullName || !companyName) {
+    throw "Missing Fields";
   }
   if (
     typeof id !== "string" ||
     typeof fullName !== "string" ||
     typeof companyName !== "string"
   ) {
-    throw "Invalid Type of Data"
+    throw "Invalid Type of Data";
   }
 
   const newEntry = {
-    fullName : fullName,
-    companyName : companyName,
-    updatedAt: getCurrentTime()
+    fullName: fullName,
+    companyName: companyName,
+    updatedAt: getCurrentTime(),
   };
 
   const employerCollection = await employer();
@@ -179,22 +176,20 @@ const editProfile = async (data) => {
   let findID = await employerCollection.findOne({
     _id: ObjectId(id.trim()),
   });
-  if (findID === null){
+  if (findID === null) {
     throw "Employer does not exist for the given id ${employerID.trim()}";
-  }
-  else{
+  } else {
     const updatedInfo = await employerCollection.updateOne(
       { _id: ObjectId(id.trim()) },
       { $set: newEntry }
     );
     if (updatedInfo.modifiedCount === 0) {
-      throw 'Could not update employer successfully';
+      throw "Could not update employer successfully";
     }
     const updatedprofile = await getEmployer(id);
     return updatedprofile;
   }
 };
-
 
 module.exports = {
   createEmployer,
@@ -202,5 +197,5 @@ module.exports = {
   checker,
   remove,
   listemployer,
-  editProfile
+  editProfile,
 };

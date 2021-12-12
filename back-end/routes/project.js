@@ -44,6 +44,18 @@ router.post("/", async (req, res) => {
       return;
     }
 
+    if (tenureMonths < 0) {
+      res.status(400).json({
+        error: "Tenure months should be greater than zero",
+      });
+      return;
+    }
+    if (hourlyPay < 0) {
+      res.status(400).json({
+        error: "Hourly pay should be greater than zero",
+      });
+      return;
+    }
     if (hrsPerDay < 1 || hrsPerDay > 8) {
       res.status(400).json({
         error: "Hours per day should be less than 8 and greater than zero",
