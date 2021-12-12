@@ -97,7 +97,7 @@ const createFreelancer = async (data) => {
 
   var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   if (!emailPattern.test(emailId)) throw "Email ID not valid";
-  if (emailId !== null) throw "There is already a user with this emailID "
+
   let skillsArrayF = await getSkill(skills);
   //console.log(skillsArrayF);
   const hash = await bCrypt.hash(password, saltRounds);
@@ -122,7 +122,8 @@ const createFreelancer = async (data) => {
 
   
   let duplicateUser = await freelancerCollection.findOne({emailId: emailId.toLowerCase()});
-  if(duplicateUser !== null) throw "There is already a user with that username";
+  console.log("dublicate user: ", duplicateUser);
+  if(duplicateUser) throw "There is already a user with that username";
   
   let addedEntryF = await freelancerCollection.insertOne(newEntry);
   if (addedEntryF.insertedCount === 0)
