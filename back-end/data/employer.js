@@ -237,10 +237,10 @@ const editProfile = async (data) => {
 
 const getProjectsBySkills = async (employerId) => {
 
-  if (!employerID) throw "You must provide an ID to search for";
-  if (typeof employerID !== "string")
+  if (!employerId) throw "You must provide an ID to search for";
+  if (typeof employerId !== "string")
     throw "You must provide an ID in string only";
-  if (!ObjectId.isValid(employerID.trim()))
+  if (!ObjectId.isValid(employerId.trim()))
     throw "Please provide a valid objectID.";
   
   ObjectId(employerId);

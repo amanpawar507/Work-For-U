@@ -347,10 +347,10 @@ const getRecommended = async (employerId) => {
 
 const Blacklist = async (freelancerID, employerID) => {
 
-  if (!employerId || !freelancerID) throw "Please pass an employer ID and freelancerID both";
-  if (typeof employerId !== "string" || typeof freelancerID !== "string") throw "Invalid type of employerID and freelancerID";
-  if (employerId.trim().length === 0 || freelancerID.trim().length === 0) throw "empty spaces found";
-  if ((!ObjectId.isValid(employerId.trim())) || (!ObjectId.isValid(freelancerID.trim()))) throw "Please provide a valid objectID.";
+  if (!employerID || !freelancerID) throw "Please pass an employer ID and freelancerID both";
+  if (typeof employerID !== "string" || typeof freelancerID !== "string") throw "Invalid type of employerID and freelancerID";
+  if (employerID.trim().length === 0 || freelancerID.trim().length === 0) throw "empty spaces found";
+  if ((!ObjectId.isValid(employerID.trim())) || (!ObjectId.isValid(freelancerID.trim()))) throw "Please provide a valid objectID.";
 
   let verifyfreelancer = await getFreelancer(freelancerID);
   let verifyemployer = await getEmployer(employerID);
@@ -380,10 +380,10 @@ const Blacklist = async (freelancerID, employerID) => {
 const Blacklistremove = async (freelancerID, employerID) => {
 
   
-  if (!employerId || !freelancerID) throw "Please pass an employer ID and freelancerID both";
-  if (typeof employerId !== "string" || typeof freelancerID !== "string") throw "Invalid type of employerID and freelancerID";
-  if (employerId.trim().length === 0 || freelancerID.trim().length === 0) throw "empty spaces found";
-  if ((!ObjectId.isValid(employerId.trim())) || (!ObjectId.isValid(freelancerID.trim()))) throw "Please provide a valid objectID.";
+  if (!employerID || !freelancerID) throw "Please pass an employer ID and freelancerID both";
+  if (typeof employerID !== "string" || typeof freelancerID !== "string") throw "Invalid type of employerID and freelancerID";
+  if (employerID.trim().length === 0 || freelancerID.trim().length === 0) throw "empty spaces found";
+  if ((!ObjectId.isValid(employerID.trim())) || (!ObjectId.isValid(freelancerID.trim()))) throw "Please provide a valid objectID.";
 
   let verifyfreelancer = await getFreelancer(freelancerID);
   let verifyemployer = await getEmployer(employerID);
