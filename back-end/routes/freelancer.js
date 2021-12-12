@@ -55,10 +55,6 @@ router.post("/", async (req, res) => {
       return;
     }
 
-    // if (emailId !== null) {
-    //   res.status(400).json({ error: "There is already a user with this mailID" });
-    //   return;
-    // }
 
     if(password.trim().length < 6) res.status(400).json({error: "Password should be atleast 6 characters!"});
 
@@ -66,7 +62,7 @@ router.post("/", async (req, res) => {
     res.json(resultF);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.messsage });
+    res.status(500).json({ error: error.messsage ? error.message : error });
   }
 });
 
