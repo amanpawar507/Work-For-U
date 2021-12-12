@@ -205,6 +205,13 @@ export const Projects = () => {
         }
     }
 
+    const updateProjectAfterRating = data => {
+        if(!data) return;
+        setProjects(prevValue => {
+            return prevValue.map(i => i._id === data._id ? data : i);
+        });
+    }
+
     return(
         <Box w={'100%'}>
             {!isFreelancer && <Button minW={'100px'} variant={'solid'} color={'black'} bg={'brand.900'} mb='20px' onClick={() => {setSelectedProject(null); onOpen()}}>Add</Button>}
@@ -241,6 +248,7 @@ export const Projects = () => {
                                 status={i.status} 
                                 assignedTo={i.assignedTo}
                                 assignedBy={i.createdBy}
+                                reviewed={i.reviewed}
                                 onDetailsClick={() => handleShowDetails(i)} 
                                 onEditClick={() => handleEditProject(i)} 
                                 onDeleteClick={() => handleDeleteProject(i._id)} 
@@ -257,7 +265,7 @@ export const Projects = () => {
             <AddProjectModal isOpen={isOpen} onClose={onClose} onSubmit={handleCreateProject} submitting={isSubmitting} isEdit={isEdit} selectedProject={selectedProject}/>
             <ProjectDetailsModal isOpen={isDetailsOpen} onClose={onDetailsClose} projectDetails={selectedProject}/>
             <UpdateStatusModal isOpen={isUpdateOpen} onClose={onUpdateClose} selectedProject={selectedProject} setUpdatedProject={setUpdatedProject}/>
-            <RateModal project={selectedProject} isOpen={isRatingOpen} onClose={() => {setSelectedProject(); onRatingClose();}} updateFreelancer={(data) => updateUserInfo(data)}/>
+            <RateModal project={selectedProject} isOpen={isRatingOpen} onClose={() => {setSelectedProject(); onRatingClose();}} updateProject={(data) => updateProjectAfterRating(data)}/>
         </Box>
     )
 }

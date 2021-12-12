@@ -51,8 +51,9 @@ import { UserContext } from "../contexts/userContext";
             }
         }
         if(projectDetails.assignedTo) {
-            getEmployer();
             getFreelancer();
+        }else{
+            getEmployer();
         }
     },[projectDetails])
 

@@ -71,6 +71,7 @@ export const Register = ({isFreelancer}) => {
             }
             setSubmitting(true);
             let request = details;
+            console.log(request);
             delete request.confirmPassword;
             if(isFreelancer) {
                 delete request.companyName
@@ -99,10 +100,11 @@ export const Register = ({isFreelancer}) => {
         } catch (error) {
             console.log(error)
             toast({
-                title: error.message? error.message : error,
+                title: error.response? error.response.data.error : error,
                 status: "error",
                 duration: 2000
             });
+            setSubmitting(false);
         }
     }
 
@@ -135,6 +137,7 @@ export const Register = ({isFreelancer}) => {
                     </CheckboxGroup>}
                     {isFreelancer && <FormLabel htmlFor="location">Location</FormLabel>}
                     {isFreelancer && <Select size={'sm'} name="location" value={details.location} onChange={handleChange}>
+                        <option value={null}>Select location</option>
                         {allStates && allStates.map((i,idx) => <option key={idx} value={i.name}>{i.name}</option>)}
                     </Select>}
                     <InputComp name="password" label="Password" type={'password'} value={details.password} onChange={handleChange} required={true}/>
