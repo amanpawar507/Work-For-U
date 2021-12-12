@@ -6,6 +6,8 @@ const bCrypt = require("bcrypt");
 const e = require("express");
 const saltRounds = 16;
 
+//--------------------------------------Get CurrentTime--------------------------------------------------
+
 const getCurrentTime = () => {
   var today = new Date();
   var date =
@@ -16,10 +18,13 @@ const getCurrentTime = () => {
   return dateTime;
 };
 
+//--------------------------------------Get Employer Projects--------------------------------------------------
 
 async function getAllEmployerProjects(employerID) {
   if (!employerID) throw "Pass a employerID to search";
   if (typeof employerID !== "string") throw "Invalid employer ID";
+  if (employerID.trim().length === 0 ) throw "Empty spaces as input";
+  
 
   const pCollection = await project();
 
@@ -126,7 +131,7 @@ async function checker(emailId, password) {
   if (typeof emailId !== "string" || typeof password !== "string")
     throw "All the parameters has to be string";
   if (emailId.trim().length == 0 || password.trim().length == 0)
-    throw "All the parameters has to be string";
+    throw "Empty spaces for input";
   if (!emailId.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
     throw "Incorrect username or password";
   //if (password.length < 6) throw "Incorrect username or password";
@@ -145,9 +150,16 @@ async function checker(emailId, password) {
 
 //------------------------------------------delete employer------------------------------------------
 const remove = async (employerID) => {
+
+  if (!employerID) throw "You must provide an ID to search for";
+  if (typeof employerID !== "string")
+    throw "You must provide an ID in string only";
+  if (!ObjectId.isValid(employerID.trim()))
+    throw "Please provide a valid objectID.";
+
   const rest = await employer();
 
-  const deletionInfo = await rest.deleteOne({ _id: ObjectId(employerID) });
+  const deletionInfo = await rest.deleteOne({ _id: ObjectId(employerID.trim()) });
   if (deletionInfo.deletedCount === 0) {
     throw `Could not delete employer with id of ${id}`;
   }
@@ -186,6 +198,14 @@ const editProfile = async (data) => {
   ) {
     throw "Invalid Type of Data";
   }
+  if (
+    fullName.trim().length === 0 ||
+    id.trim().length === 0 ||
+    companyName.trim().length === 0
+  ) {
+    throw "Empty spaces as input";
+  }
+
 
   const newEntry = {
     fullName: fullName,
@@ -215,7 +235,14 @@ const editProfile = async (data) => {
 
 //--------------------------------------GetProjectsBySkills--------------------------------------------------
 
-const getProjectsBySkills = async employerId => {
+const getProjectsBySkills = async (employerId) => {
+
+  if (!employerId) throw "You must provide an ID to search for";
+  if (typeof employerId !== "string")
+    throw "You must provide an ID in string only";
+  if (!ObjectId.isValid(employerId.trim()))
+    throw "Please provide a valid objectID.";
+  
   ObjectId(employerId);
 
   const allProjects = await getAllEmployerProjects(employerId);
