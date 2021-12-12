@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const {skill} = require('../data');
 
+//-----------------------------------------createskill---------------------------------------------------------
+
 router.post('/', async (req,res) => {
     try {
         const {name} = req.body;
@@ -14,6 +16,11 @@ router.post('/', async (req,res) => {
             return;
         }
 
+        if (name.trim().length === 0) {
+            res.status(400).json({ error: "empty spaces for input" });
+            return;
+          }
+
         let result = await skill.createSkill(name);
         if(result) {
             res.status(200).json({message: "skill added successfully"});
@@ -23,6 +30,8 @@ router.post('/', async (req,res) => {
         res.status(500).json({error: error.messsage});
     }
 });
+
+//-----------------------------------------getAllSkills---------------------------------------------------------
 
 router.get("/", async(req,res) => {
     try {

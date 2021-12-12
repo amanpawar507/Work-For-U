@@ -44,6 +44,16 @@ router.post("/", async (req, res) => {
       return;
     }
 
+    if(
+      name.trim().length === 0 ||
+      description.trim().length === 0 ||
+      createdBy.trim().length === 0 
+    ) {
+      res.status(400).json({ error: "Empty spaces as input" });
+      return;
+    }
+
+
     if (tenureMonths < 0) {
       res.status(400).json({
         error: "Tenure months should be greater than zero",
@@ -139,6 +149,20 @@ router.patch("/:projectId", async (req, res) => {
   try {
     // if(req.session.email) {
     const id = req.params.projectId;
+
+    if (!id) {
+      res.status(400).json({ error: "Please provide an ID" });
+      return;
+    }
+    if (typeof id !== "string") {
+      res.status(400).json({ error: "Invalid type of ID" });
+      return;
+    }
+    if (id.trim().length === 0) {
+      res.status(400).json({ error: "empty spaces for ID" });
+      return;
+    }
+
     const {
       name,
       description,
@@ -172,6 +196,14 @@ router.patch("/:projectId", async (req, res) => {
       typeof daysPerWeek !== "number"
     ) {
       res.status(400).json({ error: "Invalid type of fields" });
+      return;
+    }
+
+    if(
+      name.trim().length === 0 ||
+      description.trim().length === 0 
+    ) {
+      res.status(400).json({ error: "Empty spaces as input" });
       return;
     }
 
@@ -215,6 +247,8 @@ router.patch("/:projectId", async (req, res) => {
   }
 });
 
+//-----------------------------------------getAllEmployerProjects-------------------------------------------------------
+
 router.get("/all/employer/:id", async (req, res) => {
   try {
     // if(req.session.email) {
@@ -225,6 +259,10 @@ router.get("/all/employer/:id", async (req, res) => {
     }
     if (typeof id !== "string") {
       res.status(400).json({ error: "invalid type of ID" });
+      return;
+    }
+    if (id.trim().length === 0) {
+      res.status(400).json({ error: "empty spaces for ID" });
       return;
     }
 
@@ -239,6 +277,8 @@ router.get("/all/employer/:id", async (req, res) => {
   }
 });
 
+//-----------------------------------------getAllFreelancerProjects-------------------------------------------------------
+
 router.get("/all/freelancer/:id", async (req, res) => {
   try {
     // if(req.session.email) {
@@ -249,6 +289,10 @@ router.get("/all/freelancer/:id", async (req, res) => {
     }
     if (typeof id !== "string") {
       res.status(400).json({ error: "invalid type of ID" });
+      return;
+    }
+    if (id.trim().length === 0) {
+      res.status(400).json({ error: "empty spaces for ID" });
       return;
     }
 
@@ -263,6 +307,8 @@ router.get("/all/freelancer/:id", async (req, res) => {
   }
 });
 
+//-----------------------------------------getAllFreelancerProjects-------------------------------------------------------
+
 router.post("/requests/add", async (req, res) => {
   try {
     // if(req.session.email) {
@@ -275,6 +321,10 @@ router.post("/requests/add", async (req, res) => {
     }
     if (typeof freelancerId !== "string" || typeof projectId !== "string") {
       res.status(400).json({ error: "Invalid type of fields" });
+      return;
+    }
+    if ((freelancerId.trim().length === 0)||(projectId.trim().length === 0)) {
+      res.status(400).json({ error: "empty spaces for input" });
       return;
     }
 
@@ -295,6 +345,8 @@ router.post("/requests/add", async (req, res) => {
   }
 });
 
+//-----------------------------------------getFreelancerRequests-------------------------------------------------------
+
 router.get("/requests/:freelancerId", async (req, res) => {
   try {
     // if(req.session.email) {
@@ -310,6 +362,11 @@ router.get("/requests/:freelancerId", async (req, res) => {
       return;
     }
 
+    if (freelancerId.trim().length === 0) {
+      res.status(400).json({ error: "empty spaces for input" });
+      return;
+    }
+
     const result = await project.getFreelancerRequests(freelancerId);
     res.json(result);
 
@@ -321,6 +378,8 @@ router.get("/requests/:freelancerId", async (req, res) => {
     res.status(500).json({ error: error.message ? error.message : error });
   }
 });
+
+//-----------------------------------------updateFreelancerRequest-------------------------------------------------------
 
 router.patch("/requests/update", async (req, res) => {
   try {
@@ -341,6 +400,15 @@ router.patch("/requests/update", async (req, res) => {
       return;
     }
 
+    if(
+      freelancerId.trim().length === 0 ||
+      projectId.trim().length === 0 ||
+      status.trim().length === 0 
+    ) {
+      res.status(400).json({ error: "Empty spaces as input" });
+      return;
+    }
+
     const result = await project.updateFreelancerRequest(
       projectId,
       freelancerId,
@@ -357,6 +425,8 @@ router.patch("/requests/update", async (req, res) => {
   }
 });
 
+//-----------------------------------------updateProjectStatus-------------------------------------------------------
+
 router.patch("/status/update", async (req, res) => {
   try {
     const { projectId, status } = req.body;
@@ -368,6 +438,10 @@ router.patch("/status/update", async (req, res) => {
       res.status(400).json({ error: "Invalid type of fields" });
       return;
     }
+    if ((projectId.trim().length === 0)||(status.trim().length === 0)) {
+      res.status(400).json({ error: "empty spaces for input" });
+      return;
+    }
 
     const result = await project.updateProjectStatus(projectId, status);
     res.json(result);
@@ -376,6 +450,8 @@ router.patch("/status/update", async (req, res) => {
     res.status(500).json({ error: error.message ? error.message : error });
   }
 });
+
+//-----------------------------------------deleteProject-------------------------------------------------------
 
 router.delete("/:id", async (req, res) => {
   try {
@@ -387,6 +463,10 @@ router.delete("/:id", async (req, res) => {
     }
     if (typeof id !== "string") {
       res.status(400).json({ error: "Invalid ID" });
+      return;
+    }
+    if (id.trim().length === 0) {
+      res.status(400).json({ error: "empty spaces for ID" });
       return;
     }
 
@@ -403,6 +483,8 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: error.message ? error.message : error });
   }
 });
+
+//-----------------------------------------filterProject-------------------------------------------------------
 
 router.get("/filter/:userType/:userId/:query/:type", async (req, res) => {
   try {
