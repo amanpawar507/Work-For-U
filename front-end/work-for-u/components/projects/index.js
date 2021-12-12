@@ -30,6 +30,18 @@ export const Projects = () => {
 
     const toast = useToast();
 
+    const errorAlert = error => {
+        toast({
+            title: error.response? 
+                    error.response.data.error : 
+                    error.message ? 
+                    error.message : 
+                    error,
+            status: "error",
+            duration: 2000
+        });
+    }
+
     useEffect(() => {
         try {
             const getAllSkills = async () => {
@@ -45,21 +57,28 @@ export const Projects = () => {
     useEffect(() => {
         if(!user) return;
         const getFreelancerRequests = async() => {
-            const {data} = await client.get(`http://localhost:5000/project/requests/${user._id}`);
-            console.log(data);
-            setRequests(data);
+            try {
+                const {data} = await client.get(`http://localhost:5000/project/requests/${user._id}`);
+                console.log(data);
+                setRequests(data);
+            } catch (error) {
+                errorAlert(error);
+            }
         }
         const getAllProjects = async () => {
-            if(!isFreelancer){
-                const {data} = await client.get(`http://localhost:5000/project/all/employer/${user._id}`);
-                console.log(data);
-                setProjects(data);
-            }
-            else{
-                const {data} = await client.get(`http://localhost:5000/project/all/freelancer/${user._id}`);
-                setProjects(data);
-            }
-            
+            try {
+                if(!isFreelancer){
+                    const {data} = await client.get(`http://localhost:5000/project/all/employer/${user._id}`);
+                    console.log(data);
+                    setProjects(data);
+                }
+                else{
+                    const {data} = await client.get(`http://localhost:5000/project/all/freelancer/${user._id}`);
+                    setProjects(data);
+                } 
+            } catch (error) {
+                errorAlert(error);
+            }            
         }
         if(isFreelancer) getFreelancerRequests();
         getAllProjects();
@@ -126,11 +145,8 @@ export const Projects = () => {
 
         } catch (error) {
             console.log(error.response.data);
-            toast({title: error.response? error.response.data.error : error,
-                status: "error",
-                duration: 2000
-            });
             setIsSubmitting(false);
+            errorAlert(error);
         }
     }
     
@@ -156,7 +172,7 @@ export const Projects = () => {
                 });
             }
         } catch (error) {
-            toast({title: error.message? error.message : error, status:"error", duration: 2000});
+            errorAlert(error);
         }
     }
 
@@ -187,10 +203,7 @@ export const Projects = () => {
         
             setProjects(data);
         } catch (error) {
-            toast({title: error.response? error.response.data.error : error,
-                status: "error",
-                duration: 2000
-            });
+            errorAlert(error);
         } 
     }
 
@@ -237,9 +250,9 @@ export const Projects = () => {
             </>}
             <br/>
             <Heading mt='10px' mb='10px' fontSize={'2xl'} borderBottom={'1px solid black'}>Your projects</Heading>
-            {projects.length > 0 ? <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+                <Grid templateColumns="repeat(3, 1fr)" gap={4}>
                 <GridItem colSpan={2}>
-                    <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                    { projects.length > 0 ? <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                         {
                             projects.map((i,idx) => <ProjectCard 
                                 key={idx} 
@@ -256,12 +269,11 @@ export const Projects = () => {
                                 onRateClick={() => {setSelectedProject(i); onRatingOpen();}}
                         />)
                         }
-                    </Grid>
+                    </Grid>:
+                    <EmptyAlert text={isFreelancer ? "You have no project for now." : "No projects created. Create some!"}/>}
                 </GridItem>
                 <ProjectFilter handleFilter={handleFilter} handleClearFilter={clearFilter}/>
-            </Grid> :
-            <EmptyAlert text={isFreelancer ? "You have no project for now." : "No projects created. Create some!"}/>
-            } 
+            </Grid>  
             <AddProjectModal isOpen={isOpen} onClose={onClose} onSubmit={handleCreateProject} submitting={isSubmitting} isEdit={isEdit} selectedProject={selectedProject}/>
             <ProjectDetailsModal isOpen={isDetailsOpen} onClose={onDetailsClose} projectDetails={selectedProject}/>
             <UpdateStatusModal isOpen={isUpdateOpen} onClose={onUpdateClose} selectedProject={selectedProject} setUpdatedProject={setUpdatedProject}/>

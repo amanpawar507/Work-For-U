@@ -36,6 +36,17 @@ import client from "../../utils/client";
     const [loading, setLoading] = useState(false);
 
     const toast = useToast();
+    const errorAlert = error => {
+        toast({
+            title: error.response? 
+                    error.response.data.error : 
+                    error.message ? 
+                    error.message : 
+                    error,
+            status: "error",
+            duration: 2000
+        });
+    }
 
     useEffect(() => {
         try {
@@ -59,6 +70,7 @@ import client from "../../utils/client";
             // }
         } catch (error) {
             console.log(error);
+            errorAlert(error);
         }
     },[isOpen]);
 

@@ -78,7 +78,8 @@ router.get("/all", async (req, res) => {
     try {
       // console.log(req.session.email);
       // if(req.session.email) {
-        const freelancerList = await freelancer.getAll();
+        console.log('headers: ', req.headers.user);
+        const freelancerList = await freelancer.getAll(req.headers.user._id);
         res.json(freelancerList);
       // }else{
       //   res.status(401).json({message: "unauthorized access!"});

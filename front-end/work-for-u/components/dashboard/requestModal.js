@@ -32,6 +32,17 @@ import { UserContext } from "../contexts/userContext";
     const {user} = useContext(UserContext);
 
     const toast = useToast();
+    const errorAlert = error => {
+        toast({
+            title: error.response? 
+                    error.response.data.error : 
+                    error.message ? 
+                    error.message : 
+                    error,
+            status: "error",
+            duration: 2000
+        });
+    }
 
     useEffect(() => {
         if(!user || !selectedFreelancer || !isOpen) return;
@@ -52,11 +63,7 @@ import { UserContext } from "../contexts/userContext";
                 }
                 setLoading(false);
             } catch (error) {
-                toast({
-                    title: error.message? error.message : error,
-                    status: "error",
-                    duration: 2000
-                });
+                errorAlert(error);
             }
         }
         getUserProjects();
