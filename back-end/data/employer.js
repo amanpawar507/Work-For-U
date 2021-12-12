@@ -66,6 +66,11 @@ const createEmployer = async (data) => {
     companyName,
     createdAt: getCurrentTime(),
   };
+  
+  let duplicateUser = await employerCollection.findOne({emailId: emailId.toLowerCase()});
+  if(duplicateUser !== null) throw "There is already a user with that username";
+  
+
   let addedEntryE = await employerCollection.insertOne(newEntry);
   if (addedEntryE.insertedCount === 0) throw "The employer couldn't be created";
 
@@ -116,6 +121,8 @@ async function checker(emailId, password) {
   let user = await employerCollection.findOne({
     emailId: emailId.toLowerCase(),
   });
+//  if (user !==null) throw "There is already a username with the emailID"
+  
   if (!user || !user._id) throw "Either the emailId or password is invalid";
   let mat = await bCrypt.compare(password, user.password);
   if (!mat) throw "Either the emailId or password is invalid";
