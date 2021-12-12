@@ -1,6 +1,6 @@
 const { project, freelancer } = require("../config/mongoCollections");
 const { getSkill } = require("./skill");
-const { getFreelancer, getSuccessRate } = require('./freelancer');
+const { getFreelancer, getSuccessRate } = require("./freelancer");
 const { ObjectId } = require("mongodb");
 var addMonths = require("date-fns/addMonths");
 
@@ -67,6 +67,9 @@ const createProject = async (data) => {
     typeof daysPerWeek !== "number"
   )
     throw "Invalid type of data";
+
+  if (tenureMonths < 0) throw "Tenure months should be greater than zero";
+  if (hourlyPay < 0) throw "Hourly pay should be greater than zero";
   if (hrsPerDay < 1 || hrsPerDay > 8)
     throw "Hours per day should be less than 8 and greater than zero";
   if (daysPerWeek < 1 || daysPerWeek > 6)
@@ -238,27 +241,26 @@ const updateProjectStatus = async (projectId, status) => {
   );
   if (updateInfo.modifiedCount === 0) throw "Could not update the project";
 
-  if(status === 3 || status === 4) {
+  if (status === 3 || status === 4) {
     const getSuccessInfo = await getSuccessRate(projectExist.assignedTo);
     console.log(getSuccessInfo);
-    if(!getSuccessInfo) throw "Cannot get successInfo for the freelancer"
-    const {
-      successRate,
-      closedProjects,
-      completeProjects,
-      projectBySkills
-    } = getSuccessInfo;
+    if (!getSuccessInfo) throw "Cannot get successInfo for the freelancer";
+    const { successRate, closedProjects, completeProjects, projectBySkills } =
+      getSuccessInfo;
     const freelancerCollection = await freelancer();
     const updatedInfo = await freelancerCollection.updateOne(
-      {_id: ObjectId(projectExist.assignedTo)},
-      {$set: {
+      { _id: ObjectId(projectExist.assignedTo) },
+      {
+        $set: {
           successRate,
           closedProjects,
           completeProjects,
-          projectBySkills
-      }}
+          projectBySkills,
+        },
+      }
     );
-    if (updatedInfo.modifiedCount === 0) throw "Could not update the freelancer";
+    if (updatedInfo.modifiedCount === 0)
+      throw "Could not update the freelancer";
   }
 
   let updatedProject = await getProject(projectId);
@@ -402,59 +404,98 @@ const filterProject = async (filterObj) => {
   if (!filterObj.query || !filterObj.userType || !filterObj.userId)
     throw "Please provide all the details";
   if (
-    typeof filterObj.query !== "string" || typeof filterObj.userType !== "string" || typeof filterObj.userId !== "string"
+    typeof filterObj.query !== "string" ||
+    typeof filterObj.userType !== "string" ||
+    typeof filterObj.userId !== "string"
   )
     throw "Invalid type of input object";
   if (
-    filterObj.query.trim().length === 0 || filterObj.userType.trim().length === 0 || filterObj.userId.trim().length === 0
+    filterObj.query.trim().length === 0 ||
+    filterObj.userType.trim().length === 0 ||
+    filterObj.userId.trim().length === 0
   )
     throw "empty spaces for input object";
 
   const projectCollection = await project();
 
   let result = [];
-  if(filterObj.filterkey === "name" || !filterObj.filterkey || filterObj.filterkey === "null") {
+  if (
+    filterObj.filterkey === "name" ||
+    !filterObj.filterkey ||
+    filterObj.filterkey === "null"
+  ) {
     let listForName;
-    if(filterObj.userType === 'freelancer') {
-       listForName = await projectCollection.find({name: { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0}, 
-      assignedTo: {$eq: filterObj.userId}}).toArray();
-    }else{
-      listForName = await projectCollection.find({name: { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0}, 
-      createdBy: {$eq: filterObj.userId}}).toArray();
+    if (filterObj.userType === "freelancer") {
+      listForName = await projectCollection
+        .find({
+          name: { $regex: `${filterObj.query}`, $options: "i" },
+          status: { $ne: 0 },
+          assignedTo: { $eq: filterObj.userId },
+        })
+        .toArray();
+    } else {
+      listForName = await projectCollection
+        .find({
+          name: { $regex: `${filterObj.query}`, $options: "i" },
+          status: { $ne: 0 },
+          createdBy: { $eq: filterObj.userId },
+        })
+        .toArray();
     }
-    result = [...result,...listForName];
+    result = [...result, ...listForName];
   }
-  if(filterObj.filterkey === "skill" || !filterObj.filterkey || filterObj.filterkey === "null") {
+  if (
+    filterObj.filterkey === "skill" ||
+    !filterObj.filterkey ||
+    filterObj.filterkey === "null"
+  ) {
     let listForSkills;
-    if(filterObj.userType === 'freelancer') {
-      listForSkills = await projectCollection.find({'skillsRequired.name': { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0},
-      assignedTo: {$eq: filterObj.userId}}).toArray();
-    }else{
-      listForSkills = await projectCollection.find({'skillsRequired.name': { $regex: `${filterObj.query}`, $options: 'i'}, status: {$ne: 0},
-      createdBy: {$eq: filterObj.userId}}).toArray();
+    if (filterObj.userType === "freelancer") {
+      listForSkills = await projectCollection
+        .find({
+          "skillsRequired.name": {
+            $regex: `${filterObj.query}`,
+            $options: "i",
+          },
+          status: { $ne: 0 },
+          assignedTo: { $eq: filterObj.userId },
+        })
+        .toArray();
+    } else {
+      listForSkills = await projectCollection
+        .find({
+          "skillsRequired.name": {
+            $regex: `${filterObj.query}`,
+            $options: "i",
+          },
+          status: { $ne: 0 },
+          createdBy: { $eq: filterObj.userId },
+        })
+        .toArray();
     }
-    result = [...result,...listForSkills];
+    result = [...result, ...listForSkills];
   }
-  let finalResult = []
-  result.forEach(el => {
-    if(finalResult.length > 0) {
-      const exist = finalResult.find(i => i._id.toString() === el._id.toString());
-      if(!exist) {
+  let finalResult = [];
+  result.forEach((el) => {
+    if (finalResult.length > 0) {
+      const exist = finalResult.find(
+        (i) => i._id.toString() === el._id.toString()
+      );
+      if (!exist) {
         finalResult.push({
           _id: el._id.toString(),
-          ...el
-        })
+          ...el,
+        });
       }
-    }else{
+    } else {
       finalResult.push({
         _id: el._id.toString(),
-        ...el
-      })
+        ...el,
+      });
     }
   });
 
   return finalResult;
-  
 };
 
 module.exports = {
@@ -469,5 +510,5 @@ module.exports = {
   updateFreelancerRequest,
   deleteProject,
   updateProjectStatus,
-  filterProject
+  filterProject,
 };

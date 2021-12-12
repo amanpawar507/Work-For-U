@@ -1,14 +1,11 @@
 const dbConnection = require("../config/mongoConnection");
 const { skill, project, freelancer, employer } = require("../data");
 
-
-
-
 async function main() {
-  var twirlTimer = (function() {
+  var twirlTimer = (function () {
     var P = ["\\", "|", "/", "-"];
     var x = 0;
-    return setInterval(function() {
+    return setInterval(function () {
       process.stdout.write("\r" + P[x++]);
       x &= 3;
     }, 250);
