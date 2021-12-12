@@ -184,7 +184,20 @@ router.get("/recommended/:id", async(req,res) => {
 
 router.get("/delete/:id", async (req, res) => {
   try {
-    const freelancer = await freelancer.remove(req.params.id);
+    const id = req.params.id;
+      if(!id) {
+        res.status(400).json({error: "Please provide an freelancerId"});
+        return;
+      }
+      if(typeof id !== "string") {
+        res.status(400).json({error: "Invalid type of freelancerId"});
+        return;
+      }
+      if(id.trim().length === 0) {
+        res.status(400).json({error: "Just empty spaces"});
+        return;
+      }
+    const freelancer = await freelancer.remove(id);
     res.redirect("/login/");
   } catch (e) {
     console.log(e);
@@ -192,6 +205,7 @@ router.get("/delete/:id", async (req, res) => {
   }
 });
 //---------------------------------------login------------------------------------------------
+
 router.post("/login", async (req, res) => {
   try {
     const { emailId, password } = req.body;
@@ -204,6 +218,10 @@ router.post("/login", async (req, res) => {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
+    if(emailId.trim().length === 0 ||password.trim().length === 0) {
+      res.status(400).json({ error: "Empty spaces as input" });
+      return;
+    }  
 
     let verifyUser = await freelancer.checker(emailId, password);
     let token = generateToken(verifyUser);
@@ -270,6 +288,8 @@ router.delete("/blacklist/:freelancerID/:EmployerID", async (req, res) => {
   }
 });
 
+//---------------------------------------SuccessRate------------------------------------------------
+
 router.get("/successRate/:freelancerId", async(req,res) => {
   try {
     const freelancerId = req.params.freelancerId;
@@ -324,6 +344,7 @@ router.patch("/edit", async (req, res) => {
 });
 
 //-------------------------------------logout-----------------------------------------------
+
 router.get("/logout", async (req, res) => {
   req.session.destroy();
   res.json({loggedOut: true})

@@ -99,7 +99,7 @@ const createFreelancer = async (data) => {
   if (password.trim().length < 6)
     throw "Password should be atleast 6 characters!";
 
-  if (expectedPay < 0) throw "Expected pay should be atleast greater than 0!";
+  if (expectedPay < 0) throw "Expected pay should be a negetive value!";
 
   var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   if (!emailPattern.test(emailId)) throw "Email ID not valid";

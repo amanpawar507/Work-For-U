@@ -28,6 +28,15 @@ router.post("/", async (req, res) => {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
+    if(
+      fullName.trim().length === 0 ||
+      emailId.trim().length === 0 ||
+      password.trim().length === 0 ||
+      companyName.trim().length === 0 
+    ) {
+      res.status(400).json({ error: "Empty spaces as input" });
+      return;
+    }
 
     if(password.trim().length < 6) {
       res.status(400).json({error: "Password should be atleast 6 characters!"});
@@ -59,6 +68,11 @@ router.get("/:id", async (req, res) => {
         return;
       }
   
+      if (id.trim().length === 0) {
+        res.status(400).json({ error: "empty spaces for ID" });
+        return;
+      }
+
       let result = await employer.getEmployer(id);
       res.json(result);
     //}else{
@@ -74,7 +88,23 @@ router.get("/:id", async (req, res) => {
 
 router.get("/delete/:id", async (req, res) => {
   try {
-    const employer = await employerData.remove(req.params.id);
+    const id = req.params.id;
+
+      if (!id) {
+        res.status(400).json({ error: "please provide an Id" });
+        return;
+      }
+  
+      if (typeof id !== "string") {
+        res.status(400).json({ error: "Invalid ID" });
+        return;
+      }
+  
+      if (id.trim().length === 0) {
+        res.status(400).json({ error: "empty spaces for ID" });
+        return;
+      }
+    const employer = await employerData.remove(id);
     res.redirect("/login/");
   } catch (e) {
     console.log(e);
@@ -96,6 +126,10 @@ router.post("/login", async (req, res) => {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
+    if(emailId.trim().length === 0 ||password.trim().length === 0) {
+      res.status(400).json({ error: "Empty spaces as input" });
+      return;
+    }  
 
     let verifyUser = await employer.checker(emailId,password);
 
@@ -147,6 +181,11 @@ router.patch("/edit", async (req, res) => {
       typeof companyName !== "string"
     ) {
       res.status(400).json({ error: "Invalid type of data" });
+      return;
+    }
+    if(
+      fullName.trim().length === 0 || companyName.trim().length === 0) {
+      res.status(400).json({ error: "Empty spaces as input" });
       return;
     }
 
