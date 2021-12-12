@@ -31,7 +31,7 @@ export const Login = () => {
         try {
             e.preventDefault();
             const {emailId,password} = details;
-            if(emailId.trim().length  === 0 || password.trim().length === 0) {
+            if(emailId.trim().length  === 0 || password.length === 0) {
                 warn("Please pass both the fields");
                 return;
             }

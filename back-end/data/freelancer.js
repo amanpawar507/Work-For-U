@@ -102,13 +102,13 @@ const createFreelancer = async (data) => {
   if (
     fullName.trim().length === 0 ||
     emailId.trim().length === 0 ||
-    password.trim().length === 0 ||
+    password.length === 0 ||
     location.trim().length === 0
   ) {
     throw "Empty spaces as input";
   }
 
-  if (password.trim().length < 6)
+  if (password.length < 6)
     throw "Password should be atleast 6 characters!";
 
   if (expectedPay < 0) throw "Expected pay should be a negetive value!";
@@ -278,7 +278,7 @@ async function checker(emailId, password) {
   if (!emailId || !password) throw "All fields to have valid values";
   if (typeof emailId !== "string" || typeof password !== "string")
     throw "All the parameters has to be string";
-  if (emailId.trim().length == 0 || password.trim().length == 0)
+  if (emailId.trim().length == 0 || password.length == 0)
     throw "All the parameters has to be string";
   if (!emailId.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
     throw "Incorrect username or password";
