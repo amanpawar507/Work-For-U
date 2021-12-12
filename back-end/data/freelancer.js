@@ -135,6 +135,7 @@ const createFreelancer = async (data) => {
     completeProjects: 0,
     projectBySkills: {},
     expectedPay,
+    blacklist:[],
     createdAt: getCurrentTime(),
   };
 
@@ -161,18 +162,21 @@ const createFreelancer = async (data) => {
 
 //-----------------------------------------getAll---------------------------------------------------------
 
-const getAll = async () => {
+const getAll = async userId => {
   //Exceptions
 
   const freelancerCollection = await freelancer();
   const freelancerList = await freelancerCollection.find({}).toArray();
 
+
+  const result = [];
   for (let i of freelancerList) {
     i._id = i._id.toString();
+    if(!(i.blacklist && i.blacklist.includes(userId))) result.push(i);
   }
 
   //Output
-  return freelancerList;
+  return result;
 };
 
 //-----------------------------------------get---------------------------------------------------------
@@ -311,10 +315,12 @@ const getRecommended = async (employerId) => {
     .find({ "skills._id": { $in: skillsRequired } })
     .toArray();
   if (!matchedFreelancers) throw "could not find recommendations";
+  let result =[];
   for (let i of matchedFreelancers) {
     i._id = i._id.toString();
+    if(!(i.blacklist && i.blacklist.includes(employerId))) result.push(i);
   }
-  return matchedFreelancers;
+  return result;
   // }else{
   //   throw "could not find employer"
   // }

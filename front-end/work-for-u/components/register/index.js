@@ -13,14 +13,17 @@ export const Register = ({isFreelancer}) => {
     const [details, setDetails] = useState({
         fullName: "",
         emailId: "",
-        password: "",
         companyName: "",
-        confirmPassword:"",
         location: null,
         introduction:"",
         expectedPay:null,
         skills:null
     });
+
+    const [pass, setPass] = useState({
+        password: "",
+        confirmPassword: ""
+    })
     const [submitting, setSubmitting] = useState(false);
     const [allStates, setAllStates] = useState([]);
     const [skillList, setSkillList] = useState([]);
@@ -28,6 +31,18 @@ export const Register = ({isFreelancer}) => {
     const router = useRouter();
     // const {isFreelancer} = useContext(UserContext);
     const toast = useToast();
+
+    const errorAlert = error => {
+        toast({
+            title: error.response? 
+                    error.response.data.error : 
+                    error.message ? 
+                    error.message : 
+                    error,
+            status: "error",
+            duration: 2000
+        });
+    }
 
     useEffect(() => {
         const getData = async () => {
@@ -39,11 +54,7 @@ export const Register = ({isFreelancer}) => {
                 setSkillList(skills);
             } catch (error) {
                 console.log(error);
-                toast({
-                    title: error.message? error.message : error,
-                    status: "error",
-                    duration: 2000
-                });
+                errorAlert(error);
             }
         }
         if(isFreelancer) getData();
@@ -59,6 +70,21 @@ export const Register = ({isFreelancer}) => {
         });
     }
 
+    const handlePassChange = e =>{
+        const {value,name} = e.target;
+        setPass(prevValue => {
+            return{
+                ...prevValue,
+                [name]: value
+            }
+        });
+    }
+
+    useEffect(() => {
+        console.log(details);
+        console.log(pass);
+    },[details])
+
     const warn = text => {
         toast({
             title: text,
@@ -70,8 +96,10 @@ export const Register = ({isFreelancer}) => {
     const handleSubmit = async e => {
         try {
             e.preventDefault();
-            const {fullName,companyName, emailId, password, confirmPassword, location, skills, introduction, expectedPay} = details;
-            if(fullName.trim().length === 0 || emailId.trim().length === 0 || password.trim().length === 0 || confirmPassword.trim().length === 0) {
+            console.log(details);
+            const {fullName,companyName, emailId, location, skills, introduction, expectedPay} = details;
+            const {password, confirmPassword} = pass;
+            if(fullName.trim().length === 0 || emailId.trim().length === 0 ) {
                 warn("Please fill all the fields");
                 return;
             }
@@ -107,7 +135,7 @@ export const Register = ({isFreelancer}) => {
                 }
             }
             setSubmitting(true);
-            let request = details;
+            let request = {...details,...pass};
             console.log(request);
             delete request.confirmPassword;
             if(isFreelancer) {
@@ -137,11 +165,7 @@ export const Register = ({isFreelancer}) => {
         } catch (error) {
             setSubmitting(false);
             console.log(error)
-            toast({
-                title: error.response? error.response.data.error : error,
-                status: "error",
-                duration: 2000
-            });
+            errorAlert(error);
         }
     }
 
@@ -177,8 +201,8 @@ export const Register = ({isFreelancer}) => {
                         <option value={null}>Select location</option>
                         {allStates && allStates.map((i,idx) => <option key={idx} value={i.name}>{i.name}</option>)}
                     </Select>}
-                    <InputComp name="password" label="Password" type={'password'} value={details.password} onChange={handleChange} helper="atleast 6 characters long" required={true}/>
-                    <InputComp name="confirmPassword" label="Confirm Password" type={'password'} value={details.confirmPassword} helper="atleast 6 characters long" onChange={handleChange} required={true}/>
+                    <InputComp name="password" label="Password" type={'password'} value={pass.password} onChange={handlePassChange} helper="atleast 6 characters long" required={true}/>
+                    <InputComp name="confirmPassword" label="Confirm Password" type={'password'} value={pass.confirmPassword} helper="atleast 6 characters long" onChange={handlePassChange} required={true}/>
                     <Button variant={'outline'} colorScheme={'teal'} mt='10px' w="100%" type="submit" isLoading={submitting}>
                         Register
                     </Button>

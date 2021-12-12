@@ -36,7 +36,7 @@ export const FreelancerDashboard = () => {
                 }
                 let total = 0;
                 data.forEach(element => {
-                    if(element.status === 3) total += element.hourlyPay * 8 * 30 * element.tenureMonths
+                    if(element.status === 3) total += element.hourlyPay * element.hrsPerDay * (element.daysPerWeek * 3) * element.tenureMonths
                 });
                 setEarnings(total);
             } catch (error) {
