@@ -43,7 +43,7 @@ import { UserContext } from "../contexts/userContext";
                 if(data.length > 0) {
                     let available = [];
                     data.forEach(el => {
-                        if(!el.requested.includes(selectedFreelancer._id)) available.push(el);
+                        if(!el.requested.includes(selectedFreelancer._id) && !el.assignedTo) available.push(el);
                     });
                     console.log(available);
                     setAvailableProjects(available);

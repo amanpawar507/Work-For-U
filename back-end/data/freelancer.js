@@ -97,7 +97,7 @@ const createFreelancer = async (data) => {
 
   var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
   if (!emailPattern.test(emailId)) throw "Email ID not valid";
-
+  if (emailId !== null) throw "There is already a user with this emailID "
   let skillsArrayF = await getSkill(skills);
   //console.log(skillsArrayF);
   const hash = await bCrypt.hash(password, saltRounds);
@@ -105,7 +105,7 @@ const createFreelancer = async (data) => {
 
   const newEntry = {
     fullName,
-    emailId,
+    emailId: emailId.toLowerCase(),
     password: hash,
     introduction,
     skills: skillsArrayF,
@@ -119,6 +119,11 @@ const createFreelancer = async (data) => {
     expectedPay,
     createdAt: getCurrentTime(),
   };
+
+  
+  let duplicateUser = await freelancerCollection.findOne({emailId: emailId.toLowerCase()});
+  if(duplicateUser !== null) throw "There is already a user with that username";
+  
   let addedEntryF = await freelancerCollection.insertOne(newEntry);
   if (addedEntryF.insertedCount === 0)
     throw "The freelancer couldn't be created";
@@ -237,6 +242,7 @@ async function checker(emailId, password) {
   let user = await freelancerCollection.findOne({
     emailId: emailId.toLowerCase(),
   });
+  
   if (!user || !user._id) throw "Either the emailId or password is invalid";
   let mat = await bCrypt.compare(password, user.password);
   if (!mat) throw "Either the emailId or password is invalid";

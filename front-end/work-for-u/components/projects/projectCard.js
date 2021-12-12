@@ -11,7 +11,20 @@ import client from "../../utils/client";
 import { getColorScheme, getStatus } from "../../utils/helper";
 import { UserContext } from "../contexts/userContext";
 
-export const ProjectCard = ({id, name, status,assignedTo,assignedBy,onDetailsClick,onEditClick,onDeleteClick,onUpdateClick,onRateClick,setUpdatedRequest}) => {
+export const ProjectCard = (
+    {id, 
+    name, 
+    status,
+    assignedTo,
+    assignedBy,
+    reviewed,
+    onDetailsClick,
+    onEditClick,
+    onDeleteClick,
+    onUpdateClick,
+    onRateClick,
+    setUpdatedRequest}
+    ) => {
 
     const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -61,7 +74,7 @@ export const ProjectCard = ({id, name, status,assignedTo,assignedBy,onDetailsCli
                         {status !== 0 && isFreelancer && <Button colorScheme={"gray"} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>}
                         {!isFreelancer &&  status !== 3 &&  status !== 4 && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
                         {!isFreelancer &&  status !== 3 &&  status !== 4 && <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>}
-                        {!isFreelancer &&  (status === 3 ||  status === 4) && <Button color={'black'} bg={"yellow.400"} leftIcon={<MdGrade/>} onClick={() => onRateClick()}>Rate</Button> }
+                        {!isFreelancer &&  (status === 3 ||  status === 4) && <Button color={'black'} bg={"yellow.400"} leftIcon={<MdGrade/>} disabled={reviewed} onClick={() => onRateClick()}>{reviewed ? "Rated" : "Rate"}</Button> }
                         {isFreelancer && status === 0 && <Button isLoading={accepting} isDisabled={rejecting} size={'sm'} variant={"solid"} colorScheme={'green'} onClick={() => handleAcceptReject("accept")}>Accept</Button>}
                         {isFreelancer && status === 0 && <Button isLoading={rejecting} isDisabled={accepting}  size={'sm'} variant={"solid"} colorScheme={'red'}  onClick={() => handleAcceptReject("reject")}>Reject</Button>}
                         <Menu>

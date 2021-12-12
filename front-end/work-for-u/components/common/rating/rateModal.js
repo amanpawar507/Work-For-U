@@ -17,7 +17,7 @@ import { useContext, useEffect, useState } from "react"
 import client from "../../../utils/client";
 import { UserContext } from "../../contexts/userContext";
 
-export const RateModal = ({isOpen, onClose, project}) => {
+export const RateModal = ({isOpen, onClose, project, updateProject}) => {
 
     const [details,setDetails] = useState({
         title: "",
@@ -52,10 +52,11 @@ export const RateModal = ({isOpen, onClose, project}) => {
         setSubmitting(true);
         console.log(details);
         try {
-            const {data} = await client.post(`http://localhost:5000/reviews/${project.assignedTo}`,{
+            const {data} = await client.post(`http://localhost:5000/reviews/${project.assignedTo}/${project._id}`,{
                 ...details,
                 reviewer: user._id
             });
+            updateProject(data);
             setSubmitting(false);
             onClose();
             toast({
@@ -64,9 +65,9 @@ export const RateModal = ({isOpen, onClose, project}) => {
                 duration: 2000
             })
         } catch (error) {
-            console.log(error);
+            console.log(error.response ? error.response : error);
             toast({
-                title: error.response ? error.response.data.error.toString() : error,
+                title: "Some error occured",
                 status: "error",
                 duration: 2000
             })
