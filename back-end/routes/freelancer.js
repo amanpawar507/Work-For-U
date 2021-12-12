@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
     if(
       fullName.trim().length === 0 ||
       emailId.trim().length === 0 ||
-      password.trim().length === 0 ||
+      password.length === 0 ||
       location.trim().length === 0 
     ) {
       res.status(400).json({ error: "Empty spaces as input" });
@@ -62,7 +62,7 @@ router.post("/", async (req, res) => {
     }
 
 
-    if(password.trim().length < 6) res.status(400).json({error: "Password should be atleast 6 characters!"});
+    if(password.length < 6) res.status(400).json({error: "Password should be atleast 6 characters!"});
 
     let resultF = await freelancer.createFreelancer(req.body);
     res.json(resultF);
@@ -219,7 +219,7 @@ router.post("/login", async (req, res) => {
       res.status(400).json({ error: "Invalid type of data" });
       return;
     }
-    if(emailId.trim().length === 0 ||password.trim().length === 0) {
+    if(emailId.trim().length === 0 ||password.length === 0) {
       res.status(400).json({ error: "Empty spaces as input" });
       return;
     }  

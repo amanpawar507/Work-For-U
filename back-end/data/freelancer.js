@@ -8,9 +8,12 @@ const bCrypt = require("bcrypt");
 const e = require("express");
 const saltRounds = 16;
 
+//--------------------------------------getAllEmployerProjects--------------------------------------------------
+
 async function getAllEmployerProjects(employerID) {
   if (!employerID) throw "Pass a employerID to search";
   if (typeof employerID !== "string") throw "Invalid employer ID";
+  if (employerID.trim().length == 0)throw "Empty spaces for input";
 
   const pCollection = await project();
 
@@ -20,9 +23,12 @@ async function getAllEmployerProjects(employerID) {
   return foundList;
 }
 
+//--------------------------------------getAllFreelancerProjects--------------------------------------------------
+
 const getAllFreelancerProjects = async (freelancerID) => {
   if (!freelancerID) throw "Pass a freelancerID to search";
   if (typeof freelancerID !== "string") throw "Invalid freeelancer ID";
+  if (freelancerID.trim().length == 0)throw "Empty spaces for input";
 
   const pCollection = await project();
 
@@ -34,6 +40,8 @@ const getAllFreelancerProjects = async (freelancerID) => {
   return foundList;
 };
 
+//--------------------------------------Get Current Time--------------------------------------------------
+
 const getCurrentTime = () => {
   var today = new Date();
   var date =
@@ -44,6 +52,8 @@ const getCurrentTime = () => {
   return dateTime;
 };
 
+//--------------------------------------createIndices--------------------------------------------------
+
 const createIndices = async () => {
   const freelancerCollection = await freelancer();
   const result = await freelancerCollection.createIndex({
@@ -53,6 +63,8 @@ const createIndices = async () => {
   });
   console.log(result);
 };
+
+//--------------------------------------createFreelancer--------------------------------------------------
 
 const createFreelancer = async (data) => {
   const {
@@ -90,13 +102,13 @@ const createFreelancer = async (data) => {
   if (
     fullName.trim().length === 0 ||
     emailId.trim().length === 0 ||
-    password.trim().length === 0 ||
+    password.length === 0 ||
     location.trim().length === 0
   ) {
     throw "Empty spaces as input";
   }
 
-  if (password.trim().length < 6)
+  if (password.length < 6)
     throw "Password should be atleast 6 characters!";
 
   if (expectedPay < 0) throw "Expected pay should be a negetive value!";
@@ -180,6 +192,7 @@ const getAll = async userId => {
 };
 
 //-----------------------------------------get---------------------------------------------------------
+
 const getFreelancer = async (freelancerID) => {
   if (!freelancerID) throw "You must provide an ID to search for";
   if (typeof freelancerID !== "string")
@@ -263,12 +276,13 @@ const searchType = async (filterObj) => {
 
   return finalResult;
 };
-/////-----------------------------------------checkFreelancer-----------------------------------------------------
+//-----------------------------------------checkFreelancer-----------------------------------------------------
+
 async function checker(emailId, password) {
   if (!emailId || !password) throw "All fields to have valid values";
   if (typeof emailId !== "string" || typeof password !== "string")
     throw "All the parameters has to be string";
-  if (emailId.trim().length == 0 || password.trim().length == 0)
+  if (emailId.trim().length == 0 || password.length == 0)
     throw "All the parameters has to be string";
   if (!emailId.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
     throw "Incorrect username or password";
@@ -286,9 +300,16 @@ async function checker(emailId, password) {
 }
 //--------------------------------------------delete freelancer-----------------------------------------------
 const remove = async (freelancerID) => {
+
+  if (!freelancerID) throw "You must provide an ID to search for";
+  if (typeof freelancerID !== "string")
+    throw "You must provide an ID in string only";
+  if (!ObjectId.isValid(freelancerID.trim()))
+    throw "Please provide a valid objectID.";
+
   const rest = await freelancer();
 
-  const deletionInfo = await rest.deleteOne({ _id: ObjectId(freelancerID) });
+  const deletionInfo = await rest.deleteOne({ _id: ObjectId(freelancerID.trim()) });
   if (deletionInfo.deletedCount === 0) {
     throw `Could not delete freelancer with id of ${id}`;
   }
@@ -297,9 +318,11 @@ const remove = async (freelancerID) => {
 //---------------------------------------------get recommended freelancers-----------------------------------------------
 
 const getRecommended = async (employerId) => {
+
   if (!employerId) throw "Please pass an employer ID";
   if (typeof employerId !== "string") throw "Invalid type of employerID";
   if (employerId.trim().length === 0) throw "empty spaces found";
+  if (!ObjectId.isValid(employerId.trim())) throw "Please provide a valid objectID.";
   ObjectId(employerId);
   //const employerFound = await getEmployer(employerId);
   // if(employerFound) {
@@ -329,8 +352,15 @@ const getRecommended = async (employerId) => {
 //---------------------------------------------Blacklisting-----------------------------------------------
 
 const Blacklist = async (freelancerID, employerID) => {
+
+  if (!employerID || !freelancerID) throw "Please pass an employer ID and freelancerID both";
+  if (typeof employerID !== "string" || typeof freelancerID !== "string") throw "Invalid type of employerID and freelancerID";
+  if (employerID.trim().length === 0 || freelancerID.trim().length === 0) throw "empty spaces found";
+  if ((!ObjectId.isValid(employerID.trim())) || (!ObjectId.isValid(freelancerID.trim()))) throw "Please provide a valid objectID.";
+
   let verifyfreelancer = await getFreelancer(freelancerID);
   let verifyemployer = await getEmployer(employerID);
+
   const freelancerCollection = await freelancer();
 
   let parsedId = ObjectId(freelancerID);
@@ -354,8 +384,16 @@ const Blacklist = async (freelancerID, employerID) => {
 //---------------------------------------BlacklistDelete------------------------------------------------
 
 const Blacklistremove = async (freelancerID, employerID) => {
+
+  
+  if (!employerID || !freelancerID) throw "Please pass an employer ID and freelancerID both";
+  if (typeof employerID !== "string" || typeof freelancerID !== "string") throw "Invalid type of employerID and freelancerID";
+  if (employerID.trim().length === 0 || freelancerID.trim().length === 0) throw "empty spaces found";
+  if ((!ObjectId.isValid(employerID.trim())) || (!ObjectId.isValid(freelancerID.trim()))) throw "Please provide a valid objectID.";
+
   let verifyfreelancer = await getFreelancer(freelancerID);
   let verifyemployer = await getEmployer(employerID);
+
   const freelancerCollection = await freelancer();
 
   let parsedId = ObjectId(freelancerID);
@@ -384,6 +422,7 @@ const Blacklistremove = async (freelancerID, employerID) => {
 const getSuccessRate = async (freelancerId) => {
   if (!freelancerId) throw "Pass a freelancer ID";
   if (typeof freelancerId !== "string") throw "Invalid type of ID";
+  if (!ObjectId.isValid(freelancerId.trim())) throw "Please provide a valid objectID.";
   ObjectId(freelancerId);
 
   const allProjects = await getAllFreelancerProjects(freelancerId);
@@ -437,6 +476,13 @@ const editProfile = async (data) => {
     typeof expectedPay !== "number"
   ) {
     throw "Invalid type of data";
+  }
+  if (
+    id.trim().length === 0 ||
+    fullName.trim().length === 0 ||
+    location.trim().length === 0
+  ) {
+    throw "Empty spaces as input";
   }
 
   let skillsArrayF = await getSkill(skills);
