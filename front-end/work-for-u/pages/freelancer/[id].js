@@ -28,10 +28,10 @@ const FreelanceProfilePage = () => {
     // useEffect(() => {
        
     // },[isFreelancer])
-
+    const {id} = query;
     useEffect(() => {
-        if(!query || !user) return;
-        const {id} = query;
+        if(!id || !user) return;
+
 
         const getInfo = async userId => {
             try {
@@ -58,7 +58,7 @@ const FreelanceProfilePage = () => {
        
         getInfo(id);
 
-    },[query,user])
+    },[id,user])
     
     return(
          <Layout>

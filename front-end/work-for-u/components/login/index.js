@@ -81,6 +81,7 @@ export const Login = () => {
           <InputComp
             name="emailId"
             label="Username"
+            placeholder={"Email ID"}
             value={details.emailId}
             onChange={(e) =>
               setDetails((prevValue) => {
@@ -95,6 +96,7 @@ export const Login = () => {
             type="password"
             name="password"
             label="Password"
+            placeholder={"Password"}
             value={details.password}
             onChange={(e) =>
               setDetails((prevValue) => {

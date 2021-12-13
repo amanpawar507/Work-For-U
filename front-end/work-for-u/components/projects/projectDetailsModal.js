@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import client from "../../utils/client";
-import { getStatus } from "../../utils/helper";
+import { getDateFormat, getStatus } from "../../utils/helper";
 import { UserContext } from "../contexts/userContext";
 
 export const ProjectDetailsModal = ({ isOpen, onClose, projectDetails }) => {
@@ -128,7 +128,7 @@ export const ProjectDetailsModal = ({ isOpen, onClose, projectDetails }) => {
                 </Text>
               )}
               <Text mb="5px">
-                <strong>Created on:</strong> {projectDetails.createdAt}
+                <strong>Created on:</strong> {getDateFormat(projectDetails.createdAt)}
               </Text>
             </Box>
           )}

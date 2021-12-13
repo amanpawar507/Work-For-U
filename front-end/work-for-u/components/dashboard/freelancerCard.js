@@ -8,7 +8,6 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
-import randomcolor from "randomcolor";
 import { getRandomColor } from "../../utils/helper";
 import { Rating } from "../common/rating/rateModal";
 
