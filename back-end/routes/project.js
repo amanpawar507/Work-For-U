@@ -93,7 +93,7 @@ router.post("/", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.messsage ? error.message : error });
+    res.status(404).json({ error: error.messsage ? error.message : error });
   }
 });
 
@@ -123,7 +123,7 @@ router.get("/:id", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.messsage });
+    res.status(404).json({ error: error.messsage });
   }
 });
 
@@ -139,7 +139,7 @@ router.get("/", async (req, res) => {
     // }
   } catch (e) {
     let error = e.toString();
-    res.status(500).json({ error: error });
+    res.status(404).json({ error: error });
   }
 });
 
@@ -243,7 +243,7 @@ router.patch("/:projectId", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message ? error.message : error });
+    res.status(404).json({ error: error.message ? error.message : error });
   }
 });
 
@@ -273,7 +273,7 @@ router.get("/all/employer/:id", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message ? error.message : error });
+    res.status(404).json({ error: error.message ? error.message : error });
   }
 });
 
@@ -303,7 +303,7 @@ router.get("/all/freelancer/:id", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message ? error.message : error });
+    res.status(404).json({ error: error.message ? error.message : error });
   }
 });
 
@@ -341,7 +341,7 @@ router.post("/requests/add", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message ? error.message : error });
+    res.status(404).json({ error: error.message ? error.message : error });
   }
 });
 
@@ -375,7 +375,7 @@ router.get("/requests/:freelancerId", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message ? error.message : error });
+    res.status(404).json({ error: error.message ? error.message : error });
   }
 });
 
@@ -420,7 +420,7 @@ router.patch("/requests/update", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message ? error.message : error });
+    res.status(404).json({ error: error.message ? error.message : error });
   }
 });
 
@@ -447,7 +447,7 @@ router.patch("/status/update", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message ? error.message : error });
+    res.status(404).json({ error: error.message ? error.message : error });
   }
 });
 
@@ -480,7 +480,7 @@ router.delete("/:id", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.message ? error.message : error });
+    res.status(404).json({ error: error.message ? error.message : error });
   }
 });
 
@@ -519,7 +519,7 @@ router.get("/filter/:userType/:userId/:query/:type", async (req, res) => {
     // }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error.messsage ? error.message : error });
+    res.status(404).json({ error: error.messsage ? error.message : error });
   }
 });
 
