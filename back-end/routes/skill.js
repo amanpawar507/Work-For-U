@@ -27,7 +27,7 @@ router.post('/', async (req,res) => {
         }
     } catch (error) {
         console.log(error);
-        res.status(500).json({error: error.messsage});
+        res.status(404).json({error: error.messsage});
     }
 });
 
@@ -41,7 +41,7 @@ router.get("/", async(req,res) => {
         }
     } catch (error) {
         console.log(error);
-        res.status(500).json({error: error.messsage? error.message:error});
+        res.status(404).json({error: error.messsage? error.message:error});
     }
 })
 
