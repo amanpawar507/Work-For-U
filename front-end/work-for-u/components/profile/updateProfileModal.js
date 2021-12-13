@@ -74,7 +74,48 @@ export const UpdateProfileModal = ({
     }
   }, [isOpen, isFreelancer]);
 
-  const toast = useToast();
+    useEffect(() => {
+        try {
+            const getAllSkills = async () => {
+                const {data} = await client.get("http://localhost:5000/skills/");
+                setSkillList(data);
+                setLoading(false);
+            } 
+            if(isOpen && isFreelancer) {
+                setLoading(true);
+                getAllSkills();
+            }
+        } catch (error) {
+            console.log(error);
+            errorAlert(error);
+        }
+    },[isOpen,isFreelancer]);
+
+
+    useEffect(() => {
+        if(!details) return;
+        let current;
+        if(isFreelancer) {
+            let {_id,fullName, introduction, skills, location, expectedPay} = details;
+            current = {
+                _id,
+                fullName,
+                introduction,
+                skills:  skills.map(i => {return i._id.toString()}),
+                location,
+                expectedPay
+            }
+          
+        }else{
+            let {_id,fullName, companyName} = details;
+            current = {
+                _id,
+                fullName,
+                companyName
+            }
+        }
+        setUserDetails(current);
+    },[isFreelancer, details])
 
   useEffect(() => {
     if (!details) return;

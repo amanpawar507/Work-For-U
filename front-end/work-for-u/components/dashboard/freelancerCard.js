@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/dist/client/router";
 import randomcolor from "randomcolor";
+import { getRandomColor } from "../../utils/helper";
 import { Rating } from "../common/rating/rateModal";
 
 export const FreelancerCard = ({ name, rating, location, onRequest, id }) => {
@@ -26,7 +27,7 @@ export const FreelancerCard = ({ name, rating, location, onRequest, id }) => {
       <Center
         w={"100%"}
         minH={"200px"}
-        bg={randomcolor()}
+        bg={getRandomColor()}
         color={"white"}
         cursor={"pointer"}
         onClick={() => router.push(`/freelancer/${id}`)}

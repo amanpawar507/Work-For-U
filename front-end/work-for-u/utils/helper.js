@@ -47,3 +47,18 @@ export const getDateFormat = date => {
         if (!isDate(formatdate)) return
         return format(formatdate, 'dd/MM/yyyy')
 }
+
+export const getRandomColor = () => {
+    const colors = [
+        "#F1CACA", "#F1DBCA", "#F1EDCA", "#D9F1CA", '#CAF1CC',
+        "#CAF1E8", "#CAEDF1", "#CADCF1", "#CCCAF1", "#E5CAF1",
+        "#F1CADD", "#F1CACF", "#FE9B93", "#FEBC93", "#FED793",
+        "#FEF493", "#E2FE93", "#ABFE93", "#93FEBA", "#93FEEE",
+        "#93E1FE", "#C993FE","#FE93DF","#FE93B7"
+    ]
+
+    const min = 0;
+    const max = colors.length;
+    let index = Math.floor(Math.random() * (max - min) + min);
+    return colors[index];
+}

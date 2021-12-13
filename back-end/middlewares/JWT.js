@@ -14,7 +14,6 @@ const verifyUser = token => {
 
     const user = jwt.verify(token, auth.secret, (err,user) => {
         if(err) throw err;
-        console.log(user);
         return user;
     })
 

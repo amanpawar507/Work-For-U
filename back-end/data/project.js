@@ -261,38 +261,44 @@ const updateProjectStatus = async (projectId, status) => {
 
   const projectCollection = await project();
   let objectId = ObjectId(projectId);
-  const updateInfo = await projectCollection.updateOne(
-    { _id: objectId },
-    { $set: { status: status } }
-  );
-  if (updateInfo.modifiedCount === 0) throw "Could not update the project";
 
-  if (status === 3 || status === 4) {
-    const getSuccessInfo = await getSuccessRate(projectExist.assignedTo);
-    console.log(getSuccessInfo);
-    if (!getSuccessInfo) throw "Cannot get successInfo for the freelancer";
-    const { successRate, closedProjects, completeProjects, projectBySkills } =
-      getSuccessInfo;
-    const freelancerCollection = await freelancer();
-    const updatedInfo = await freelancerCollection.updateOne(
-      { _id: ObjectId(projectExist.assignedTo) },
-      {
-        $set: {
-          successRate,
-          closedProjects,
-          completeProjects,
-          projectBySkills,
-        },
-      }
+  let updatedProject = projectExist;
+  if(projectExist.status !== status) {
+    const updateInfo = await projectCollection.updateOne(
+      { _id: objectId },
+      { $set: { status: status } }
     );
-    if (updatedInfo.modifiedCount === 0)
-      throw "Could not update the freelancer";
-  }
+    if (updateInfo.modifiedCount === 0) throw "Could not update the project";
+  
+    updatedProject = await getProject(projectId);
+    updatedProject = { _id: updatedProject._id.toString(), ...updatedProject };
 
-  let updatedProject = await getProject(projectId);
-  updatedProject = { _id: updatedProject._id.toString(), ...updatedProject };
+      await updateSuccessRate(updatedProject.assignedTo);
+  }
+  
+
   return updatedProject;
 };
+
+const updateSuccessRate = async freelancerId => {
+  const getSuccessInfo = await getSuccessRate(freelancerId);
+  console.log(getSuccessInfo);
+  if (!getSuccessInfo) throw "Cannot get successInfo for the freelancer";
+  const { successRate, closedProjects, completeProjects, projectBySkills } =
+    getSuccessInfo;
+  const freelancerCollection = await freelancer();
+  let obj = ObjectId(freelancerId);
+  console.log(obj);
+  const updatedInfo = await freelancerCollection.updateOne(
+    { _id:  obj},
+    {
+      $set: { successRate, closedProjects, completeProjects, projectBySkills }
+    }
+  );
+
+  console.log(updatedInfo);
+  if (updatedInfo.modifiedCount === 0) throw "Could not update the freelancer";
+}
 
 //-----------------------------------------addingRequestToFreelancer---------------------------------------------------------
 
@@ -471,7 +477,6 @@ const filterProject = async (filterObj) => {
       listForName = await projectCollection
         .find({
           name: { $regex: `${filterObj.query}`, $options: "i" },
-          status: { $ne: 0 },
           createdBy: { $eq: filterObj.userId },
         })
         .toArray();
@@ -502,7 +507,6 @@ const filterProject = async (filterObj) => {
             $regex: `${filterObj.query}`,
             $options: "i",
           },
-          status: { $ne: 0 },
           createdBy: { $eq: filterObj.userId },
         })
         .toArray();

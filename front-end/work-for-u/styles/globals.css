@@ -28,3 +28,16 @@ input::placeholder{
 .profile-txt{
   margin-right: 10px;
 }
+
+.blacklist-table{
+  width: 80%;
+}
+
+/* .blacklist-table tr{
+  padding: 20px 0;
+} */
+
+.blacklist-table tr td{
+  text-align: center;
+  padding: 20px 0;
+}
