@@ -14,6 +14,7 @@ const getCurrentTime = () => {
 const createSkill = async (name) => {
   if (!name) throw "provide a name for the skill";
   if (typeof name !== "string") throw "invalid type of input";
+  if (name.trim().length === 0 ) throw "Empty spaces as input";
 
   const skillCollection = await skill();
 

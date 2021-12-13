@@ -19,8 +19,9 @@ const getCurrentTime = () => {
 const getProject = async (projectId) => {
   if (!projectId) throw "provide a project ID to fetch";
   if (typeof projectId !== "string") throw "Invalid project ID";
+  if (!ObjectId.isValid(projectId.trim())) throw "Please provide a valid objectID.";
 
-  const objId = ObjectId(projectId);
+  const objId = ObjectId(projectId.trim());
 
   const projectCollection = await project();
   let foundEntry = await projectCollection.findOne({ _id: objId });
@@ -67,6 +68,14 @@ const createProject = async (data) => {
     typeof daysPerWeek !== "number"
   )
     throw "Invalid type of data";
+  
+  if (
+    name.trim().length === 0 ||
+    description.trim().length === 0 ||
+    createdBy.trim().length === 0 
+  ) {
+    throw "Empty spaces as input";
+  }
 
   if (tenureMonths < 0) throw "Tenure months should be greater than zero";
   if (hourlyPay < 0) throw "Hourly pay should be greater than zero";
@@ -126,9 +135,12 @@ const getAll = async () => {
   return projectList;
 };
 
+//-----------------------------------------getAllEmployerProjects-------------------------------------------------------
+
 async function getAllEmployerProjects(employerID) {
   if (!employerID) throw "Pass a employerID to search";
   if (typeof employerID !== "string") throw "Invalid employer ID";
+  if (employerID.trim().length === 0 ) throw "Empty spaces as input";
 
   const pCollection = await project();
 
@@ -138,9 +150,12 @@ async function getAllEmployerProjects(employerID) {
   return foundList;
 }
 
+//-----------------------------------------getAllFreelancerProjects-------------------------------------------------------
+
 const getAllFreelancerProjects = async (freelancerID) => {
   if (!freelancerID) throw "Pass a freelancerID to search";
   if (typeof freelancerID !== "string") throw "Invalid freeelancer ID";
+  if (freelancerID.trim().length === 0 ) throw "Empty spaces as input";
 
   const pCollection = await project();
 
@@ -151,6 +166,8 @@ const getAllFreelancerProjects = async (freelancerID) => {
 
   return foundList;
 };
+
+//-----------------------------------------updateProject-------------------------------------------------------
 
 const updateProject = async (data) => {
   const {
@@ -188,6 +205,14 @@ const updateProject = async (data) => {
   )
     throw "Invalid fields";
 
+  if (
+    id.trim().length === 0 ||
+    name.trim().length === 0 ||
+    description.trim().length === 0 
+  ) {
+    throw "Empty spaces as input";
+  }
+
   if (hrsPerDay < 0 || hrsPerDay > 8)
     throw "Hours per day should be less than 8 and greater than zero";
   if (daysPerWeek < 0 || daysPerWeek > 6)
@@ -223,9 +248,10 @@ const updateProject = async (data) => {
 //----------------------------------------updateProjectStatus----------------------------------------------------------------
 
 const updateProjectStatus = async (projectId, status) => {
+
   if (!projectId || !status) throw "Please pass all the fields";
-  if (typeof projectId !== "string" || typeof status !== "number")
-    throw "invalid type of fields";
+  if (typeof projectId !== "string" || typeof status !== "number") throw "invalid type of fields";
+  if (projectId.trim().length === 0 ) throw "Empty spaces as input";
 
   const projectExist = await getProject(projectId);
   if (!projectExist) throw "No project exist for the given ID";
@@ -271,10 +297,9 @@ const updateProjectStatus = async (projectId, status) => {
 //-----------------------------------------addingRequestToFreelancer---------------------------------------------------------
 
 const addRequest = async (freelancerId, projectId) => {
-  if (!freelancerId || !projectId)
-    throw "Please pass both freelancer ID and project ID";
-  if (typeof freelancerId !== "string" || typeof projectId !== "string")
-    throw "Invalid type of request";
+  if (!freelancerId || !projectId) throw "Please pass both freelancer ID and project ID";
+  if (typeof freelancerId !== "string" || typeof projectId !== "string") throw "Invalid type of request";
+  if (freelancerId.trim().length === 0 || projectId.trim().length === 0 ) throw "Empty spaces as input";
 
   let foundProject = await getProject(projectId);
   await getFreelancer(freelancerId);
@@ -310,6 +335,7 @@ const addRequest = async (freelancerId, projectId) => {
 const getFreelancerRequests = async (freelancerId) => {
   if (!freelancerId) throw "please pass a freelancer ID";
   if (typeof freelancerId !== "string") throw "Invalid freelancer ID";
+  if (freelancerId.trim().length === 0 ) throw "Empty spaces as input";
 
   await getFreelancer(freelancerId);
 
@@ -334,6 +360,13 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
     typeof status !== "string"
   )
     throw "Invalid type of request";
+
+  if (
+    freelancerId.trim().length === 0 ||
+    projectId.trim().length === 0 
+  ) {
+    throw "Empty spaces as input";
+  }
 
   if (
     status.trim().toLowerCase() !== "accept" &&
@@ -384,6 +417,7 @@ const updateFreelancerRequest = async (projectId, freelancerId, status) => {
 const deleteProject = async (projectId) => {
   if (!projectId) throw "Please pass an ID";
   if (typeof projectId !== "string") throw "Invalid projectID";
+  if (projectId.trim().length === 0 ) throw "Empty spaces as input";
 
   const found = await getProject(projectId);
 
