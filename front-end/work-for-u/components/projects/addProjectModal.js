@@ -128,7 +128,6 @@ import client from "../../utils/client";
                 errors.push(k);
                 throw "missing fields"
             } 
-           debugger;
             switch (k) {
                 case "hourlyPay":
                     if(projectDetails[k] === 0) {

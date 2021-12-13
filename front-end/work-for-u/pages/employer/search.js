@@ -49,7 +49,6 @@ const SearchPage = () => {
     };
 
     if (isFreelancer !== undefined && isFreelancer !== null) {
-      debugger;
       if (isFreelancer) {
         push("/freelancer");
       } else {
