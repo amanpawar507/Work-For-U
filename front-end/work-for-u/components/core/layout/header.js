@@ -33,7 +33,7 @@ export const Header = ({isFreelancer,userInfo}) => {
         router.push(`/employer/search?q=${search}&&t=${filter}`);
     }
 
-    console.log(pathname.split("/"));
+    //console.log(pathname.split("/"));
 
     return(
         <HStack bg={"rgb(245, 245, 245)"} w={'100%'} p ={'10px 0'} justifyContent={'space-between'} top={0} width={'1000px'} position={'fixed'} zIndex={2}>

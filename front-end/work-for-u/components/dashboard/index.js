@@ -13,20 +13,20 @@ export const Dashboard = () => {
   const { user } = useContext(UserContext);
 
   const toast = useToast();
-  const errorAlert = error => {
+  const errorAlert = (error) => {
     toast({
-        title: error.response? 
-                error.response.data.error : 
-                error.message ? 
-                error.message : 
-                error,
-        status: "error",
-        duration: 2000
+      title: error.response
+        ? error.response.data.error
+        : error.message
+        ? error.message
+        : error,
+      status: "error",
+      duration: 2000,
     });
-}
+  };
 
   useEffect(() => {
-    if(!user) return;
+    if (!user) return;
     const getFreelancers = async () => {
       try {
         if (showRecommended) {
@@ -41,7 +41,7 @@ export const Dashboard = () => {
           setListOfFreelancers(data);
         }
       } catch (error) {
-        console.log(error);
+        //console.log(error);
         errorAlert(error);
       }
     };

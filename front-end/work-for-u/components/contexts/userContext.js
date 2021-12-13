@@ -23,12 +23,11 @@ const UserContextProvider = ({ children }) => {
         router.push("/logout");
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }, []);
 
   const setCurrentUser = async () => {
-    
     const { data } = await client.post(`http://localhost:5000/common/reCreate`);
     if (data) {
       if (data.user.reviews) {

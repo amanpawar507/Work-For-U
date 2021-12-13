@@ -7,23 +7,23 @@ import { Search } from "../../components/search";
 import client from "../../utils/client";
 
 const SearchPage = () => {
-  const { query,push } = useRouter();
+  const { query, push } = useRouter();
   const toast = useToast();
   const [results, setResults] = useState([]);
 
-  const {isFreelancer} = useContext(UserContext);
+  const { isFreelancer } = useContext(UserContext);
 
-  const errorAlert = error => {
+  const errorAlert = (error) => {
     toast({
-        title: error.response? 
-                error.response.data.error : 
-                error.message ? 
-                error.message : 
-                error,
-        status: "error",
-        duration: 2000
+      title: error.response
+        ? error.response.data.error
+        : error.message
+        ? error.message
+        : error,
+      status: "error",
+      duration: 2000,
     });
-}
+  };
 
   useEffect(() => {
     if (!query) return;
@@ -33,31 +33,30 @@ const SearchPage = () => {
           "http://localhost:5000/freelancer/searchFreelancer",
           req
         );
-        console.log(data);
+        //console.log(data);
         setResults(data);
       } catch (error) {
-        console.log(error.response.data);
+        //console.log(error.response.data);
         errorAlert(error);
       }
     };
     const { q, t } = query;
     if (!q || !t) return;
-    console.log(q, t);
+    //console.log(q, t);
     const req = {
       query: q,
       filterkey: t,
     };
 
-    if(isFreelancer !== undefined && isFreelancer !== null) {
+    if (isFreelancer !== undefined && isFreelancer !== null) {
       debugger;
-      if(isFreelancer) {
+      if (isFreelancer) {
         push("/freelancer");
-      }else{
+      } else {
         searching(req);
       }
     }
-
-  }, [query,isFreelancer]);
+  }, [query, isFreelancer]);
   return (
     <Layout>
       <Search query={query && query.q} results={results} />
