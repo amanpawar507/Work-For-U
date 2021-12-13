@@ -437,6 +437,8 @@ return;
 
   let employer1;
   let employer2;
+  let employer3;
+  let employer4;
 
   try {
     let result = await employer.createEmployer({
@@ -464,6 +466,31 @@ return;
     return;
   }
 
+  try {
+    let result = await employer.createEmployer({
+      fullName: "Gaurav Narvwani",
+      emailId: "gn@gmail.com",
+      password: "gaurav1234",
+      companyName: "someCompany1",
+    });
+    employer3 = result;
+  } catch (error) {
+    console.log("from route: ", error);
+    return;
+  }
+
+  try {
+    let result = await employer.createEmployer({
+      fullName: "Yash Patade",
+      emailId: "yashp@gmail.com",
+      password: "yash1234",
+      companyName: "someCompany2",
+    });
+    employer4 = result;
+  } catch (error) {
+    console.log("from route: ", error);
+    return;
+  }
   //name, description, tenureMonths, skillsRequired, hourlyPay, status, createdBy
   try {
     let result = await project.createProject({
@@ -598,6 +625,52 @@ return;
       introduction: "My name is Emma",
       skills: skills1,
       location: "Virginia",
+      expectedPay: 32,
+    });
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  
+  try {
+    await freelancer.createFreelancer({
+      fullName: "Yash Gilda",
+      emailId: "yashg@gmail.com",
+      password: "yash1234",
+      introduction: "My name is Yash",
+      skills: skills1,
+      location: "Florida",
+      expectedPay: 24,
+    });
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  try {
+    await freelancer.createFreelancer({
+      fullName: "Rohan Divate",
+      emailId: "rohand@gmail.com",
+      password: "rohan1234",
+      introduction: "My name is Rohan",
+      skills: skills2,
+      location: "New Jersey",
+      expectedPay: 30,
+    });
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  try {
+    await freelancer.createFreelancer({
+      fullName: "Sanket Surve",
+      emailId: "sanket@gmail.com",
+      password: "sanket1234",
+      introduction: "My name is Sanket",
+      skills: skills1,
+      location: "Ohio",
       expectedPay: 32,
     });
   } catch (error) {
