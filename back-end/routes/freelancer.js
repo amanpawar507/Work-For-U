@@ -24,7 +24,6 @@ router.post("/", async (req, res) => {
       !fullName ||
       !emailId ||
       !password ||
-      !introduction ||
       !skills ||
       !location ||
       !expectedPay

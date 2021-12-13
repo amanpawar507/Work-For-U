@@ -115,7 +115,6 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 setUser(data);
                 setBlackListing(false)
             }else{
-                debugger;
                 const {data} = await client.delete(`http://localhost:5000/freelancer/blacklist/${currentUser._id}/${userInfo._id}`)
                 setUser(data);
                 setBlackListing(false)

@@ -1,4 +1,5 @@
 import { Box, Flex, Heading, HStack, IconButton, Text } from "@chakra-ui/react"
+import { Tooltip } from "chart.js"
 import { MdDelete } from "react-icons/md"
 import { getDateFormat } from "../../../utils/helper"
 import { Avatar, CustomAvatar } from "../Avatar"
@@ -16,7 +17,11 @@ export const ReviewItem = ({reviewer, date, title, review, rating, canDelete , h
                     </Box>
                 </HStack>
                 <HStack spacing={'20px'}>
-                    {canDelete && <IconButton cursor={'pointer'} variant={'ghost'} color={'black'} icon={<MdDelete/>} onClick={() => handleDelete()}/>}
+                    {canDelete && 
+                    <Tooltip label="Delete review">
+                        <IconButton cursor={'pointer'} variant={'ghost'} color={'black'} icon={<MdDelete/>} onClick={() => handleDelete()}/>
+                    </Tooltip>}
+                  
                     <Text fontSize={'sm'}>{getDateFormat(date)}</Text>
                 </HStack>
             </Flex>

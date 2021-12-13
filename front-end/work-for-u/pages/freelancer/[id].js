@@ -36,7 +36,6 @@ const FreelanceProfilePage = () => {
         const getInfo = async userId => {
             try {
                 setLoading(true);
-                debugger;
                 const {data} = await client.get(`http://localhost:5000/freelancer/${userId}`);
                 setInfo(data);
                 setLoading(false);

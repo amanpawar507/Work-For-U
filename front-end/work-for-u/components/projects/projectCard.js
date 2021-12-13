@@ -3,6 +3,7 @@ import { Badge, Box, Button, Heading, HStack, IconButton, Text, useToast, VStack
     MenuButton,
     MenuList,
     MenuItem,
+    Tooltip,
 } from "@chakra-ui/react"
 import { useRouter } from "next/dist/client/router";
 import { useContext, useState } from "react"
@@ -72,8 +73,16 @@ export const ProjectCard = (
                     {<Badge colorScheme={getColorScheme(status)} borderRadius={'2px'}>{getStatus(status)}</Badge>}
                     <HStack ml={'auto'}>
                         {status !== 0 && isFreelancer && <Button colorScheme={"gray"} size={'sm'} onClick={() => onUpdateClick()}>Update</Button>}
-                        {!isFreelancer &&  status !== 3 &&  status !== 4 && <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>}
-                        {!isFreelancer &&  status !== 3 &&  status !== 4 && <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>}
+                        {!isFreelancer &&  status !== 3 &&  status !== 4 && 
+                        <Tooltip label="update">
+                            <IconButton color={'brand.900'} icon={<MdEdit/>} onClick={() => onEditClick()}/>
+                        </Tooltip>
+                        }
+                        {!isFreelancer &&  status !== 3 &&  status !== 4 && 
+                        <Tooltip label="Delete">
+                            <IconButton color={'brand.900'} icon={<MdDelete/>} onClick={() => setDeleteOpen(true)}/>
+                        </Tooltip>
+                        }
                         {!isFreelancer &&  (status === 3 ||  status === 4) && <Button color={'black'} bg={"yellow.400"} leftIcon={<MdGrade/>} disabled={reviewed} onClick={() => onRateClick()}>{reviewed ? "Rated" : "Rate"}</Button> }
                         {isFreelancer && status === 0 && <Button isLoading={accepting} isDisabled={rejecting} size={'sm'} variant={"solid"} colorScheme={'green'} onClick={() => handleAcceptReject("accept")}>Accept</Button>}
                         {isFreelancer && status === 0 && <Button isLoading={rejecting} isDisabled={accepting}  size={'sm'} variant={"solid"} colorScheme={'red'}  onClick={() => handleAcceptReject("reject")}>Reject</Button>}
@@ -89,7 +98,8 @@ export const ProjectCard = (
                                 <MenuItem icon={<MdInfo />} onClick={() => onDetailsClick()}>
                                     Project Info
                                 </MenuItem>
-                                {!isFreelancer && assignedTo && <MenuItem icon={<MdPerson />} onClick={() => router.push(`/freelancer/${assignedTo}`)}>
+                                {!isFreelancer && assignedTo && 
+                                <MenuItem icon={<MdPerson />} onClick={() => router.push(`/freelancer/${assignedTo}`)}>
                                     Freelancer
                                 </MenuItem>}
                                 {isFreelancer && <MenuItem icon={<MdPerson />} onClick={() => router.push(`/employer/${assignedBy}`)}>

@@ -81,7 +81,6 @@ const createFreelancer = async (data) => {
     !fullName ||
     !emailId ||
     !password ||
-    !introduction||
     !skills ||
     !location ||
     !expectedPay
