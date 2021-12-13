@@ -1,6 +1,8 @@
 
 # CS 546 Web Programming I Final Project: Work For U
-A restaurant review application designed specifically for reviewing the COVID-19 safety measures of restaurants in Hoboken, NJ.
+This is a B2B web platform for employers/company and freelancers where employers can 
+find their desired freelancers and keep track of their projects, and freelancers can choose from the 
+employers who want to work with them and also showcase their past projects.
 
 Built using Express, Node.js, MongoDB ,React and Chakra UI.
 
