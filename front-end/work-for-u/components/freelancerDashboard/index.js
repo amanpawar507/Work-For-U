@@ -28,7 +28,7 @@ export const FreelancerDashboard = () => {
         const getData = async() => {
             try {
                 const {data} = await client.get(`http://localhost:5000/project/all/freelancer/${user._id}`);
-                console.log(data);
+                //console.log(data);
                 if(data.length > 3) {
                     setRecentProjects(data.slice(0,2))
                 }else{
@@ -41,7 +41,7 @@ export const FreelancerDashboard = () => {
                 setEarnings(total);
             } catch (error) {
                 if(error.statusCode === 401) router.push("/logout");
-                console.log(error);
+                //console.log(error);
                 toast({
                     title: error.message? error.message : error,
                     status: "error",

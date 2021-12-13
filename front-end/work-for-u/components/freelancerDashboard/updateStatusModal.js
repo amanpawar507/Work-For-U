@@ -15,11 +15,17 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import client from '../../utils/client';
 
-  export const UpdateStatusModal = ({isOpen,onClose, selectedProject, setUpdatedProject}) => {
+export const UpdateStatusModal = ({
+  isOpen,
+  onClose,
+  selectedProject,
+  setUpdatedProject,
+}) => {
+  const [status, setStatus] = useState(0);
 
-        const [status, setStatus] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-        const [loading,setLoading] = useState(false);
+  
 
         const toast = useToast();
         const errorAlert = error => {
@@ -52,11 +58,11 @@ import client from '../../utils/client';
                    setUpdatedProject(data);
                 }
             } catch (error) {
-                console.log(error);
                 errorAlert(error);
                 setLoading(false);
             }
         }
+     
 
       return(
         <Modal isOpen={isOpen} onClose={() => onClose()} >

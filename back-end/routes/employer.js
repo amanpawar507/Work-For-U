@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
     res.json(resultE);
   } catch (error) {
     console.log("from data: ", error);
-    res.status(500).json({ error: error.messsage });
+    res.status(404).json({ error: error.messsage });
   }
 });
 
@@ -80,7 +80,7 @@ router.get("/:id", async (req, res) => {
     //}
   } catch (error) {
     console.log("from data: ", error);
-    res.status(500).json({ error: error.messsage });
+    res.status(404).json({ error: error.messsage });
   }
 });
 
@@ -138,7 +138,7 @@ router.post("/login", async (req, res) => {
     res.json({token: token,user: verifyUser});
   } catch (error) {
     console.log("from data: ", error);
-    res.status(400).json({ error: error.messsage ? error.message : error });
+    res.status(404).json({ error: error.messsage ? error.message : error });
   }
 });
 
@@ -162,7 +162,7 @@ router.post("/getList", async (req, res) => {
 
   } catch (error) {
     console.log("from data: ", error);
-    res.status(400).json({ error: error.messsage ? error.message : error });
+    res.status(404).json({ error: error.messsage ? error.message : error });
   }
 });
 
@@ -194,7 +194,7 @@ router.patch("/edit", async (req, res) => {
 
   } catch (error) {
     console.log("from data: ", error);
-    res.status(400).json({ error: error.messsage ? error.message : error });
+    res.status(404).json({ error: error.messsage ? error.message : error });
   }
 });
 
@@ -214,7 +214,7 @@ router.get("/project/skills/:id", async (req,res) => {
 
   } catch (error) {
     console.log("from data: ", error);
-    res.status(400).json({ error: error.messsage ? error.message : error });
+    res.status(404).json({ error: error.messsage ? error.message : error });
   }
 })
 

@@ -17,7 +17,7 @@ router.post("/reCreate",async (req,res) => {
         res.json({user: result});
     } catch (error) {
         console.log("from data: ", error);
-        res.status(500).json({ error: error.messsage ? error.message: error });
+        res.status(404).json({ error: error.messsage ? error.message: error });
     }
 })
 

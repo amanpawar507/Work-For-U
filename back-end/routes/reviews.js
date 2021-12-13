@@ -14,7 +14,7 @@ router.post("/:freelancerId/:projectId", async (req, res) => {
       !reviewData.title ||
       !reviewData.reviewer ||
       !reviewData.rating ||
-      !reviewData.review 
+      !reviewData.review
     )
       throw "All fields need to have valid values";
     if (
