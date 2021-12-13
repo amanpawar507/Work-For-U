@@ -25,6 +25,17 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
     const {isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose} = useDisclosure();
 
     const toast = useToast();
+    const errorAlert = error => {
+        toast({
+            title: error.response? 
+                    error.response.data.error : 
+                    error.message ? 
+                    error.message : 
+                    error,
+            status: "error",
+            duration: 2000
+        });
+    }
 
     useEffect(() => {
         if(!userInfo) return;
@@ -44,11 +55,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 setChartInfo({labels,values, colors, successRate : data.successRate});
             } catch (error) {
                 console.log(error);
-                toast({
-                    title: error.response ? error.response.data.error : error,
-                    status: "error",
-                    duration: 2000
-                });
+                errorAlert(error);
             }
         }
 
@@ -61,11 +68,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 setAvgPay(total/count);
             } catch (error) {
                 console.log(error);
-                toast({
-                    title: error.response ? error.response.data.error : error,
-                    status: "error",
-                    duration: 2000
-                });
+                errorAlert(error);
             }
         }
 
@@ -90,11 +93,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
 
             } catch (error) {
                 console.log(error);
-                toast({
-                    title: error.response ? error.response.data.error : error.message,
-                    status: "error",
-                    duration: 2000
-                });
+                errorAlert(error);
             }
         }
         if(isFreelancerProfile) {
@@ -123,12 +122,56 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
             }
         } catch (error) {
             console.log(error);
+            setBlackListing(false);
+            errorAlert(error);
+        }
+    }
+
+    const handleReviewDelete = async (reviewId, projectId) => {
+        try {
+            const getOverallRating = reviews => {
+                if (reviews.length == 0) {
+                    return 0;
+                  } else {
+                    let avg = 0;
+                    let count = 0;
+                    for (element of reviews) {
+                      avg = avg + element.rating;
+                      count++;
+                    }
+                    avg = avg / count;
+                    return Number(avg.toFixed(2));
+                  }
+            }
+
+            const {data} = await client.delete(`http://localhost:5000/reviews/${reviewId}/${projectId}`);
+            const {reviewID, deleted} = data;
+            if(deleted) {
+                let currentUserData = userInfo;
+                let newArray = currentUserData.reviews.filter(i => i._id !== reviewID);
+                currentUserData = {
+                    ...currentUserData,
+                    overallRating: getOverallRating(newArray),
+                    reviews: newArray
+                };
+                if(isUser) {
+                    setUser(currentUserData);
+                }else{
+                    updateUserInfo(currentUserData);
+                }
+                toast({
+                    title: "review deleted successfully",
+                    status: "success",
+                    duration: 2000
+                });
+            }
+        } catch (error) {
+            console.log(error);
             toast({
-                title: "Could not blacklist",
+                title: "Could not delete",
                 status: "error",
                 duration: 2000
             });
-            setBlackListing(false)
         }
     }
 
@@ -149,8 +192,8 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                     {(currentUser.blacklist && currentUser.blacklist.includes(userInfo._id) ) ? "Blacklisted": "Blacklist"}
                 </Button>}
             </HStack>
-            <HStack w='100%'  spacing={'20px'} minH={'60%'} mb='10px'>
-                <Box minW={'250px'} maxW={'400px'} borderRight={'1px solid gray'}>
+            <HStack w='100%' justifyContent={'center'}  spacing={'20px'} minH={'60%'} mb='10px'>
+                <Box w={'100%'}  borderRight={'1px solid gray'}>
                     {userInfo.fullName && <InfoText label="Full Name" content={userInfo.fullName}/>}
                     {userInfo.companyName && <InfoText label="Company Name" content={userInfo.companyName}/>}
                     {userInfo.emailId && <InfoText label="Email" content={userInfo.emailId}/>}
@@ -166,7 +209,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
             </HStack>
             <Divider/>
             {isFreelancerProfile && <Box w={'100%'} pt='10px'>
-                {userInfo.reviews.length > 0 ? <ReviewList reviews={userInfo.reviews}/> : <EmptyAlert text="No Reviews yet!"/>}
+                {userInfo.reviews.length > 0 ? <ReviewList reviews={userInfo.reviews} user={currentUser} owner={isUser} handleDelete={handleReviewDelete}/> : <EmptyAlert text="No Reviews yet!"/>}
             </Box>}
             <RequestModal isOpen={isOpen} onClose={() => onClose()} selectedFreelancer={userInfo}/>
             {isUser && <UpdateProfileModal isOpen={isUpdateOpen} onClose={onUpdateClose} details={userInfo} isFreelancer={isFreelancerProfile}/>}

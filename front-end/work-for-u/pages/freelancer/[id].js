@@ -14,7 +14,17 @@ const FreelanceProfilePage = () => {
     const {query, push} = useRouter();
     const {user,isFreelancer} = useContext(UserContext);
     const toast = useToast();
-
+    const errorAlert = error => {
+        toast({
+            title: error.response? 
+                    error.response.data.error : 
+                    error.message ? 
+                    error.message : 
+                    error,
+            status: "error",
+            duration: 2000
+        });
+    }
     // useEffect(() => {
        
     // },[isFreelancer])
@@ -31,13 +41,9 @@ const FreelanceProfilePage = () => {
                 setInfo(data);
                 setLoading(false);
             } catch (error) {
-                toast({
-                    title: error.response ?error.response.data.error : error,
-                    status: "error",
-                    duration: 2000
-                });
-                setInfo(null);
                 setLoading(false);
+                setInfo(null);
+                errorAlert(error);
             }
         }
         
@@ -57,7 +63,7 @@ const FreelanceProfilePage = () => {
     
     return(
          <Layout>
-            <Container maxW={"container.md"} pt="20px" h={'600px'}>
+            <Container maxW={"container.lg"} pt="50px" h={'600px'}>
                 {info ? 
                     <Profile 
                         isFreelancerProfile={true} 

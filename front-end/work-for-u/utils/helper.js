@@ -1,4 +1,5 @@
 import { useToast } from "@chakra-ui/react"
+import { format, isDate } from "date-fns"
 
 export const getStatus = status => {
     switch (status) {
@@ -39,4 +40,10 @@ export const emailValidation = email => {
     var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailPattern.test(email)) return false;
     return true;
+}
+
+export const getDateFormat = date => {
+        const formatdate = new Date(date)
+        if (!isDate(formatdate)) return
+        return format(formatdate, 'dd/MM/yyyy')
 }

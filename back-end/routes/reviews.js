@@ -109,20 +109,20 @@ router.get("/review/:reviewId", async (req, res) => {
   }
 });
 
-router.delete("/:reviewId", async (req, res) => {
+router.delete("/:reviewId/:projectId", async (req, res) => {
   try {
-    if (!req.params.reviewId) throw "Review Id must be provided";
-    if (typeof req.params.reviewId != "string")
+    if (!req.params.reviewId || !req.params.projectId) throw "all fields must be provided";
+    if (typeof req.params.reviewId != "string" || typeof req.params.projectId != "string")
       throw "Input not in string format";
-    if (req.params.reviewId.trim().length < 1)
+    if (req.params.reviewId.trim().length < 1 || req.params.projectId.trim().length < 1)
       throw "Input cannot be empty string";
-    const check = reData.get(req.params.reviewId);
-    if (check == null) throw "Review does not exist";
+    // const check = await reData.get(req.params.reviewId);
+    // if (check == null) throw "Review does not exist";
   } catch (e) {
-    res.status(404).json({ Error: "e" });
+    res.status(404).json({ error: e.message? e.message : e });
   }
   try {
-    await reData.remove(req.params.reviewId);
+    await reData.remove(req.params.reviewId, req.params.projectId);
     res.status(200).json({ reviewID: req.params.reviewId, deleted: true });
   } catch (e) {
     res.status(404).json({ Error: e });

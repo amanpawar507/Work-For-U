@@ -10,7 +10,8 @@ export const ProjectFilter = ({handleFilter,handleClearFilter}) => {
         <VStack>
             <FormControl>
                 <FormLabel htmlFor="project-filter-type">Filter Type</FormLabel>
-                <Select id="project-filter-type" value={type} onChange={e => setType(e.target.value)} placeholder="Filter Type">
+                <Select id="project-filter-type"  onChange={e => {setType(e.target.value.trim() !== "" ? e.target.value : null)}}>
+                    <option value={""}>Filter Type</option>
                     <option value="name">Name</option>
                     <option value="skill">Skill</option>
                 </Select>

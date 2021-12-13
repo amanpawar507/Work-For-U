@@ -13,6 +13,18 @@ const SearchPage = () => {
 
   const {isFreelancer} = useContext(UserContext);
 
+  const errorAlert = error => {
+    toast({
+        title: error.response? 
+                error.response.data.error : 
+                error.message ? 
+                error.message : 
+                error,
+        status: "error",
+        duration: 2000
+    });
+}
+
   useEffect(() => {
     if (!query) return;
     const searching = async (req) => {
@@ -25,13 +37,7 @@ const SearchPage = () => {
         setResults(data);
       } catch (error) {
         console.log(error.response.data);
-        toast({
-          title: error.response.data
-            ? error.response.data.error
-            : error.message,
-          status: "error",
-          duration: 2000,
-        });
+        errorAlert(error);
       }
     };
     const { q, t } = query;
