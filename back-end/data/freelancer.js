@@ -208,7 +208,6 @@ const getFreelancer = async (freelancerID) => {
   if (findID === null)
     throw `Freelancer does not exist for the given id ${freelancerID.trim()}`;
   findID._id = findID._id.toString();
-  console.log(findID);
   return findID;
 };
 

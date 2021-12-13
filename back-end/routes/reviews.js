@@ -69,16 +69,13 @@ router.post("/:freelancerId/:projectId", async (req, res) => {
 
 router.get("/:freelancerId", async (req, res) => {
   try {
-    if (!req.params.freelancerId) throw "Restaurant Id must be provided";
+    if (!req.params.freelancerId) throw "Freelancer Id must be provided";
     if (typeof req.params.freelancerId != "string")
       throw "Input not in string format";
     if (req.params.freelancerId.trim().length < 1)
       throw "Input cannot be empty string";
-
-    const check2 = await freelancerData.getFreelancer(req.params.freelancerId);
-    if (check2 == null) throw "Restaurant does not exist";
   } catch (e) {
-    res.status(404).json({ error: e });
+    res.status(400).json({ error: e });
   }
 
   try {

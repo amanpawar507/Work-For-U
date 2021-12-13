@@ -56,7 +56,7 @@ const EmployerProfilePage = () => {
     
     return(
         <Layout>
-            <Container maxW={"container.md"} pt="20px" h={'600px'}>
+            <Container maxW={"container.lg"} pt="20px" h={'600px'}>
                 {
                    info ? 
                     <Profile 

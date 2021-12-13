@@ -265,6 +265,13 @@ router.get("/all/employer/:id", async (req, res) => {
       res.status(400).json({ error: "empty spaces for ID" });
       return;
     }
+    if(req.headers.user) {
+      if(req.headers.user._id !== id) {
+        res.status(401).json({ error: "You are not allowed access!" });
+        return;
+      }
+    }
+
 
     const result = await project.getAllEmployerProjects(id);
     res.json(result);
@@ -295,6 +302,13 @@ router.get("/all/freelancer/:id", async (req, res) => {
       res.status(400).json({ error: "empty spaces for ID" });
       return;
     }
+    if(req.headers.user) {
+      if(req.headers.user._id !== id) {
+        res.status(401).json({ error: "You are not allowed access!" });
+        return;
+      }
+    }
+
 
     const result = await project.getAllFreelancerProjects(id);
     res.json(result);
@@ -367,6 +381,14 @@ router.get("/requests/:freelancerId", async (req, res) => {
       return;
     }
 
+    if(req.headers.user) {
+      if(req.headers.user._id !== freelancerId) {
+        res.status(401).json({ error: "You are not allowed access!" });
+        return;
+      }
+    }
+
+
     const result = await project.getFreelancerRequests(freelancerId);
     res.json(result);
 
@@ -406,6 +428,13 @@ router.patch("/requests/update", async (req, res) => {
     ) {
       res.status(400).json({ error: "Empty spaces as input" });
       return;
+    }
+
+    if(req.headers.user) {
+      if(req.headers.user._id !== freelancerId) {
+        res.status(401).json({ error: "You are not allowed access!" });
+        return;
+      }
     }
 
     const result = await project.updateFreelancerRequest(

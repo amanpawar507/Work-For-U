@@ -1,6 +1,6 @@
-import { Avatar, Box, Center, Text } from "@chakra-ui/react"
+import {Center, Text } from "@chakra-ui/react"
 import { useRouter } from "next/dist/client/router"
-import randomcolor from "randomcolor";
+import { getRandomColor } from "../../utils/helper";
 
 export const CustomAvatar = ({size, name, id, isFreelancer}) => {
 
@@ -46,8 +46,9 @@ export const CustomAvatar = ({size, name, id, isFreelancer}) => {
         <Center 
             w={getSize(size)}
             h={getSize(size)}
-            bg={randomcolor()}
+            bg={getRandomColor()}
             borderRadius="full"
+            onClick={() => id && router.push(`/${isFreelancer ? "freelancer":"employer"}/${id}`)}
         >
             <Text  fontSize={`calc(${getFontSize(size)} / 2.5)`}>{getInitials(name)}</Text>
         </Center>

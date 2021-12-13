@@ -13,6 +13,7 @@ import { Box,
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react"
 import client from "../../utils/client";
+import { CustomAvatar } from "../common/Avatar";
 import { EmptyAlert } from "../common/emptyAlert";
 import { UserContext } from "../contexts/userContext";
 
@@ -66,26 +67,25 @@ export const Blacklist = () => {
 
     return(
         <Box>
-            {details.length > 0 ? <Table variant='simple' size={'md'}>
-                <Thead>
-                    <Tr>
-                    <Th></Th>
-                    <Th>Employer</Th>
-                    <Th textAlign={'left'}>Action</Th>
-                    </Tr>
-                </Thead>
-                <Tbody>
+            {details.length > 0 ? 
+            <table className="blacklist-table">
+                <thead>
+                    <tr>
+                    <th>Profile</th>
+                    <th>Employer</th>
+                    <th>Action</th>
+                    </tr>
+                </thead>
                     {
                         details.map((i,idx) => 
-                        <Tr key={idx}> 
-                            <Td><Avatar cursor={'pointer'} onClick={() => router.push(`/employer/${i._id}`)} name={i.fullName}/></Td>
-                            <Td>{i.fullName}</Td>
-                            <Td><Button colorScheme={'teal'} isLoading={loading} onClick={() => unBlock(i)}>Remove</Button></Td>
-                        </Tr>
+                        <tr key={idx}> 
+                            <td><CustomAvatar cursor={'pointer'} isFreelancer={false} id={i._id} name={i.fullName}/></td>
+                            <td>{i.fullName}</td>
+                            <td><Button colorScheme={'teal'} variant={'outline'} isLoading={loading} onClick={() => unBlock(i)}>Remove</Button></td>
+                        </tr>
                         )
                     }
-                </Tbody>
-            </Table> :
+            </table> :
             <EmptyAlert text="You haven't blacklisted anyone yet"/>
             }
         </Box>

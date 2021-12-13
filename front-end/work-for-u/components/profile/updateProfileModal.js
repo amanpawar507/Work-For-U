@@ -69,8 +69,6 @@ import { UserContext } from "../contexts/userContext";
         }
     },[isOpen,isFreelancer]);
 
-    const toast = useToast();
-
 
     useEffect(() => {
         if(!details) return;

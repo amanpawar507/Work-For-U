@@ -8,7 +8,8 @@ import {
     ModalCloseButton,
     Button,
     FormControl,
-    Select
+    Select,
+    useToast
   } from '@chakra-ui/react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -19,6 +20,19 @@ import client from '../../utils/client';
         const [status, setStatus] = useState(0);
 
         const [loading,setLoading] = useState(false);
+
+        const toast = useToast();
+        const errorAlert = error => {
+          toast({
+              title: error.response? 
+                      error.response.data.error : 
+                      error.message ? 
+                      error.message : 
+                      error,
+              status: error.response ? "error" : "warning",
+              duration: 2000
+          });
+      }
 
         const handleSubmit = async e => {
             try {
@@ -39,6 +53,7 @@ import client from '../../utils/client';
                 }
             } catch (error) {
                 console.log(error);
+                errorAlert(error);
                 setLoading(false);
             }
         }
@@ -52,7 +67,7 @@ import client from '../../utils/client';
           <ModalBody pb='10px'>
             <form onSubmit={handleSubmit}>
                 <FormControl isRequired textAlign={'right'}>
-                    <Select placeholder='Select status' mb='10px' onChange={e => setStatus(parseInt(e.target.value))}  defaultValue={selectedProject && selectedProject.status}>
+                    <Select placeholder='Select status' mb='10px' value={status} onChange={e => setStatus(parseInt(e.target.value))}  defaultValue={selectedProject && selectedProject.status}>
                         <option value={1}>Accepted</option>
                         <option value={2}>In progress</option>
                         <option value={3}>Completed</option>
