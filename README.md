@@ -50,11 +50,11 @@ the skillset required by the employer and the success rate of the freelancer
 - Blacklisting: Freelancers can block a company if the freelancer does not want to see request 
 from that employer anymore
 
-#Employer username and password:
+##Employer username and password:
 -aman@gmail.com, aman1234
 -ameya@gmail.com, ameya1234
 
-#Freelancer username and password:
+##Freelancer username and password:
 -joe@gmail.com, joe1234
 -rohan@gmail.com, joe1234
 -vidhi@gmail.com, vidhi1234
