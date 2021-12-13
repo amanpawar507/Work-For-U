@@ -10,24 +10,22 @@ export const ReviewList = ({ reviews, user, owner, handleDelete }) => {
     if (!reviews) return;
     const getReviewerInfo = async (reviewers) => {
       try {
-        const { data } = await client.post(
-          `http://localhost:5000/employer/getList`,
-          { employeridarr: reviewers }
-        );
+        const {data} = await client.post(`http://localhost:5000/employer/getList`,{employeridarr: reviewers});
         let finalList = [];
 
-        reviews.forEach((element) => {
-          const foundReviewer = data.find((i) => i._id === element.reviewer);
-          if (foundReviewer) {
-            finalList.push({
-              ...element,
-              reviewer: foundReviewer,
-            });
-          }
+        reviews.forEach(element => {
+            const foundReviewer = data.find(i => i._id === element.reviewer);
+            if(foundReviewer) {
+                finalList.push({
+                    ...element,
+                    reviewer: foundReviewer
+                })
+            }
         });
-        setAllReviews(finalList);
+
+            setAllReviews(finalList);
       } catch (error) {
-        //console.log(error);
+        console.log(error);
       }
     };
 
@@ -35,16 +33,10 @@ export const ReviewList = ({ reviews, user, owner, handleDelete }) => {
     getReviewerInfo(reviewers);
   }, [reviews]);
 
-  // useEffect(() => {
-  //     console.log(user);
-  //     console.log(reviews);
-  //     console.log(user._id === allReviews[0].reviewer)
-  // },[user, reviews]);
-
   return (
     <Box w={"100%"} maxHeight={"700px"} overflow={"auto"} p={"10px"}>
       <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-        {allReviews.map((i, idx) => (
+        {allReviews.length > 0 && allReviews.map((i, idx) => (
           <ReviewItem
             key={idx}
             review={i.review}

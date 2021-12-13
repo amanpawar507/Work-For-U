@@ -1,5 +1,4 @@
-import { Box, Flex, Heading, HStack, IconButton, Text } from "@chakra-ui/react"
-import { Tooltip } from "chart.js"
+import { Box, Flex, Heading, HStack, IconButton, Text, Tooltip } from "@chakra-ui/react"
 import { MdDelete } from "react-icons/md"
 import { getDateFormat } from "../../../utils/helper"
 import { Avatar, CustomAvatar } from "../Avatar"
