@@ -69,7 +69,7 @@ import client from "../../utils/client";
                 // })
             // }
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             errorAlert(error);
         }
     },[isOpen]);
@@ -111,7 +111,7 @@ import client from "../../utils/client";
     }
 
     const handleCheck = value => {
-        console.log(value);
+        //console.log(value);
         setProjectDetails(prevValue => {
             return {
                 ...prevValue,
@@ -168,7 +168,7 @@ import client from "../../utils/client";
                     break;
             } 
         });
-        console.log(errors);
+        //console.log(errors);
         setErrorList(errors);
     }
 
@@ -176,7 +176,7 @@ import client from "../../utils/client";
         e.preventDefault();
         try {
             validation();
-            console.log(projectDetails);
+            //console.log(projectDetails);
             if(errorList.length === 0)  onSubmit(projectDetails);
         } catch (error) {
             toast({

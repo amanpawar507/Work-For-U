@@ -42,7 +42,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
         const getSuccessRate = async () => {
             try {
                 const {data} = await client.get(`http://localhost:5000/freelancer/successRate/${userInfo._id}`);
-                console.log(data);
+                //console.log(data);
                 let labels = [];
                 let values = [];
                 let colors = [];
@@ -51,10 +51,10 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                     values.push(data.projectBySkills[key]);
                     colors.push(randomcolor());
                 }
-                console.log({labels,values, colors});
+                //console.log({labels,values, colors});
                 setChartInfo({labels,values, colors, successRate : data.successRate});
             } catch (error) {
-                console.log(error);
+                //console.log(error);
                 errorAlert(error);
             }
         }
@@ -67,7 +67,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 data.map(i => total += i.hourlyPay);
                 setAvgPay(total/count);
             } catch (error) {
-                console.log(error);
+                //console.log(error);
                 errorAlert(error);
             }
         }
@@ -75,8 +75,8 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
         const getProjectsBySkills = async() => {
             try {
                 const {data} = await client.get(`http://localhost:5000/employer/project/skills/${userInfo._id}`);
-                console.log("projects by skills: " , data)
-                console.log(Object.keys(data).length);
+                //console.log("projects by skills: " , data)
+                //console.log(Object.keys(data).length);
                 if(Object.keys(data).length > 0) {
                     let labels = [];
                     let values = [];
@@ -92,7 +92,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 }
 
             } catch (error) {
-                console.log(error);
+                //console.log(error);
                 errorAlert(error);
             }
         }
@@ -121,7 +121,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 setBlackListing(false)
             }
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             setBlackListing(false);
             errorAlert(error);
         }
@@ -166,7 +166,7 @@ export const Profile = ({isFreelancer,isFreelancerProfile,userInfo,isUser,update
                 });
             }
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             toast({
                 title: "Could not delete",
                 status: "error",
