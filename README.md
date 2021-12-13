@@ -7,13 +7,13 @@ employers who want to work with them and also showcase their past projects.
 Built using Express, Node.js, MongoDB ,React and Chakra UI.
 
 ## How to Setup 
-For backend:
+- For backend:
 1. cd back-end
 2. npm i
 3. npm run seed
 4. npm start
 
-For front-end:
+- For front-end:
 1. cd front-end
 2. cd work-for-u
 3. Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
