@@ -50,13 +50,13 @@ import { UserContext } from "../contexts/userContext";
             try {
                 setLoading(true);
                 const {data} = await client.get(`http://localhost:5000/project/all/employer/${user._id}`);
-                console.log("data: ",data);
+                //console.log("data: ",data);
                 if(data.length > 0) {
                     let available = [];
                     data.forEach(el => {
                         if(!el.requested.includes(selectedFreelancer._id) && !el.assignedTo) available.push(el);
                     });
-                    console.log(available);
+                    //console.log(available);
                     setAvailableProjects(available);
                 }else{
                     setAvailableProjects([]);
@@ -93,7 +93,7 @@ import { UserContext } from "../contexts/userContext";
             setSending(false);
             onClose(); 
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             toast({
                 title: "Request could not be sent",
                 status:"error",
