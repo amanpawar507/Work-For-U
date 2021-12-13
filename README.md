@@ -50,6 +50,11 @@ the skillset required by the employer and the success rate of the freelancer
 - Blacklisting: Freelancers can block a company if the freelancer does not want to see request 
 from that employer anymore
 
+## More Extra Features (not mentioned)
+- Projects can be filtered according to name and skill
+- List of freelancers can be sorted on the basis of rating and success rate
+- Freelancers can see their approximate total earnings
+
 ## Employer username and password
 - aman@gmail.com, aman1234
 - ameya@gmail.com, ameya1234
